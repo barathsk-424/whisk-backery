@@ -4,7 +4,7 @@
  * Thin API wrapper for order operations.
  *
  * Strategy:
- *   1. Try the Node/Express backend at http://localhost:5000
+ *   1. Try the Node/Express backend at https://whisk-backery.onrender.com
  *   2. If the backend is unreachable (network error / 503) fall
  *      back to Supabase via useStore (handled in caller).
  *   3. localStorage is ALWAYS updated as an offline cache.
@@ -13,7 +13,8 @@
 
 import { supabase } from "./supabase";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL =
+  import.meta.env.VITE_API_URL || "https://whisk-backery.onrender.com";
 
 /**
  * apiFetch

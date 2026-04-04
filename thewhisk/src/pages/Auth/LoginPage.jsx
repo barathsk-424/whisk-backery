@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import useStore from '../../store/useStore';
-import toast from 'react-hot-toast';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import useStore from "../../store/useStore";
+import toast from "react-hot-toast";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL =
+  import.meta.env.VITE_API_URL || "https://whisk-backery.onrender.com";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -30,16 +31,16 @@ export default function LoginPage() {
       const res = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
-        const decoded = JSON.parse(atob(data.token.split('.')[1]));
+        const decoded = JSON.parse(atob(data.token.split(".")[1]));
         setAuthData({ ...decoded, ...data.user }, data.token);
-        
-        toast.success(`Welcome, ${data.user?.name || 'Artisan'}! 🧁`);
+
+        toast.success(`Welcome, ${data.user?.name || "Artisan"}! 🧁`);
         if (decoded.role === "admin") navigate("/admin-dashboard");
         else navigate("/");
       } else {
@@ -48,12 +49,14 @@ export default function LoginPage() {
       }
     } catch (err) {
       toast.error("Network error. Backend service unreachable.");
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    
+
     if (!validateEmail(email)) {
       setError("Please enter a valid artisan email.");
       return;
@@ -66,7 +69,7 @@ export default function LoginPage() {
       const res = await fetch(`${API_URL}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password })
+        body: JSON.stringify({ name, email, password }),
       });
 
       const data = await res.json();
@@ -80,7 +83,9 @@ export default function LoginPage() {
       }
     } catch (err) {
       toast.error("Network error during registration.");
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -89,29 +94,37 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center py-24 px-6 transition-colors duration-700 ${theme === 'dark' ? 'bg-[#0D0807]' : 'bg-secondary'}`}>
+    <div
+      className={`min-h-screen flex items-center justify-center py-24 px-6 transition-colors duration-700 ${theme === "dark" ? "bg-[#0D0807]" : "bg-secondary"}`}
+    >
       <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         className="w-full max-w-lg"
       >
-        <div className={`rounded-[3rem] p-10 shadow-2xl border transition-all ${
-           theme === 'dark' ? 'bg-[#1A1110] border-white/5 shadow-white/5' : 'bg-white border-brown-100'
-        }`}>
+        <div
+          className={`rounded-[3rem] p-10 shadow-2xl border transition-all ${
+            theme === "dark"
+              ? "bg-[#1A1110] border-white/5 shadow-white/5"
+              : "bg-white border-brown-100"
+          }`}
+        >
           <div className="text-center mb-10">
-            <motion.div 
+            <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: 'spring' }}
+              transition={{ type: "spring" }}
               className="w-20 h-20 bg-accent/10 rounded-3xl flex items-center justify-center mx-auto mb-6 text-4xl"
             >
               🧁
             </motion.div>
-            <h1 className={`text-3xl font-black uppercase tracking-tighter ${theme === 'dark' ? 'text-secondary' : 'text-primary'}`}>
+            <h1
+              className={`text-3xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+            >
               Artisan Gateway
             </h1>
             <p className="text-accent font-black uppercase text-[10px] tracking-[0.4em] mt-3">
-              {isSignUp ? 'Create Membership' : 'Unified Intelligence Portal'}
+              {isSignUp ? "Create Membership" : "Unified Intelligence Portal"}
             </p>
           </div>
 
@@ -130,8 +143,13 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {isSignUp && (
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-                <label className="block text-[10px] font-black text-brown-400 uppercase tracking-widest mb-2 ml-4 self-start text-left">Masterpiece Signature (Name)</label>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+              >
+                <label className="block text-[10px] font-black text-brown-400 uppercase tracking-widest mb-2 ml-4 self-start text-left">
+                  Masterpiece Signature (Name)
+                </label>
                 <input
                   type="text"
                   required
@@ -139,14 +157,18 @@ export default function LoginPage() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="EX: PIERRE HERMÉ"
                   className={`w-full px-6 py-4.5 rounded-2xl border font-black text-xs tracking-widest focus:outline-none focus:ring-4 transition-all uppercase ${
-                    theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:ring-white/5 placeholder:text-white/20' : 'bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5 placeholder:text-brown-200'
+                    theme === "dark"
+                      ? "bg-white/5 border-white/10 text-white focus:ring-white/5 placeholder:text-white/20"
+                      : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5 placeholder:text-brown-200"
                   }`}
                 />
               </motion.div>
             )}
 
             <div>
-              <label className="block text-[10px] font-black text-brown-400 uppercase tracking-widest mb-2 ml-4 self-start text-left">Identity (Email)</label>
+              <label className="block text-[10px] font-black text-brown-400 uppercase tracking-widest mb-2 ml-4 self-start text-left">
+                Identity (Email)
+              </label>
               <input
                 type="email"
                 required
@@ -154,13 +176,17 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="YOU@ARTISAN.COM"
                 className={`w-full px-6 py-4.5 rounded-2xl border font-black text-xs tracking-widest focus:outline-none focus:ring-4 transition-all uppercase ${
-                  theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:ring-white/5 placeholder:text-white/20' : 'bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5 placeholder:text-brown-200'
+                  theme === "dark"
+                    ? "bg-white/5 border-white/10 text-white focus:ring-white/5 placeholder:text-white/20"
+                    : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5 placeholder:text-brown-200"
                 }`}
               />
             </div>
 
             <div>
-              <label className="block text-[10px] font-black text-brown-400 uppercase tracking-widest mb-2 ml-4 self-start text-left">Secure Cipher (Password)</label>
+              <label className="block text-[10px] font-black text-brown-400 uppercase tracking-widest mb-2 ml-4 self-start text-left">
+                Secure Cipher (Password)
+              </label>
               <input
                 type="password"
                 required
@@ -168,7 +194,9 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className={`w-full px-6 py-4.5 rounded-2xl border font-black text-xs focus:outline-none focus:ring-4 transition-all ${
-                  theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:ring-white/5 tracking-widest' : 'bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5'
+                  theme === "dark"
+                    ? "bg-white/5 border-white/10 text-white focus:ring-white/5 tracking-widest"
+                    : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5"
                 }`}
               />
             </div>
@@ -177,31 +205,35 @@ export default function LoginPage() {
               type="submit"
               disabled={loading}
               className={`w-full py-5 bg-primary text-white font-black text-xs rounded-2xl shadow-xl hover:translate-y-[-2px] active:translate-y-[1px] transition-all flex items-center justify-center gap-3 uppercase tracking-[0.3em] ${
-                loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary-light active:bg-primary-dark shadow-luxury'
+                loading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-primary-light active:bg-primary-dark shadow-luxury"
               }`}
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
-                <>{isSignUp ? 'Initiate Membership' : 'Authenticate Identity'}</>
+                <>
+                  {isSignUp ? "Initiate Membership" : "Authenticate Identity"}
+                </>
               )}
             </button>
           </form>
 
           <div className="mt-12 text-center border-t border-brown-50 pt-8 flex items-center justify-center gap-3">
-             <p className="text-[10px] font-black text-brown-400 uppercase tracking-widest">
-               {isSignUp ? 'Already a member?' : "New to the community?"}{' '}
-               <button
-                 type="button"
-                 onClick={() => {
-                   setIsSignUp(!isSignUp);
-                   setError(null);
-                 }}
-                 className="text-accent font-black hover:underline"
-               >
-                 {isSignUp ? 'Sign In Instead' : 'Create Identity'}
-               </button>
-             </p>
+            <p className="text-[10px] font-black text-brown-400 uppercase tracking-widest">
+              {isSignUp ? "Already a member?" : "New to the community?"}{" "}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSignUp(!isSignUp);
+                  setError(null);
+                }}
+                className="text-accent font-black hover:underline"
+              >
+                {isSignUp ? "Sign In Instead" : "Create Identity"}
+              </button>
+            </p>
           </div>
 
           <div className="mt-8 flex justify-center gap-4 text-[8px] font-black uppercase tracking-widest text-brown-300 opacity-50">

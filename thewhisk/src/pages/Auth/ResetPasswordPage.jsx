@@ -1,32 +1,33 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL =
+  import.meta.env.VITE_API_URL || "https://whisk-backery.onrender.com";
 
 /* ── Simple password strength ──────────────────────── */
 function getStrength(pwd) {
-  if (!pwd) return { label: '', color: '', pct: 0 };
-  if (pwd.length < 6)  return { label: 'Too short', color: '#ef4444', pct: 20 };
-  if (pwd.length < 8)  return { label: 'Weak',      color: '#f97316', pct: 40 };
+  if (!pwd) return { label: "", color: "", pct: 0 };
+  if (pwd.length < 6) return { label: "Too short", color: "#ef4444", pct: 20 };
+  if (pwd.length < 8) return { label: "Weak", color: "#f97316", pct: 40 };
   if (!/[A-Z]/.test(pwd) || !/\d/.test(pwd))
-    return { label: 'Fair',      color: '#eab308', pct: 65 };
+    return { label: "Fair", color: "#eab308", pct: 65 };
   if (pwd.length >= 10 && /[^A-Za-z0-9]/.test(pwd))
-    return { label: 'Strong',    color: '#22c55e', pct: 100 };
-  return { label: 'Good',        color: '#84cc16', pct: 80 };
+    return { label: "Strong", color: "#22c55e", pct: 100 };
+  return { label: "Good", color: "#84cc16", pct: 80 };
 }
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
 
-  const [otp,         setOtp]         = useState(['', '', '', '', '', '']);
-  const [newPwd,      setNewPwd]      = useState('');
-  const [confirmPwd,  setConfirmPwd]  = useState('');
-  const [showPwd,     setShowPwd]     = useState(false);
-  const [loading,     setLoading]     = useState(false);
-  const [step,        setStep]        = useState('otp'); // 'otp' | 'password' | 'done'
-  const [recoveryToken, setRecoveryToken] = useState('');
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [newPwd, setNewPwd] = useState("");
+  const [confirmPwd, setConfirmPwd] = useState("");
+  const [showPwd, setShowPwd] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState("otp"); // 'otp' | 'password' | 'done'
+  const [recoveryToken, setRecoveryToken] = useState("");
 
   const strength = getStrength(newPwd);
 
@@ -42,18 +43,18 @@ export default function ResetPasswordPage() {
   };
 
   const handleOtpKeyDown = (e, idx) => {
-    if (e.key === 'Backspace' && !otp[idx] && idx > 0) {
+    if (e.key === "Backspace" && !otp[idx] && idx > 0) {
       document.getElementById(`otp-${idx - 1}`)?.focus();
     }
   };
 
   // ── Verify OTP through Backend ───────────────────────
   const verifyOtp = async () => {
-    const entered  = otp.join('');
-    const email = localStorage.getItem('resetEmail') || '';
+    const entered = otp.join("");
+    const email = localStorage.getItem("resetEmail") || "";
 
     if (entered.length < 6) {
-      toast.error('Identity code requires 6 digits.');
+      toast.error("Identity code requires 6 digits.");
       return;
     }
 
@@ -62,19 +63,19 @@ export default function ResetPasswordPage() {
       const res = await fetch(`${API_URL}/verify-recovery`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, token: entered })
+        body: JSON.stringify({ email, token: entered }),
       });
 
       const data = await res.json();
       if (res.ok) {
-        toast.success(data.message || 'Identity confirmed! 🔐');
+        toast.success(data.message || "Identity confirmed! 🔐");
         setRecoveryToken(data.token);
-        setStep('password');
+        setStep("password");
       } else {
-        toast.error(data.message || 'Invalid or expired code.');
+        toast.error(data.message || "Invalid or expired code.");
       }
     } catch (err) {
-      toast.error('Verification relay failure.');
+      toast.error("Verification relay failure.");
     } finally {
       setLoading(false);
     }
@@ -82,59 +83,71 @@ export default function ResetPasswordPage() {
 
   // ── Reset password through Backend ───────────────────
   const handleReset = async () => {
-    if (!newPwd) { toast.error('Cipher required.'); return; }
-    if (newPwd.length < 6) { toast.error('Cipher too short.'); return; }
-    if (newPwd !== confirmPwd) { toast.error('Ciphers do not match.'); return; }
+    if (!newPwd) {
+      toast.error("Cipher required.");
+      return;
+    }
+    if (newPwd.length < 6) {
+      toast.error("Cipher too short.");
+      return;
+    }
+    if (newPwd !== confirmPwd) {
+      toast.error("Ciphers do not match.");
+      return;
+    }
 
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: recoveryToken, password: newPwd })
+        body: JSON.stringify({ token: recoveryToken, password: newPwd }),
       });
 
       const data = await res.json();
       if (res.ok) {
         // Cleanup
-        localStorage.removeItem('resetEmail');
-        setStep('done');
-        toast.success('🎉 Vault re-secured!');
+        localStorage.removeItem("resetEmail");
+        setStep("done");
+        toast.success("🎉 Vault re-secured!");
       } else {
-        toast.error(data.message || 'Vault update failure.');
+        toast.error(data.message || "Vault update failure.");
       }
     } catch (err) {
-      toast.error('Security server error.');
+      toast.error("Security server error.");
     } finally {
       setLoading(false);
     }
   };
 
   // ── Done ─────────────────────────────────────────────
-  if (step === 'done') {
+  if (step === "done") {
     return (
       <div className="min-h-screen flex items-center justify-center gradient-hero py-20 px-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: 'spring' }}
+          transition={{ type: "spring" }}
           className="w-full max-w-md"
         >
           <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-10 shadow-2xl border border-white/20 text-center">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: 'spring', delay: 0.1 }}
+              transition={{ type: "spring", delay: 0.1 }}
               className="text-7xl mb-6"
             >
               🎉
             </motion.div>
-            <h2 className="font-heading text-2xl font-bold text-primary mb-2">Password Reset!</h2>
+            <h2 className="font-heading text-2xl font-bold text-primary mb-2">
+              Password Reset!
+            </h2>
             <p className="text-brown-400 text-sm mb-8">
-              Your password has been updated successfully. You can now sign in with your new password.
+              Your password has been updated successfully. You can now sign in
+              with your new password.
             </p>
             <button
-              onClick={() => navigate('/login')}
+              onClick={() => navigate("/login")}
               className="w-full py-4 gradient-accent text-white font-bold rounded-2xl
                          shadow-lg shadow-accent/20 hover:opacity-90 transition-all"
             >
@@ -154,31 +167,29 @@ export default function ResetPasswordPage() {
         className="w-full max-w-md"
       >
         <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20">
-
           {/* Header */}
           <div className="text-center mb-8">
             <motion.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: 'spring' }}
+              transition={{ delay: 0.2, type: "spring" }}
               className="text-6xl block mb-4"
             >
-              {step === 'otp' ? '🔢' : '🔑'}
+              {step === "otp" ? "🔢" : "🔑"}
             </motion.span>
             <h1 className="font-heading text-3xl font-bold text-primary">
-              {step === 'otp' ? 'Verify OTP' : 'New Password'}
+              {step === "otp" ? "Verify OTP" : "New Password"}
             </h1>
             <p className="text-brown-400 mt-2 text-sm">
-              {step === 'otp'
-                ? 'Enter the 6-digit code that was shown in the notification'
-                : 'Choose a strong password for your account'}
+              {step === "otp"
+                ? "Enter the 6-digit code that was shown in the notification"
+                : "Choose a strong password for your account"}
             </p>
           </div>
 
           <AnimatePresence mode="wait">
-
             {/* ── Step 1: OTP ─────────────────────────────── */}
-            {step === 'otp' && (
+            {step === "otp" && (
               <motion.div
                 key="otp"
                 initial={{ opacity: 0, x: -20 }}
@@ -220,9 +231,9 @@ export default function ResetPasswordPage() {
                 </button>
 
                 <p className="text-center text-sm text-brown-400">
-                  Wrong email?{' '}
+                  Wrong email?{" "}
                   <button
-                    onClick={() => navigate('/forgot-password')}
+                    onClick={() => navigate("/forgot-password")}
                     className="text-accent font-bold hover:underline"
                   >
                     Go back
@@ -232,7 +243,7 @@ export default function ResetPasswordPage() {
             )}
 
             {/* ── Step 2: New Password ─────────────────────── */}
-            {step === 'password' && (
+            {step === "password" && (
               <motion.div
                 key="password"
                 initial={{ opacity: 0, x: 20 }}
@@ -247,7 +258,7 @@ export default function ResetPasswordPage() {
                   </label>
                   <div className="relative">
                     <input
-                      type={showPwd ? 'text' : 'password'}
+                      type={showPwd ? "text" : "password"}
                       value={newPwd}
                       onChange={(e) => setNewPwd(e.target.value)}
                       placeholder="Min. 6 characters"
@@ -260,7 +271,7 @@ export default function ResetPasswordPage() {
                       onClick={() => setShowPwd(!showPwd)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-brown-300 hover:text-primary transition-colors"
                     >
-                      {showPwd ? '🙈' : '👁️'}
+                      {showPwd ? "🙈" : "👁️"}
                     </button>
                   </div>
 
@@ -279,7 +290,10 @@ export default function ResetPasswordPage() {
                           className="h-full rounded-full transition-all duration-300"
                         />
                       </div>
-                      <p className="text-xs mt-1 ml-1" style={{ color: strength.color }}>
+                      <p
+                        className="text-xs mt-1 ml-1"
+                        style={{ color: strength.color }}
+                      >
                         {strength.label}
                       </p>
                     </motion.div>
@@ -292,18 +306,22 @@ export default function ResetPasswordPage() {
                     Confirm Password
                   </label>
                   <input
-                    type={showPwd ? 'text' : 'password'}
+                    type={showPwd ? "text" : "password"}
                     value={confirmPwd}
                     onChange={(e) => setConfirmPwd(e.target.value)}
                     placeholder="Re-enter password"
                     className={`w-full px-4 py-3.5 rounded-2xl border text-sm
                                 focus:outline-none focus:ring-4 focus:ring-accent/10 transition-all bg-white/50
-                                ${confirmPwd && confirmPwd !== newPwd
-                                  ? 'border-red-300 focus:border-red-400'
-                                  : 'border-brown-100 focus:border-accent'}`}
+                                ${
+                                  confirmPwd && confirmPwd !== newPwd
+                                    ? "border-red-300 focus:border-red-400"
+                                    : "border-brown-100 focus:border-accent"
+                                }`}
                   />
                   {confirmPwd && confirmPwd !== newPwd && (
-                    <p className="text-xs text-red-500 mt-1 ml-1">Passwords don't match</p>
+                    <p className="text-xs text-red-500 mt-1 ml-1">
+                      Passwords don't match
+                    </p>
                   )}
                 </div>
 
@@ -313,7 +331,7 @@ export default function ResetPasswordPage() {
                   className={`w-full py-4 gradient-accent text-white font-bold rounded-2xl
                               shadow-lg shadow-accent/20 flex items-center justify-center gap-2
                               transition-all
-                              ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90 hover:-translate-y-0.5 active:scale-[0.98]'}`}
+                              ${loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90 hover:-translate-y-0.5 active:scale-[0.98]"}`}
                 >
                   {loading ? (
                     <>
@@ -321,7 +339,7 @@ export default function ResetPasswordPage() {
                       Resetting...
                     </>
                   ) : (
-                    '🔐 Reset Password'
+                    "🔐 Reset Password"
                   )}
                 </button>
               </motion.div>
@@ -332,7 +350,7 @@ export default function ResetPasswordPage() {
           <div className="mt-8 text-center border-t border-brown-50 pt-6">
             <p className="text-sm text-brown-400">
               <button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate("/login")}
                 className="text-accent font-bold hover:underline"
               >
                 ← Back to Sign In

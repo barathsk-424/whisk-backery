@@ -1,17 +1,18 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL =
+  import.meta.env.VITE_API_URL || "https://whisk-backery.onrender.com";
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();
-  const [email, setEmail]         = useState('');
-  const [loading, setLoading]     = useState(false);
-  const [sent, setSent]           = useState(false);
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
   const [countdown, setCountdown] = useState(0);
-  const timerRef                  = useRef(null);
+  const timerRef = useRef(null);
 
   // ── countdown tick ───────────────────────────────────────
   useEffect(() => {
@@ -28,11 +29,11 @@ export default function ForgotPasswordPage() {
   // ── generate & send OTP via Backend ────────────────────────
   const sendOTP = async () => {
     if (!email.trim()) {
-      toast.error('Identity required to proceed.');
+      toast.error("Identity required to proceed.");
       return;
     }
     if (!validateEmail(email)) {
-      toast.error('Please enter a valid artisan email.');
+      toast.error("Please enter a valid artisan email.");
       return;
     }
 
@@ -42,12 +43,12 @@ export default function ForgotPasswordPage() {
       const res = await fetch(`${API_URL}/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email }),
       });
 
       const data = await res.json();
       if (res.ok) {
-        localStorage.setItem('resetEmail', email.trim());
+        localStorage.setItem("resetEmail", email.trim());
         toast.success(data.message || "Security code dispatched! 📬");
         setSent(true);
         setCountdown(60);
@@ -75,20 +76,22 @@ export default function ForgotPasswordPage() {
         className="w-full max-w-md"
       >
         <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20">
-
           {/* Header */}
           <div className="text-center mb-8">
             <motion.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: 'spring' }}
+              transition={{ delay: 0.2, type: "spring" }}
               className="text-6xl block mb-4"
             >
               🔐
             </motion.span>
-            <h1 className="font-heading text-3xl font-bold text-primary">Forgot Password?</h1>
+            <h1 className="font-heading text-3xl font-bold text-primary">
+              Forgot Password?
+            </h1>
             <p className="text-brown-400 mt-2 text-sm leading-relaxed">
-              Enter the email linked to your account and we'll send you a 6-digit OTP.
+              Enter the email linked to your account and we'll send you a
+              6-digit OTP.
             </p>
           </div>
 
@@ -101,7 +104,7 @@ export default function ForgotPasswordPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && !sent && sendOTP()}
+              onKeyDown={(e) => e.key === "Enter" && !sent && sendOTP()}
               placeholder="you@thewhisk.com"
               disabled={sent}
               className="w-full px-4 py-3.5 rounded-2xl border border-brown-100 text-sm
@@ -123,7 +126,7 @@ export default function ForgotPasswordPage() {
                 className={`w-full py-4 gradient-accent text-white font-bold rounded-2xl
                             shadow-lg shadow-accent/20 transition-all flex items-center
                             justify-center gap-2
-                            ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90 hover:-translate-y-0.5 active:scale-[0.98]'}`}
+                            ${loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90 hover:-translate-y-0.5 active:scale-[0.98]"}`}
               >
                 {loading ? (
                   <>
@@ -131,7 +134,7 @@ export default function ForgotPasswordPage() {
                     Sending OTP...
                   </>
                 ) : (
-                  '📧 Send Reset OTP'
+                  "📧 Send Reset OTP"
                 )}
               </motion.button>
             ) : (
@@ -143,13 +146,17 @@ export default function ForgotPasswordPage() {
               >
                 {/* Success banner */}
                 <div className="p-4 bg-green-50 border border-green-200 rounded-2xl text-center">
-                  <p className="text-green-700 font-semibold text-sm">✅ Security code dispatched!</p>
-                  <p className="text-green-500 text-xs mt-1">Please enter the 6-digit code from your inbox.</p>
+                  <p className="text-green-700 font-semibold text-sm">
+                    ✅ Security code dispatched!
+                  </p>
+                  <p className="text-green-500 text-xs mt-1">
+                    Please enter the 6-digit code from your inbox.
+                  </p>
                 </div>
 
                 {/* Go to Reset */}
                 <button
-                  onClick={() => navigate('/reset-password')}
+                  onClick={() => navigate("/reset-password")}
                   className="w-full py-4 gradient-accent text-white font-bold rounded-2xl
                              shadow-lg shadow-accent/20 hover:opacity-90 hover:-translate-y-0.5
                              active:scale-[0.98] transition-all"
@@ -159,9 +166,11 @@ export default function ForgotPasswordPage() {
 
                 {/* Resend */}
                 <p className="text-center text-sm text-brown-400">
-                  Didn't get it?{' '}
+                  Didn't get it?{" "}
                   {countdown > 0 ? (
-                    <span className="text-accent font-semibold">Resend in {countdown}s</span>
+                    <span className="text-accent font-semibold">
+                      Resend in {countdown}s
+                    </span>
                   ) : (
                     <button
                       onClick={handleResend}
@@ -178,9 +187,9 @@ export default function ForgotPasswordPage() {
           {/* Back to Login */}
           <div className="mt-8 text-center border-t border-brown-50 pt-6">
             <p className="text-sm text-brown-400">
-              Remember your password?{' '}
+              Remember your password?{" "}
               <button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate("/login")}
                 className="text-accent font-bold hover:underline"
               >
                 Back to Sign In
