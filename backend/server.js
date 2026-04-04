@@ -317,6 +317,8 @@ app.get("/api/orders", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`\n🚀 ARTISAN BACKEND ONLINE → http://localhost:${PORT}`);
+  console.log(
+    `\n🚀 ARTISAN BACKEND ONLINE → https://whisk-backery.onrender.com:${PORT}`,
+  );
   console.log(`📦 MONITORING CHANNEL: cqdxnjhyoxqxofyhzgov.supabase.co\n`);
 });
