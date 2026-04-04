@@ -138,11 +138,18 @@ app.post("/login", async (req, res) => {
 
   try {
     // 1. MASTER VAULT SEARCH
-    const { data: masterAdmin } = await supabase
+    const { data: masterAdmin, error: adminErr } = await supabase
       .from("admins")
       .select("*")
       .eq("email", userEmail)
       .maybeSingle();
+
+    if (adminErr) {
+      console.error("[AUTH] Admin Search ERROR:", adminErr.message);
+      return res
+        .status(500)
+        .json({ message: "Master vault lookup failure: " + adminErr.message });
+    }
 
     if (masterAdmin && masterAdmin.password === password) {
       console.log(
@@ -170,11 +177,18 @@ app.post("/login", async (req, res) => {
     }
 
     // 2. GENERAL USER SEARCH (MEMBERS)
-    let { data: user } = await supabase
+    let { data: user, error: userErr } = await supabase
       .from("users")
       .select("*")
       .eq("email", userEmail)
       .maybeSingle();
+
+    if (userErr) {
+      console.error("[AUTH] User Search ERROR:", userErr.message);
+      return res
+        .status(500)
+        .json({ message: "Registry lookup failure: " + userErr.message });
+    }
 
     if (user) {
       if (user.password === password) {
@@ -203,7 +217,11 @@ app.post("/login", async (req, res) => {
       }
     }
 
-    return res.status(401).json({ message: "Artisan not found in registry." });
+    return res
+      .status(401)
+      .json({
+        message: "Artisan not found in registry (Search: " + userEmail + ")",
+      });
   } catch (err) {
     console.error("   → SYSTEM ERROR LOGIN:", err.message);
     res.status(500).json({ message: "Server error during authentication" });
@@ -317,8 +335,6 @@ app.get("/api/orders", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(
-    `\n🚀 ARTISAN BACKEND ONLINE → https://whisk-backery.onrender.com:${PORT}`,
-  );
+  console.log(`\n🚀 ARTISAN BACKEND ONLINE → http://localhost:${PORT}`);
   console.log(`📦 MONITORING CHANNEL: cqdxnjhyoxqxofyhzgov.supabase.co\n`);
 });
