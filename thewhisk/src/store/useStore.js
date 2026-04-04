@@ -1,57 +1,64 @@
-import { create } from 'zustand';
-import { supabase } from '../lib/supabase';
-import toast from 'react-hot-toast';
-import { getOrdersAPI } from '../lib/orderApi';
+import { create } from "zustand";
+import { supabase } from "../lib/supabase";
+import toast from "react-hot-toast";
+import { getOrdersAPI } from "../lib/orderApi";
 
 const useStore = create((set, get) => ({
   // ─── INITIAL STATES ─────────────────
   user: null,
   profile: null,
-  token: localStorage.getItem('token') || null,
+  token: localStorage.getItem("token") || null,
   isAuthenticated: false,
   isAdmin: false,
   loading: false,
   authInitialized: false,
   cart: (() => {
     try {
-      const saved = localStorage.getItem('cart');
+      const saved = localStorage.getItem("cart");
       return saved ? JSON.parse(saved) : [];
-    } catch (e) { return []; }
+    } catch (e) {
+      return [];
+    }
   })(),
   cartOpen: false,
-  searchQuery: '',
-  activeCategory: 'all',
+  searchQuery: "",
+  activeCategory: "all",
   products: [],
   orders: [],
   savedDesigns: [],
   customCakes: [],
   budgetRange: [0, 5000],
-  theme: localStorage.getItem('theme') || 'light',
+  theme: localStorage.getItem("theme") || "light",
   reviews: [],
 
   // ── INITIALIZE AUTH (JWT BASED) ───────────
   initializeAuth: async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token) {
         try {
-          const base64Url = token.split('.')[1];
-          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-          const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-              return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-          }).join(''));
+          const base64Url = token.split(".")[1];
+          const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+          const jsonPayload = decodeURIComponent(
+            atob(base64)
+              .split("")
+              .map(function (c) {
+                return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+              })
+              .join(""),
+          );
 
           const decoded = JSON.parse(jsonPayload);
-          set({ 
-            user: decoded, 
-            isAuthenticated: true, 
-            isAdmin: decoded.role === 'admin' || decoded.source === 'master',
-            token: token
+          set({
+            user: decoded,
+            isAuthenticated: true,
+            isAdmin: decoded.role === "admin" || decoded.source === "master",
+            token: token,
           });
           get().fetchOrders();
           get().fetchSavedDesigns();
         } catch (e) {
-          localStorage.removeItem('token');
+          localStorage.removeItem("token");
         }
       }
       set({ authInitialized: true });
@@ -62,15 +69,15 @@ const useStore = create((set, get) => ({
   },
 
   setAuthData: (user, token) => {
-    set({ 
-      user, 
-      token, 
-      isAuthenticated: !!user, 
-      isAdmin: user?.role === 'admin' || user?.source === 'master'
+    set({
+      user,
+      token,
+      isAuthenticated: !!user,
+      isAdmin: user?.role === "admin" || user?.source === "master",
     });
     if (user) {
-       get().fetchOrders();
-       get().fetchSavedDesigns();
+      get().fetchOrders();
+      get().fetchSavedDesigns();
     }
   },
 
@@ -80,21 +87,26 @@ const useStore = create((set, get) => ({
   setBudgetRange: (range) => set({ budgetRange: range }),
   setProducts: (prods) => set({ products: prods }),
   setTheme: (theme) => {
-    localStorage.setItem('theme', theme);
+    localStorage.setItem("theme", theme);
     set({ theme });
-    if (theme === 'dark') document.documentElement.classList.add('dark');
-    else document.documentElement.classList.remove('dark');
+    if (theme === "dark") document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
   },
-  toggleTheme: () => get().setTheme(get().theme === 'light' ? 'dark' : 'light'),
+  toggleTheme: () => get().setTheme(get().theme === "light" ? "dark" : "light"),
 
   // ─── USER DATA FETCHING ──────────────────────
   fetchProducts: async () => {
     set({ loading: true });
     try {
-      const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .order("created_at", { ascending: false });
       if (error) throw error;
       set({ products: data || [], loading: false });
-    } catch (err) { set({ loading: false }); }
+    } catch (err) {
+      set({ loading: false });
+    }
   },
 
   initiateRazorpayPayment: async (amount, orderId) => {
@@ -102,12 +114,13 @@ const useStore = create((set, get) => ({
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
-          razorpay_payment_id: "pay_artisan_" + Math.random().toString(36).substr(2, 9),
+          razorpay_payment_id:
+            "pay_artisan_" + Math.random().toString(36).substr(2, 9),
           razorpay_order_id: orderId,
           razorpay_signature: "mock_signature_" + Date.now(),
-          status: 'captured'
+          status: "captured",
         });
-      }, 1500); 
+      }, 1500);
     });
   },
 
@@ -116,7 +129,10 @@ const useStore = create((set, get) => ({
     if (!uID) return;
 
     try {
-      const { success, orders, error } = await getOrdersAPI({ user_id: uID, email: get().user?.email });
+      const { success, orders, error } = await getOrdersAPI({
+        user_id: uID,
+        email: get().user?.email,
+      });
       if (!success) throw new Error(error);
       set({ orders: orders || [] });
     } catch (err) {
@@ -127,17 +143,27 @@ const useStore = create((set, get) => ({
 
   deleteOrder: async (orderId) => {
     // Optimistically remove from UI first to ensure a smooth experience
-    set(state => ({ orders: state.orders.filter(o => o.id !== orderId) }));
-    
+    set((state) => ({ orders: state.orders.filter((o) => o.id !== orderId) }));
+
     // Attempt database deletion if it's not a mock order
-    if (orderId && !orderId.toString().startsWith('ord-') && !orderId.toString().includes('mock')) {
+    if (
+      orderId &&
+      !orderId.toString().startsWith("ord-") &&
+      !orderId.toString().includes("mock")
+    ) {
       try {
-        const { error } = await supabase.from('orders').delete().eq('id', orderId);
+        const { error } = await supabase
+          .from("orders")
+          .delete()
+          .eq("id", orderId);
         if (error) throw error;
         toast.success("Order removed from history!");
       } catch (err) {
         // Fallback: If DB delete fails (e.g. RLS), we've already hidden it from UI for this session.
-        console.warn("DB deletion failed, but hidden from session UI:", err.message);
+        console.warn(
+          "DB deletion failed, but hidden from session UI:",
+          err.message,
+        );
       }
     } else {
       toast.success("Demo order removed from session.");
@@ -147,14 +173,22 @@ const useStore = create((set, get) => ({
   clearOrders: async () => {
     const { user } = get();
     if (!user) return;
-    if (!window.confirm("Are you sure you want to clear your entire order history from the Artisan Vault?")) return;
-    
+    if (
+      !window.confirm(
+        "Are you sure you want to clear your entire order history from the Artisan Vault?",
+      )
+    )
+      return;
+
     // Always clear the UI state first
     set({ orders: [] });
 
     try {
       const uID = user.id || user.sub;
-      const { error } = await supabase.from('orders').delete().eq('user_id', uID);
+      const { error } = await supabase
+        .from("orders")
+        .delete()
+        .eq("user_id", uID);
       toast.success("Artisan history cleared!");
     } catch (err) {
       console.warn("Full history clear failure:", err.message);
@@ -166,7 +200,11 @@ const useStore = create((set, get) => ({
     const uID = user?.id || user?.sub;
     if (!uID) return;
     try {
-      const { data, error } = await supabase.from('saved_designs').select('*').eq('user_id', uID).order('created_at', { ascending: false });
+      const { data, error } = await supabase
+        .from("saved_designs")
+        .select("*")
+        .eq("user_id", uID)
+        .order("created_at", { ascending: false });
       if (error) throw error;
       set({ savedDesigns: data || [] });
     } catch (err) {
@@ -182,11 +220,14 @@ const useStore = create((set, get) => ({
       const profileData = {
         id: user.id || user.sub,
         email: user.email,
-        name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Artisan Member'
+        name:
+          user.user_metadata?.full_name ||
+          user.email?.split("@")[0] ||
+          "Artisan Member",
       };
-      
+
       // Minimal upsert matching user requirements and ensuring 'name' is not null
-      await supabase.from('users').upsert([profileData], { onConflict: 'id' });
+      await supabase.from("users").upsert([profileData], { onConflict: "id" });
     } catch (err) {
       console.warn("Profile sync warning:", err.message);
     }
@@ -195,10 +236,10 @@ const useStore = create((set, get) => ({
   placeOrder: async (orderMetadata) => {
     const { cart, user, getCartTotal } = get();
     if (!user) {
-       toast.error("Identity required to place order.");
-       return;
+      toast.error("Identity required to place order.");
+      return;
     }
-    
+
     // Ensure public.users entry exists to prevent FK constraint errors (orders_user_id_fkey)
     await get().ensureUserProfile();
 
@@ -206,31 +247,40 @@ const useStore = create((set, get) => ({
       const orderPayload = {
         user_id: user.id || user.sub || null,
         user_email: user.email,
-        customer_name: orderMetadata.delivery_details?.name || user.user_metadata?.full_name || 'Artisan Guest',
-        items: cart, 
+        customer_name:
+          orderMetadata.delivery_details?.name ||
+          user.user_metadata?.full_name ||
+          "Artisan Guest",
+        items: cart,
         total_price: getCartTotal(),
-        status: orderMetadata.status || 'Order Confirmed',
-        payment_status: orderMetadata.payment_status || 'pending',
-        payment_method: orderMetadata.payment_method || 'Online',
+        status: orderMetadata.status || "Order Confirmed",
+        payment_status: orderMetadata.payment_status || "pending",
+        payment_method: orderMetadata.payment_method || "Online",
         payment_id: orderMetadata.payment_id || null,
-        delivery_date: orderMetadata.delivery_date || new Date().toISOString().split('T')[0],
-        delivery_time: orderMetadata.delivery_time || 'N/A',
+        delivery_date:
+          orderMetadata.delivery_date || new Date().toISOString().split("T")[0],
+        delivery_time: orderMetadata.delivery_time || "N/A",
         address: orderMetadata.delivery_details || {},
         delivery_details: orderMetadata.delivery_details || {},
-        notes: orderMetadata.notes || '',
-        product_name: cart[0]?.name || 'Custom Bakery Piece',
-        image_url: cart[0]?.image_url || cart[0]?.image || '',
+        notes: orderMetadata.notes || "",
+        product_name: cart[0]?.name || "Custom Bakery Piece",
+        image_url: cart[0]?.image_url || cart[0]?.image || "",
         price: cart[0]?.price || 0,
         quantity: cart.reduce((acc, item) => acc + (item.quantity || 1), 0),
-        revenue_category: orderMetadata.revenue_category || (getCartTotal() > 3000 ? 'Premium Artisan' : 'Standard Collection'),
+        revenue_category:
+          orderMetadata.revenue_category ||
+          (getCartTotal() > 3000 ? "Premium Artisan" : "Standard Collection"),
         peak_impact: orderMetadata.peak_impact || false,
       };
 
-      const { data, error } = await supabase.from('orders').insert([orderPayload]).select();
+      const { data, error } = await supabase
+        .from("orders")
+        .insert([orderPayload])
+        .select();
       if (error) throw error;
-      
+
       set({ cart: [] });
-      localStorage.removeItem('cart');
+      localStorage.removeItem("cart");
       get().fetchOrders();
       toast.success("Artisan Order Placed Successfully! 🧁");
       return data[0];
@@ -242,14 +292,20 @@ const useStore = create((set, get) => ({
 
   saveCakeDesign: async (designData) => {
     const { user } = get();
-    if (!user) throw new Error('Identity required to save blueprints');
+    if (!user) throw new Error("Identity required to save blueprints");
     try {
-      const { data, error } = await supabase.from('saved_designs').insert([{ user_id: user.id, ...designData }]).select().single();
+      const { data, error } = await supabase
+        .from("saved_designs")
+        .insert([{ user_id: user.id, ...designData }])
+        .select()
+        .single();
       if (error) throw error;
-      set(state => ({ savedDesigns: [data, ...state.savedDesigns] }));
+      set((state) => ({ savedDesigns: [data, ...state.savedDesigns] }));
       toast.success("Blueprint Saved to Artisan Vault! 📐");
       return data;
-    } catch (err) { throw err; }
+    } catch (err) {
+      throw err;
+    }
   },
 
   // ─── CART MANIPULATION ───────────────────────
@@ -259,73 +315,115 @@ const useStore = create((set, get) => ({
     return {
       id: customId,
       ...cakeData,
-      is_custom: true
+      is_custom: true,
     };
   },
 
   addToCart: async (product, quantity = 1) => {
     const { cart } = get();
-    const existing = cart.find(i => i.id === product.id && i.selectedSize === product.selectedSize);
-    let newCart = existing 
-      ? cart.map(i => (i.id === product.id && i.selectedSize === product.selectedSize) 
-          ? { ...i, quantity: (i.quantity || 0) + quantity } 
-          : i)
+    const existing = cart.find(
+      (i) => i.id === product.id && i.selectedSize === product.selectedSize,
+    );
+    let newCart = existing
+      ? cart.map((i) =>
+          i.id === product.id && i.selectedSize === product.selectedSize
+            ? { ...i, quantity: (i.quantity || 0) + quantity }
+            : i,
+        )
       : [...cart, { ...product, quantity }];
-    
+
     set({ cart: newCart, cartOpen: true });
-    localStorage.setItem('cart', JSON.stringify(newCart));
+    localStorage.setItem("cart", JSON.stringify(newCart));
     toast.success(`${product.name} added to cart!`);
   },
 
   removeFromCart: (productId, selectedSize) => {
-    const newCart = get().cart.filter(i => !(i.id === productId && i.selectedSize === selectedSize));
+    const newCart = get().cart.filter(
+      (i) => !(i.id === productId && i.selectedSize === selectedSize),
+    );
     set({ cart: newCart });
-    localStorage.setItem('cart', JSON.stringify(newCart));
+    localStorage.setItem("cart", JSON.stringify(newCart));
   },
 
   updateCartQuantity: (productId, selectedSize, newQty) => {
-     if (newQty < 1) return get().removeFromCart(productId, selectedSize);
-     const newCart = get().cart.map(i => (i.id === productId && i.selectedSize === selectedSize) ? { ...i, quantity: newQty } : i);
-     set({ cart: newCart });
-     localStorage.setItem('cart', JSON.stringify(newCart));
+    if (newQty < 1) return get().removeFromCart(productId, selectedSize);
+    const newCart = get().cart.map((i) =>
+      i.id === productId && i.selectedSize === selectedSize
+        ? { ...i, quantity: newQty }
+        : i,
+    );
+    set({ cart: newCart });
+    localStorage.setItem("cart", JSON.stringify(newCart));
   },
 
-  toggleCart: () => set(state => ({ cartOpen: !state.cartOpen })),
-  getCartCount: () => get().cart.reduce((count, item) => count + (item.quantity || 1), 0),
-  getCartTotal: () => get().cart.reduce((total, item) => total + ((item.price || 0) * (item.quantity || 1)), 0),
+  toggleCart: () => set((state) => ({ cartOpen: !state.cartOpen })),
+  getCartCount: () =>
+    get().cart.reduce((count, item) => count + (item.quantity || 1), 0),
+  getCartTotal: () =>
+    get().cart.reduce(
+      (total, item) => total + (item.price || 0) * (item.quantity || 1),
+      0,
+    ),
 
   getFilteredProducts: () => {
     const { products, searchQuery, activeCategory, budgetRange } = get();
-    return products.filter(p => {
-      const matchesSearch = p.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                           p.description?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = activeCategory === 'all' || p.category === activeCategory;
-      const matchesBudget = p.price >= budgetRange[0] && p.price <= budgetRange[1];
+    return products.filter((p) => {
+      const matchesSearch =
+        p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory =
+        activeCategory === "all" || p.category === activeCategory;
+      const matchesBudget =
+        p.price >= budgetRange[0] && p.price <= budgetRange[1];
       return matchesSearch && matchesCategory && matchesBudget;
     });
   },
 
   logout: async () => {
     localStorage.removeItem("token");
-    set({ user: null, profile: null, token: null, isAuthenticated: false, isAdmin: false, orders: [], savedDesigns: [] });
+    set({
+      user: null,
+      profile: null,
+      token: null,
+      isAuthenticated: false,
+      isAdmin: false,
+      orders: [],
+      savedDesigns: [],
+    });
     // We keep the cart in UI and localStorage so guest work isn't lost on disconnect
     toast.success("Disconnected from Artisan Network.");
   },
 
   addReview: async (reviewData) => {
     const { user } = get();
-    if (!user) throw new Error('Identity required to leave a review');
+    if (!user) throw new Error("Identity required to leave a review");
     try {
-      const { data, error } = await supabase.from('reviews').insert([{ ...reviewData, user_id: user.id, user_name: user.name || user.email.split('@')[0] }]).select().single();
+      const { data, error } = await supabase
+        .from("reviews")
+        .insert([
+          {
+            ...reviewData,
+            user_id: user.id,
+            user_name: user.name || user.email.split("@")[0],
+          },
+        ])
+        .select()
+        .single();
       if (error) throw error;
-      set(state => ({ reviews: [data, ...state.reviews] }));
+      set((state) => ({ reviews: [data, ...state.reviews] }));
       return data;
-    } catch (err) { throw err; }
+    } catch (err) {
+      throw err;
+    }
   },
 
   fetchReviews: async (productId) => {
     try {
-      const { data, error } = await supabase.from('reviews').select('*').eq('product_id', productId).order('created_at', { ascending: false });
+      const { data, error } = await supabase
+        .from("reviews")
+        .select("*")
+        .eq("product_id", productId)
+        .order("created_at", { ascending: false });
       if (error) throw error;
       set({ reviews: data || [] });
     } catch (err) {

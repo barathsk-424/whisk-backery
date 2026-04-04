@@ -1,28 +1,29 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { HiMicrophone, HiX } from 'react-icons/hi';
-import { useNavigate } from 'react-router-dom';
-import useStore from '../../store/useStore';
-import toast from 'react-hot-toast';
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { HiMicrophone, HiX } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
+import useStore from "../../store/useStore";
+import toast from "react-hot-toast";
 
 export default function VoiceFAB() {
   const [listening, setListening] = useState(false);
-  const [transcript, setTranscript] = useState('');
+  const [transcript, setTranscript] = useState("");
   const [showModal, setShowModal] = useState(false);
   const recognitionRef = useRef(null);
   const navigate = useNavigate();
   const { setSearchQuery, setBudgetRange, products } = useStore();
 
   useEffect(() => {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = false;
       recognitionRef.current.interimResults = true;
-      recognitionRef.current.lang = 'en-IN';
+      recognitionRef.current.lang = "en-IN";
 
       recognitionRef.current.onresult = (event) => {
-        let text = '';
+        let text = "";
         for (let i = 0; i < event.results.length; i++) {
           text += event.results[i][0].transcript;
         }
@@ -35,17 +36,17 @@ export default function VoiceFAB() {
 
       recognitionRef.current.onerror = () => {
         setListening(false);
-        toast.error('Voice recognition failed. Please try again.');
+        toast.error("Voice recognition failed. Please try again.");
       };
     }
   }, []);
 
   const startListening = () => {
     if (!recognitionRef.current) {
-      toast.error('Voice recognition is not supported in your browser.');
+      toast.error("Voice recognition is not supported in your browser.");
       return;
     }
-    setTranscript('');
+    setTranscript("");
     setListening(true);
     setShowModal(true);
     recognitionRef.current.start();
@@ -63,7 +64,9 @@ export default function VoiceFAB() {
     if (!text) return;
 
     let foundBudget = null;
-    const budgetMatch = text.match(/under\s?(?:rs|rupees|₹)?\s?(\d+)/i) || text.match(/(\d+)\s?(?:rs|rupees|₹)?\s?(?:budget|max)/i);
+    const budgetMatch =
+      text.match(/under\s?(?:rs|rupees|₹)?\s?(\d+)/i) ||
+      text.match(/(\d+)\s?(?:rs|rupees|₹)?\s?(?:budget|max)/i);
     if (budgetMatch) {
       foundBudget = parseInt(budgetMatch[1]);
       setBudgetRange([0, foundBudget]);
@@ -71,20 +74,20 @@ export default function VoiceFAB() {
 
     // Keyword intent logic
     let filterQuery = text;
-    if (text.includes('chocolate')) filterQuery = 'chocolate';
-    if (text.includes('vanilla')) filterQuery = 'vanilla';
-    if (text.includes('strawberry')) filterQuery = 'strawberry';
-    if (text.includes('red velvet')) filterQuery = 'red velvet';
+    if (text.includes("chocolate")) filterQuery = "chocolate";
+    if (text.includes("vanilla")) filterQuery = "vanilla";
+    if (text.includes("strawberry")) filterQuery = "strawberry";
+    if (text.includes("red velvet")) filterQuery = "red velvet";
 
     setSearchQuery(filterQuery);
-    
+
     let msg = `Searching for: "${filterQuery}"`;
     if (foundBudget) msg += ` under ₹${foundBudget}`;
-    toast.success(msg, { icon: '🤖' });
+    toast.success(msg, { icon: "🤖" });
 
     setShowModal(false);
-    setTranscript('');
-    navigate('/menu');
+    setTranscript("");
+    navigate("/menu");
   };
 
   return (
@@ -95,7 +98,7 @@ export default function VoiceFAB() {
         whileTap={{ scale: 0.9 }}
         onClick={startListening}
         className={`fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full shadow-xl flex items-center justify-center text-white transition-all duration-300 ${
-          listening ? 'bg-error pulse-glow' : 'gradient-accent'
+          listening ? "bg-error pulse-glow" : "gradient-accent"
         }`}
         aria-label="Voice ordering"
       >
@@ -110,7 +113,10 @@ export default function VoiceFAB() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => { stopListening(); setShowModal(false); }}
+              onClick={() => {
+                stopListening();
+                setShowModal(false);
+              }}
               className="fixed inset-0 bg-black/60 z-50"
             />
             <motion.div
@@ -124,7 +130,10 @@ export default function VoiceFAB() {
                   🎤 Voice Order
                 </h3>
                 <button
-                  onClick={() => { stopListening(); setShowModal(false); }}
+                  onClick={() => {
+                    stopListening();
+                    setShowModal(false);
+                  }}
                   className="p-1.5 rounded-full hover:bg-brown-100"
                 >
                   <HiX className="w-5 h-5" />
@@ -143,7 +152,7 @@ export default function VoiceFAB() {
                       transition={{
                         duration: 0.5,
                         repeat: Infinity,
-                        repeatType: 'reverse',
+                        repeatType: "reverse",
                         delay: i * 0.1,
                       }}
                       className="w-2 bg-accent rounded-full"
@@ -154,12 +163,14 @@ export default function VoiceFAB() {
               )}
 
               <p className="text-sm text-brown-400 mb-2">
-                {listening ? 'Listening...' : 'Tap the microphone to start'}
+                {listening ? "Listening..." : "Tap the microphone to start"}
               </p>
 
               {transcript && (
                 <div className="bg-secondary rounded-xl p-3 mb-4">
-                  <p className="text-sm font-medium text-primary">"{transcript}"</p>
+                  <p className="text-sm font-medium text-primary">
+                    "{transcript}"
+                  </p>
                 </div>
               )}
 
