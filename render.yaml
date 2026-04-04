@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: bakery-backend
+    env: node
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: SUPABASE_URL
+        fromEnvVar: SUPABASE_URL
+      - key: SUPABASE_ANON_KEY
+        fromEnvVar: SUPABASE_ANON_KEY
+      - key: JWT_SECRET
+        fromEnvVar: JWT_SECRET
+      - key: MONGODB_URI
+        fromEnvVar: MONGODB_URI
