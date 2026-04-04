@@ -11,8 +11,8 @@ const JWT_SECRET = process.env.JWT_SECRET || "SECRET";
 // ─── Supabase Configuration ──────────────────────────────────────
 const { createClient } = require("@supabase/supabase-js");
 const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY,
+  "https://cqdxnjhyoxqxofyhzgov.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxZHhuamh5b3hxeG9meWh6Z292Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODYzNjcsImV4cCI6MjA5MDE2MjM2N30.gOMC8DwXfGPM1IOwwpJdOU6YVoAQCHvuF1tW5Sd3WzI",
 );
 
 // ─── MongoDB Connection (Optional/Stabilization) ────────────────
@@ -145,10 +145,11 @@ app.post("/login", async (req, res) => {
       .maybeSingle();
 
     if (adminErr) {
-      console.error("[AUTH] Admin Search ERROR:", adminErr.message);
-      return res
-        .status(500)
-        .json({ message: "Master vault lookup failure: " + adminErr.message });
+      console.error("[AUTH] Admin Search ERROR:", adminErr);
+      return res.status(500).json({
+        message: "Master vault lookup failure: " + adminErr.message,
+        details: adminErr,
+      });
     }
 
     if (masterAdmin && masterAdmin.password === password) {
