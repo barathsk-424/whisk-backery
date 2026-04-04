@@ -1,0 +1,225 @@
+(Here is a comprehensive, advanced-level Product Requirements Document (PRD) for your **Smart Bakery Platform**, designed to be a standout project. It incorporates your core ideas, elevates them with a Swiggy-like UI/UX, and uses **Supabase** as the backend.
+    
+---
+
+# Product Requirements Document (PRD)
+## Project: "The Whisk" - AI-Powered Bakery Platform
+**Version:** 2.0 (Future-Ready)
+**Date:** March 27, 2026
+
+---
+
+### 1. Executive Summary
+**The Whisk** is an advanced e-commerce platform that redefines the bakery ordering experience. It moves beyond a simple product catalog by offering an interactive **3D Custom Cake Builder**, an **AI-powered recommendation engine**, and a **seamless omnichannel ordering experience**. The platform is built with a focus on micro-interactions, real-time data synchronization, and a visually rich interface akin to top-tier food delivery apps like Swiggy or Zomato.
+
+### 2. Tech Stack
+- **Frontend:** React (Vite), Tailwind CSS, Framer Motion (Animations), Three.js (for 3D cake preview), Zustand (State Management).
+- **Backend & Database:** **Supabase** (PostgreSQL, Auth, Storage, Realtime).
+- **Additional APIs:** OpenAI API (for voice-to-text & recipe suggestions), Razorpay/Stripe (Fake/Payment Gateway).
+
+---
+
+### 3. Core Features & Detailed Specifications
+
+#### A. Advanced Custom Cake Builder (3D/AR)
+This is the hero feature. It must be intuitive, visually appealing, and high-performance.
+
+- **UI/UX:**
+    - **Layout:** A split-screen interface.
+        - **Left Panel:** Step-by-step configuration wizard (Shape, Size, Flavor, Filling, Icing, Toppings).
+        - **Right Panel:** A real-time, interactive 3D model of the cake.
+    - **Interactions:**
+        - **Drag & Drop:** Toppings (strawberries, chocolate chips) can be dragged from a sidebar onto the 3D cake.
+        - **Color Picker:** Users can select the icing color via a hex color picker.
+        - **Text Tool:** Add custom text (e.g., "Happy Birthday, John") with font and color selection.
+    - **Micro-interactions:** Haptic feedback on button clicks, smooth rotation of the 3D model via mouse/touch drag.
+
+- **Data Structure (Supabase):**
+    - `custom_designs` table: Stores the JSON configuration of the design.
+    - `products` table: Stores base items (cakes, toppings) with attributes like `is_base`, `price_modifier`, `category`, `image_url`.
+
+#### B. AI-Powered Recommendation Engine
+Moves beyond static rules; uses a hybrid approach for "smart" suggestions.
+
+- **Logic:**
+    1.  **Occasion + Sentiment:** Analyze user input (e.g., "20th birthday party").
+    2.  **Collaborative Filtering:** "Users who ordered a 'Red Velvet' for an anniversary also bought 'Rose Petal Toppings'."
+    3.  **Dynamic Pricing:** Show recommendations strictly within a user-defined budget filter.
+- **UI/UX:**
+    - A "Smart Suggest" button on the homepage.
+    - A carousel titled "Because you loved Chocolate..." or "Perfect for Birthday Parties".
+    - A "Budget Slider" that dynamically updates recommended products.
+
+- **Data Structure (Supabase):**
+    - Use **Supabase Edge Functions** (Deno) to host the recommendation logic.
+    - `orders` and `order_items` tables provide the historical data.
+    - `user_preferences` table stores occasion history and flavor likes.
+
+#### C. Voice-Based Ordering (Conversational AI)
+- **Functionality:**
+    - A persistent microphone icon (FAB - Floating Action Button).
+    - On click, it listens to the user.
+    - **Processing:** Voice is sent to OpenAI Whisper API (or browser's Web Speech API) -> Text -> Supabase Edge Function parses intent (Flavor, Occasion, Budget) -> Returns results or adds to cart.
+- **UI/UX:**
+    - An animated waveform visualization when listening.
+    - A confirmation modal: "Did you mean: *1kg Chocolate Truffle Birthday Cake*?"
+
+#### D. Live Order Tracking (Realtime)
+- **Functionality:**
+    - Realtime status updates without page refresh.
+    - **Status Flow:** `Order Confirmed` -> `Chef Prep` -> `Oven` -> `Quality Check` -> `Out for Delivery` -> `Delivered`.
+- **UI/UX:**
+    - A **Google Maps-style timeline** showing the baker's location (static demo) or a progress bar with animated icons.
+    - Push notifications (browser) for status changes.
+- **Data Structure (Supabase):**
+    - `orders` table has a `status` column.
+    - Use **Supabase Realtime** subscriptions in React to listen for changes on the specific `order_id`.
+
+#### E. Occasion-Based Quick Order & Smart Bundles
+- **UI/UX:**
+    - **Mood Boards:** Instead of "Birthday Combo", show a visual mood board. Clicking "Birthday Blast" pre-selects a rainbow cake, candles, and a party popper add-on.
+    - **Dynamic Pricing:** The bundle price updates as users remove or add items.
+
+#### F. Admin Smart Dashboard (Supabase-Powered)
+- **UI/UX:**
+    - A dedicated admin route (`/admin`).
+    - **Widgets:**
+        - **Sales KPI:** Total revenue, daily sales (using real-time graph charts - Recharts/Chart.js).
+        - **Popular Products:** A table sorted by `order_count`.
+        - **Inventory Alert:** Highlight products low in stock (managed via `products.quantity`).
+    - **Management:** Inline editing for product catalog, ability to update order statuses with a dropdown that triggers the Realtime update.
+
+---
+
+### 4. Database Schema (Supabase)
+
+Supabase uses PostgreSQL. We will leverage its relational power.
+
+```sql
+-- Users (Managed by Supabase Auth)
+-- Extends the default auth.users table
+CREATE TABLE public.profiles (
+  id UUID REFERENCES auth.users PRIMARY KEY,
+  full_name TEXT,
+  avatar_url TEXT,
+  phone TEXT,
+  address JSONB, -- Store address as JSON: {line1, city, pincode, lat, lng}
+  preferences JSONB -- {flavors: ['chocolate'], occasions: ['birthday']}
+);
+
+-- Products
+CREATE TABLE public.products (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  description TEXT,
+  category TEXT, -- 'cake', 'topping', 'filling'
+  base_price DECIMAL(10,2),
+  image_url TEXT,
+  tags TEXT[], -- ['eggless', 'gluten-free']
+  stock_quantity INT,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+-- Custom Designs (for the builder)
+CREATE TABLE public.custom_designs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES public.profiles(id),
+  config JSONB NOT NULL, -- Stores the entire 3D state
+  preview_image_url TEXT,
+  final_price DECIMAL(10,2),
+  created_at TIMESTAMP DEFAULT now()
+);
+
+-- Orders
+CREATE TABLE public.orders (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES public.profiles(id),
+  total_amount DECIMAL(10,2),
+  status TEXT DEFAULT 'confirmed', -- confirmed, preparing, baking, delivery, delivered
+  payment_method TEXT,
+  payment_status TEXT DEFAULT 'pending',
+  delivery_address JSONB,
+  order_type TEXT DEFAULT 'delivery', -- delivery, pickup
+  created_at TIMESTAMP DEFAULT now(),
+  updated_at TIMESTAMP DEFAULT now()
+);
+
+-- Order Items (Supports both standard products and custom designs)
+CREATE TABLE public.order_items (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id UUID REFERENCES public.orders(id) ON DELETE CASCADE,
+  product_id UUID REFERENCES public.products(id) NULL, -- Null if custom
+  custom_design_id UUID REFERENCES public.custom_designs(id) NULL, -- Null if standard
+  quantity INT,
+  unit_price DECIMAL(10,2)
+);
+
+-- Reviews
+CREATE TABLE public.reviews (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id UUID REFERENCES public.orders(id),
+  user_id UUID REFERENCES public.profiles(id),
+  rating INT CHECK (rating >= 1 AND rating <= 5),
+  comment TEXT,
+  created_at TIMESTAMP DEFAULT now()
+);
+```
+
+---
+
+### 5. UI/UX Design Principles (Swiggy-Like)
+
+- **Color Palette:** Warm, appetizing colors. Primary: Deep Brown (#4A2A1A), Secondary: Cream (#FFF8E7), Accent: Vibrant Orange (#FF6B35) for CTA.
+- **Typography:** Clean, readable fonts. Poppins for headings, Inter for body text.
+- **Layout:**
+    - **Homepage:** Search bar (AI-assisted), Occasion Bubbles (scrollable horizontally), "Recommended for You" grid, Popular Items grid.
+    - **Navigation:** Bottom Tab Bar for Mobile (Home, Search, Builder, Cart, Profile).
+    - **Checkout:** A single-page checkout with address selection (saved addresses), payment method, and a prominent "Place Order" button.
+- **Micro-interactions:**
+    - **Skeleton Loading:** All data fetching shows shimmer effects.
+    - **Add to Cart:** A "flying" animation of the item moving to the cart icon.
+    - **Hover States:** Buttons have a slight scale-up effect.
+
+---
+
+### 6. Advanced Future-Ready Features (For Higher Marks)
+
+1.  **AI Recipe Generator:**
+    - If a user designs a cake with specific toppings (e.g., "mango, passion fruit"), a Supabase Edge Function calls OpenAI to generate a unique "Baker's Note" (e.g., "This tropical zest pairs perfectly with our vanilla sponge...").
+2.  **AR Preview (Optional/Concept):**
+    - Allow users to point their camera at a table to see a 3D model of their custom cake in real space. (Using React Three Fiber and WebXR).
+3.  **Loyalty Program:**
+    - "Sprinkle Points" - Earn points per order, redeem for discounts. Data stored in `profiles.points`.
+4.  **Dark Mode:**
+    - Essential for modern apps. Use Tailwind CSS dark mode strategy.
+
+---
+
+### 7. Implementation Roadmap (Sprints)
+
+- **Sprint 1 (Foundation):**
+    - Set up React + Vite + Tailwind.
+    - Set up Supabase project, enable Auth, create tables.
+    - Implement Login/Signup (Magic Link/Email).
+- **Sprint 2 (Core Commerce):**
+    - Build Product Listing page (grid view).
+    - Build Cart & Checkout flow (fake payment).
+    - Implement Order placement and basic admin order view.
+- **Sprint 3 (The Hero Feature):**
+    - Build the **Custom Cake Builder**.
+    - Integrate Three.js for 3D preview.
+    - Save custom designs to Supabase `custom_designs`.
+- **Sprint 4 (AI & Polish):**
+    - Integrate Voice Ordering (Web Speech API).
+    - Implement Recommendation Logic (Edge Function).
+    - Add Live Order Tracking (Supabase Realtime).
+    - Final UI polish, animations, and mobile responsiveness.
+
+### 8. Viva Voce Preparation (Key Points)
+- **Why Supabase?** "I chose Supabase because it offers a real-time database, built-in authentication, and storage, which significantly reduced backend boilerplate. The PostgreSQL relational schema allowed me to maintain data integrity between complex entities like custom designs and orders."
+- **How does the recommendation work?** "It's a hybrid model. Initially, it uses rule-based logic (occasion/budget). For advanced logic, I used a Supabase Edge Function that analyzes past order patterns to suggest 'frequently bought together' items."
+- **What makes the Custom Builder different?** "It's not just a UI gimmick. It generates a structured JSON object stored in the database, which can be used by the bakery staff to accurately recreate the cake. The 3D preview ensures the user knows exactly what they are getting."
+
+---
+
+This PRD provides a complete blueprint for a high-scoring, impressive project. Good luck with your build

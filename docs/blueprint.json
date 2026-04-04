@@ -1,0 +1,626 @@
+{
+  "project": {
+    "name": "The Whisk - AI-Powered Bakery Platform",
+    "version": "2.0",
+    "type": "Full Stack Web Application",
+    "description": "An advanced e-commerce platform offering interactive 3D cake customization, AI-powered recommendations, voice ordering, and real-time order tracking with a Swiggy-like premium UI/UX.",
+    "unique_selling_points": [
+      "Interactive 3D Custom Cake Builder with drag-and-drop toppings",
+      "AI-powered recommendation engine (occasion + budget + collaborative filtering)",
+      "Voice-based conversational ordering",
+      "Real-time order tracking with Supabase Realtime",
+      "Occasion-based smart bundles with dynamic pricing",
+      "Admin dashboard with analytics and inventory management"
+    ]
+  },
+  "tech_stack": {
+    "frontend": {
+      "framework": "React",
+      "build_tool": "Vite",
+      "styling": "Tailwind CSS",
+      "animations": "Framer Motion",
+      "3d_rendering": "Three.js",
+      "state_management": "Zustand",
+      "charts": "Recharts"
+    },
+    "backend_database": {
+      "platform": "Supabase",
+      "database": "PostgreSQL",
+      "auth": "Supabase Auth (JWT)",
+      "realtime": "Supabase Realtime Subscriptions",
+      "storage": "Supabase Storage (for cake images, avatars)",
+      "edge_functions": "Supabase Edge Functions (Deno) for AI logic"
+    },
+    "external_apis": {
+      "voice_to_text": "Web Speech API / OpenAI Whisper",
+      "ai_recommendations": "OpenAI API (optional for advanced logic)",
+      "payments": "Razorpay / Stripe (Fake/Payment Gateway)"
+    }
+  },
+  "database_schema": {
+    "tables": [
+      {
+        "name": "profiles",
+        "description": "Extends Supabase auth.users with user-specific data",
+        "columns": [
+          { "name": "id", "type": "UUID", "primary_key": true, "reference": "auth.users.id" },
+          { "name": "full_name", "type": "TEXT", "nullable": false },
+          { "name": "avatar_url", "type": "TEXT" },
+          { "name": "phone", "type": "TEXT" },
+          { "name": "address", "type": "JSONB", "description": "{line1, city, pincode, lat, lng}" },
+          { "name": "preferences", "type": "JSONB", "description": "{flavors: [], occasions: []}" },
+          { "name": "loyalty_points", "type": "INT", "default": 0 }
+        ]
+      },
+      {
+        "name": "products",
+        "description": "Catalog of all bakery items, bases, toppings, and fillings",
+        "columns": [
+          { "name": "id", "type": "UUID", "primary_key": true, "default": "gen_random_uuid()" },
+          { "name": "name", "type": "TEXT", "nullable": false },
+          { "name": "description", "type": "TEXT" },
+          { "name": "category", "type": "TEXT", "enum": ["cake_base", "filling", "icing", "topping", "bundle"] },
+          { "name": "base_price", "type": "DECIMAL(10,2)", "nullable": false },
+          { "name": "image_url", "type": "TEXT" },
+          { "name": "tags", "type": "TEXT[]", "description": "['eggless', 'gluten-free', 'sugar-free']" },
+          { "name": "stock_quantity", "type": "INT", "default": 0 },
+          { "name": "is_active", "type": "BOOLEAN", "default": true },
+          { "name": "created_at", "type": "TIMESTAMP", "default": "now()" }
+        ]
+      },
+      {
+        "name": "custom_designs",
+        "description": "Stores user-generated cake designs from the 3D builder",
+        "columns": [
+          { "name": "id", "type": "UUID", "primary_key": true, "default": "gen_random_uuid()" },
+          { "name": "user_id", "type": "UUID", "reference": "profiles.id" },
+          { "name": "config", "type": "JSONB", "nullable": false, "description": "Complete 3D state: {shape, size, layers, flavors, icing_color, toppings: [], text:{message, font, color}}" },
+          { "name": "preview_image_url", "type": "TEXT" },
+          { "name": "final_price", "type": "DECIMAL(10,2)" },
+          { "name": "created_at", "type": "TIMESTAMP", "default": "now()" }
+        ]
+      },
+      {
+        "name": "orders",
+        "description": "Main orders table with status tracking",
+        "columns": [
+          { "name": "id", "type": "UUID", "primary_key": true, "default": "gen_random_uuid()" },
+          { "name": "user_id", "type": "UUID", "reference": "profiles.id" },
+          { "name": "total_amount", "type": "DECIMAL(10,2)", "nullable": false },
+          { "name": "status", "type": "TEXT", "default": "confirmed", "enum": ["confirmed", "preparing", "baking", "quality_check", "out_for_delivery", "delivered", "cancelled"] },
+          { "name": "payment_method", "type": "TEXT", "enum": ["card", "upi", "cod"] },
+          { "name": "payment_status", "type": "TEXT", "default": "pending", "enum": ["pending", "paid", "failed"] },
+          { "name": "delivery_address", "type": "JSONB" },
+          { "name": "order_type", "type": "TEXT", "default": "delivery", "enum": ["delivery", "pickup"] },
+          { "name": "estimated_delivery_time", "type": "TIMESTAMP" },
+          { "name": "created_at", "type": "TIMESTAMP", "default": "now()" },
+          { "name": "updated_at", "type": "TIMESTAMP", "default": "now()" }
+        ]
+      },
+      {
+        "name": "order_items",
+        "description": "Line items for each order (supports both standard products and custom designs)",
+        "columns": [
+          { "name": "id", "type": "UUID", "primary_key": true, "default": "gen_random_uuid()" },
+          { "name": "order_id", "type": "UUID", "reference": "orders.id", "on_delete": "CASCADE" },
+          { "name": "product_id", "type": "UUID", "reference": "products.id", "nullable": true },
+          { "name": "custom_design_id", "type": "UUID", "reference": "custom_designs.id", "nullable": true },
+          { "name": "quantity", "type": "INT", "default": 1 },
+          { "name": "unit_price", "type": "DECIMAL(10,2)", "nullable": false }
+        ]
+      },
+      {
+        "name": "reviews",
+        "description": "User ratings and feedback for orders",
+        "columns": [
+          { "name": "id", "type": "UUID", "primary_key": true, "default": "gen_random_uuid()" },
+          { "name": "order_id", "type": "UUID", "reference": "orders.id" },
+          { "name": "user_id", "type": "UUID", "reference": "profiles.id" },
+          { "name": "rating", "type": "INT", "check": "rating >= 1 AND rating <= 5" },
+          { "name": "comment", "type": "TEXT" },
+          { "name": "images", "type": "TEXT[]", "description": "Array of uploaded review image URLs" },
+          { "name": "created_at", "type": "TIMESTAMP", "default": "now()" }
+        ]
+      }
+    ],
+    "row_level_security": {
+      "enabled": true,
+      "policies": [
+        "Users can read only their own profile",
+        "Users can read all products",
+        "Users can CRUD their own custom designs",
+        "Users can read/write only their own orders",
+        "Admin role has full access"
+      ]
+    }
+  },
+  "features": [
+    {
+      "name": "3D Custom Cake Builder",
+      "priority": "Critical",
+      "description": "Interactive cake design interface with real-time 3D preview",
+      "sub_features": [
+        {
+          "name": "Shape Selection",
+          "options": ["Round", "Square", "Heart", "Rectangle"]
+        },
+        {
+          "name": "Size Selection",
+          "options": ["0.5 kg (4 pcs)", "1 kg (8 pcs)", "2 kg (16 pcs)", "3 kg (24 pcs)"]
+        },
+        {
+          "name": "Layer Configuration",
+          "options": ["Single Layer", "Double Layer", "Triple Layer"]
+        },
+        {
+          "name": "Flavor Selection",
+          "options": ["Vanilla", "Chocolate", "Red Velvet", "Strawberry", "Black Forest", "Pineapple"]
+        },
+        {
+          "name": "Filling Options",
+          "options": ["Buttercream", "Ganache", "Cream Cheese", "Fruit Jam", "Nutella"]
+        },
+        {
+          "name": "Icing Color Picker",
+          "type": "Hex Color Picker"
+        },
+        {
+          "name": "Drag & Drop Toppings",
+          "options": ["Strawberries", "Chocolate Chips", "Sprinkles", "Edible Flowers", "Macarons", "Gold Leaf"],
+          "interaction": "Drag from sidebar onto 3D model"
+        },
+        {
+          "name": "Custom Text Tool",
+          "features": ["Custom message input", "Font selection", "Color picker", "Position adjustment"]
+        },
+        {
+          "name": "Live Preview",
+          "type": "3D Model",
+          "interaction": "Rotate via drag, zoom via pinch/scroll"
+        }
+      ],
+      "ui_layout": "Split screen: Left panel (wizard) + Right panel (3D canvas)"
+    },
+    {
+      "name": "AI-Powered Recommendation Engine",
+      "priority": "High",
+      "description": "Smart suggestions based on occasion, budget, and user behavior",
+      "algorithms": [
+        {
+          "type": "Rule-Based",
+          "logic": "Occasion + Flavor mapping (e.g., Birthday → Chocolate/Vanilla, Wedding → Red Velvet/Fruit Cake)"
+        },
+        {
+          "type": "Collaborative Filtering",
+          "logic": "Users who ordered X also ordered Y (based on order history)"
+        },
+        {
+          "type": "Budget Optimization",
+          "logic": "Filters recommendations within user's budget range"
+        }
+      ],
+      "ui_components": [
+        "Smart Suggest floating button",
+        "Budget slider filter",
+        "Personalized carousels: 'Because you loved...', 'Perfect for [Occasion]'"
+      ],
+      "implementation": "Supabase Edge Function calling OpenAI API or custom Python logic"
+    },
+    {
+      "name": "Voice-Based Ordering",
+      "priority": "Medium",
+      "description": "Conversational AI interface for hands-free ordering",
+      "workflow": [
+        "User clicks microphone icon",
+        "Browser listens via Web Speech API",
+        "Audio converted to text",
+        "Edge Function parses intent (flavor, occasion, quantity)",
+        "Returns matching products or adds to cart",
+        "Confirmation modal displays parsed order"
+      ],
+      "ui_components": [
+        "Floating Action Button (microphone)",
+        "Animated waveform visualization",
+        "Confirmation dialog with editable fields"
+      ],
+      "example_queries": [
+        "I want a chocolate cake for birthday under ₹1000",
+        "Add a strawberry topping to my order",
+        "Show me eggless options for anniversary"
+      ]
+    },
+    {
+      "name": "Live Order Tracking",
+      "priority": "High",
+      "description": "Real-time status updates using Supabase Realtime",
+      "status_flow": [
+        { "status": "confirmed", "icon": "📋", "description": "Order confirmed, preparing recipe" },
+        { "status": "preparing", "icon": "👩‍🍳", "description": "Chef is preparing your cake" },
+        { "status": "baking", "icon": "🔥", "description": "Cake is in the oven" },
+        { "status": "quality_check", "icon": "✓", "description": "Quality check in progress" },
+        { "status": "out_for_delivery", "icon": "🛵", "description": "Delivery partner assigned" },
+        { "status": "delivered", "icon": "🏠", "description": "Delivered successfully" }
+      ],
+      "ui_components": [
+        "Progress bar with step indicators",
+        "Timeline with animated icons",
+        "Push notifications (browser) on status change",
+        "Google Maps static location preview"
+      ]
+    },
+    {
+      "name": "Occasion-Based Quick Order & Smart Bundles",
+      "priority": "Medium",
+      "description": "Pre-configured templates for common occasions with dynamic pricing",
+      "bundles": [
+        {
+          "name": "Birthday Blast",
+          "occasion": "birthday",
+          "items": ["1 kg Rainbow Cake", "Candle Set", "Party Hat", "Birthday Card"],
+          "discount": "15%"
+        },
+        {
+          "name": "Anniversary Romance",
+          "occasion": "anniversary",
+          "items": ["1 kg Red Velvet Cake", "Rose Petals", "Chocolate Box", "Personalized Note"],
+          "discount": "10%"
+        },
+        {
+          "name": "Party Bundle",
+          "occasion": "party",
+          "items": ["2 kg Assorted Cupcakes (12 pcs)", "Party Poppers", "Balloon Set"],
+          "discount": "20%"
+        },
+        {
+          "name": "Just Because",
+          "occasion": "everyday",
+          "items": ["0.5 kg Daily Delight Cake", "Coffee Coupon"],
+          "discount": "5%"
+        }
+      ],
+      "ui_components": [
+        "Mood board style cards with high-res imagery",
+        "Dynamic price calculator (shows savings)",
+        "Customizable bundle (add/remove items)"
+      ]
+    },
+    {
+      "name": "Admin Smart Dashboard",
+      "priority": "High",
+      "description": "Analytics and management interface for bakery staff",
+      "widgets": [
+        {
+          "name": "Sales KPI",
+          "metrics": ["Today's Revenue", "Weekly Revenue", "Monthly Revenue", "Order Count"]
+        },
+        {
+          "name": "Popular Products",
+          "visualization": "Bar chart / Table",
+          "data": "Top 10 products by order count"
+        },
+        {
+          "name": "Order Status Overview",
+          "visualization": "Pie chart",
+          "data": "Distribution of orders by status"
+        },
+        {
+          "name": "Inventory Alert",
+          "data": "Products with stock < 10 units",
+          "action": "Quick reorder button"
+        },
+        {
+          "name": "Recent Orders",
+          "visualization": "Table with real-time updates",
+          "actions": ["Update status dropdown", "View details"]
+        }
+      ],
+      "management_features": [
+        "Product CRUD with image upload",
+        "Order status management (triggers Realtime updates)",
+        "User management",
+        "Discount/coupon code generator"
+      ]
+    },
+    {
+      "name": "Authentication & User Profiles",
+      "priority": "Critical",
+      "description": "Secure access with JWT-based authentication via Supabase Auth",
+      "methods": ["Email/Password", "Google OAuth", "Magic Link"],
+      "profile_features": [
+        "Order history with filters (date, status)",
+        "Saved addresses (multiple)",
+        "Wishlist / Saved designs",
+        "Loyalty points display",
+        "Review management"
+      ]
+    },
+    {
+      "name": "Ratings & Reviews",
+      "priority": "Medium",
+      "description": "Social proof system with image uploads",
+      "features": [
+        "5-star rating system",
+        "Image upload to Supabase Storage",
+        "Verified purchase badge",
+        "Helpful voting",
+        "Seller response"
+      ]
+    },
+    {
+      "name": "Fake Payment Integration",
+      "priority": "High",
+      "description": "Simulated payment flow for demo purposes",
+      "methods": [
+        {
+          "name": "Test Card",
+          "details": "4242 4242 4242 4242 (any future date, any CVV)"
+        },
+        {
+          "name": "UPI Simulator",
+          "details": "success@testupi / fail@testupi"
+        },
+        {
+          "name": "COD (Cash on Delivery)",
+          "details": "Available for orders under ₹5000"
+        }
+      ],
+      "ui_components": [
+        "Payment method selection cards",
+        "Fake OTP input modal",
+        "Success/Failure animation"
+      ]
+    }
+  ],
+  "ui_ux_design": {
+    "design_system": {
+      "color_palette": {
+        "primary": "#4A2A1A",
+        "secondary": "#FFF8E7",
+        "accent": "#FF6B35",
+        "success": "#10B981",
+        "error": "#EF4444",
+        "warning": "#F59E0B",
+        "neutral": {
+          "50": "#F9FAFB",
+          "100": "#F3F4F6",
+          "200": "#E5E7EB",
+          "300": "#D1D5DB",
+          "400": "#9CA3AF",
+          "500": "#6B7280",
+          "600": "#4B5563",
+          "700": "#374151",
+          "800": "#1F2937",
+          "900": "#111827"
+        }
+      },
+      "typography": {
+        "headings": "Poppins",
+        "body": "Inter",
+        "weights": {
+          "regular": 400,
+          "medium": 500,
+          "semibold": 600,
+          "bold": 700
+        }
+      },
+      "spacing": "4px base unit (Tailwind default)",
+      "border_radius": {
+        "sm": "8px",
+        "md": "12px",
+        "lg": "16px",
+        "xl": "24px",
+        "full": "9999px"
+      }
+    },
+    "layout": {
+      "mobile": {
+        "navigation": "Bottom Tab Bar",
+        "tabs": ["Home", "Search", "Builder", "Cart", "Profile"],
+        "header": "Sticky with search and cart icon"
+      },
+      "desktop": {
+        "navigation": "Top Navigation Bar",
+        "sidebar": "Collapsible user menu",
+        "max_width": "1440px"
+      }
+    },
+    "micro_interactions": [
+      {
+        "name": "Skeleton Loading",
+        "description": "Shimmer effect on all async data loads"
+      },
+      {
+        "name": "Add to Cart Animation",
+        "description": "Item flies from product card to cart icon with bounce effect"
+      },
+      {
+        "name": "Hover States",
+        "description": "Buttons scale to 1.05, cards lift with box-shadow"
+      },
+      {
+        "name": "Toast Notifications",
+        "description": "Bottom-right (desktop) or bottom-center (mobile) for success/error messages"
+      },
+      {
+        "name": "Page Transitions",
+        "description": "Fade and slide animations between routes"
+      }
+    ],
+    "responsive_breakpoints": {
+      "mobile": "320px - 768px",
+      "tablet": "768px - 1024px",
+      "desktop": "1024px+"
+    },
+    "accessibility": {
+      "aria_labels": true,
+      "keyboard_navigation": true,
+      "color_contrast": "WCAG AA compliant",
+      "focus_indicators": true
+    }
+  },
+  "advanced_future_features": [
+    {
+      "name": "AI Recipe Generator",
+      "description": "Edge Function calls OpenAI to generate unique 'Baker's Note' based on custom design combinations",
+      "example": "Your mango-passion fruit topping pairs perfectly with our vanilla sponge for a tropical summer delight"
+    },
+    {
+      "name": "AR Cake Preview",
+      "description": "WebXR integration allowing users to place 3D cake model on real surfaces using camera",
+      "tech": "React Three Fiber, WebXR API"
+    },
+    {
+      "name": "Loyalty Program (Sprinkle Points)",
+      "description": "Earn points per order, redeem for discounts",
+      "logic": "₹1 = 1 point, 100 points = ₹10 discount"
+    },
+    {
+      "name": "Dark Mode",
+      "description": "Theme toggle with system preference detection",
+      "implementation": "Tailwind CSS dark mode strategy"
+    },
+    {
+      "name": "Social Sharing",
+      "description": "Share custom cake designs to Instagram/Facebook with generated image"
+    },
+    {
+      "name": "WhatsApp Order Integration",
+      "description": "Order confirmation and tracking via WhatsApp Business API"
+    },
+    {
+      "name": "Subscription Box",
+      "description": "Monthly 'Cake of the Month' subscription with recurring payments"
+    }
+  ],
+  "implementation_roadmap": {
+    "sprint_1": {
+      "name": "Foundation",
+      "duration": "Week 1",
+      "tasks": [
+        "Initialize React + Vite + Tailwind",
+        "Set up Supabase project, enable Auth",
+        "Create database tables (migrations)",
+        "Implement Login/Signup UI (email, Google OAuth)",
+        "Setup Zustand store for user state",
+        "Configure Supabase Storage bucket for images"
+      ]
+    },
+    "sprint_2": {
+      "name": "Core Commerce",
+      "duration": "Week 2",
+      "tasks": [
+        "Build Product Listing page (grid with filters)",
+        "Implement product detail page",
+        "Build Cart with quantity controls",
+        "Implement Checkout flow with address form",
+        "Fake payment integration",
+        "Order placement and confirmation page",
+        "Admin: Basic order view and status update"
+      ]
+    },
+    "sprint_3": {
+      "name": "Hero Feature - Cake Builder",
+      "duration": "Week 3",
+      "tasks": [
+        "Setup Three.js scene",
+        "Create base cake geometry (cylinder, square)",
+        "Implement shape/size/layer controls",
+        "Add texture mapping for icing and toppings",
+        "Build drag-and-drop topping system",
+        "Add custom text tool with canvas texture",
+        "Save custom designs to Supabase",
+        "Preview generated image"
+      ]
+    },
+    "sprint_4": {
+      "name": "AI & Realtime Features",
+      "duration": "Week 4",
+      "tasks": [
+        "Implement Voice Ordering (Web Speech API)",
+        "Build Edge Function for recommendation logic",
+        "Integrate recommendation carousels on homepage",
+        "Setup Supabase Realtime for order tracking",
+        "Build Live Order Tracking page with progress bar",
+        "Push notifications implementation",
+        "Occasion-based bundle pages"
+      ]
+    },
+    "sprint_5": {
+      "name": "Polish & Admin Dashboard",
+      "duration": "Week 5",
+      "tasks": [
+        "Build complete Admin Dashboard with charts",
+        "Product CRUD with image upload",
+        "Implement Reviews & Ratings system",
+        "Add all micro-interactions and animations",
+        "Mobile responsiveness testing",
+        "Performance optimization (lazy loading, code splitting)",
+        "Write comprehensive README and documentation"
+      ]
+    }
+  },
+  "viva_preparation": {
+    "key_questions": [
+      {
+        "question": "Why did you choose Supabase over Firebase or traditional backend?",
+        "answer": "Supabase offers PostgreSQL, which gives me relational database capabilities crucial for handling complex relationships between orders, custom designs, and products. The built-in Realtime feature allows live order tracking without WebSocket setup, and Row Level Security provides granular access control. It's also open-source and offers generous free tier for projects."
+      },
+      {
+        "question": "How does your recommendation engine work technically?",
+        "answer": "I implemented a hybrid approach. The core logic runs in a Supabase Edge Function. It combines rule-based filtering (occasion-flavor mapping) with collaborative filtering that analyzes order_history table to find 'users who ordered X also ordered Y' patterns. For advanced capabilities, it calls OpenAI API to generate natural language recommendations based on user preferences stored in profiles table."
+      },
+      {
+        "question": "What makes your Custom Cake Builder different from standard e-commerce?",
+        "answer": "Unlike simple product selection, my builder creates a structured JSON configuration stored in the database. This configuration can be re-rendered by bakery staff for accurate replication. The 3D preview using Three.js provides realistic visualization with drag-and-drop toppings and custom text, eliminating guesswork for customers."
+      },
+      {
+        "question": "How did you handle state management across the app?",
+        "answer": "I used Zustand for global state (user, cart, UI theme) because it's lightweight and requires less boilerplate than Redux. For server state (products, orders), I rely on Supabase queries with React Query for caching and synchronization. The custom builder uses local component state for real-time updates, only saving to database on finalization."
+      },
+      {
+        "question": "How did you ensure security and prevent unauthorized access?",
+        "answer": "Supabase Row Level Security (RLS) policies ensure users can only access their own data. I implemented JWT authentication with Supabase Auth. All API calls are authenticated, and sensitive operations like order placement require valid session. Environment variables store all API keys securely."
+      }
+    ],
+    "project_differentiators": [
+      "Complete 3D customization workflow, not just static product selection",
+      "AI-powered recommendations with real business logic (occasion + budget)",
+      "Real-time order tracking with Supabase subscriptions",
+      "Voice interface for accessibility and innovation",
+      "Professional UI/UX matching industry standards (Swiggy-like)"
+    ],
+    "technical_challenges": [
+      {
+        "challenge": "3D rendering performance",
+        "solution": "Used Three.js with optimized geometry, texture compression, and lazy loading. Implemented Level of Detail (LOD) for mobile devices."
+      },
+      {
+        "challenge": "Real-time updates across devices",
+        "solution": "Supabase Realtime subscriptions listen to order status changes. Updates propagate instantly to all connected clients."
+      },
+      {
+        "challenge": "Complex JSONB queries for custom designs",
+        "solution": "Leveraged PostgreSQL JSONB operators for efficient querying of custom design configurations."
+      }
+    ]
+  },
+  "deliverables": {
+    "code": [
+      "Complete React frontend source code",
+      "Supabase migrations and RLS policies",
+      "Edge Functions source code",
+      "Documentation (README with setup instructions)"
+    ],
+    "demo": [
+      "Live deployment URL (Vercel/Netlify)",
+      "Demo video (5-7 minutes walkthrough)",
+      "Screenshots of all major features"
+    ],
+    "documentation": [
+      "API documentation (Postman collection)",
+      "Database schema diagram",
+      "User manual",
+      "Admin guide"
+    ]
+  }
+}
