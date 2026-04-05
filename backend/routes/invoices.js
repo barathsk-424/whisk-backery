@@ -46,6 +46,28 @@ function calculateGST(total) {
   };
 }
 
+// Helper to extract Phone and Formatted Address from Order
+function extractDeliveryInfo(order) {
+  if (!order) return { phone: "", address: "" };
+
+  const details = order.delivery_details || order.address || {};
+  const phone = order.phone || details.phone || "";
+
+  let formattedAddress = "";
+  if (typeof details === "string") {
+    formattedAddress = details;
+  } else {
+    const parts = [
+      details.address || details.line1 || "",
+      details.city || "",
+      details.pincode || details.zip || "",
+    ].filter((p) => p && p.trim() !== "");
+    formattedAddress = parts.join(", ");
+  }
+
+  return { phone, address: formattedAddress };
+}
+
 // 1. Generate & Save Invoice
 router.post("/generate", async (req, res) => {
   const {
@@ -88,6 +110,11 @@ router.post("/generate", async (req, res) => {
           subtotal: gstData.subtotal,
           gst_amount: gstData.gst_amount,
           status: "Generated",
+          items: items || [],
+          customer_phone: req.body.customer_phone || "",
+          customer_address: req.body.customer_address || "",
+          payment_method: req.body.payment_method || "Online",
+          delivery_slot: req.body.delivery_slot || "Standard",
         },
       ])
       .select()
@@ -140,6 +167,7 @@ router.get("/order/:order_id", async (req, res) => {
     const total = order.total_price || 0;
     const gstData = calculateGST(total);
     const invoice_id_formatted = await generateInvoiceNumber();
+    const deliveryInfo = extractDeliveryInfo(order);
 
     const { data: newInvoice, error: createError } = await supabase
       .from("invoices")
@@ -155,9 +183,13 @@ router.get("/order/:order_id", async (req, res) => {
           gst_amount: gstData.gst_amount,
           status: "Paid",
           shop_name: "The Whisk Bakery",
-          shop_address:
-            "123 Artisan Lane, Flour District, Bangalore, Karnataka - 560001",
+          shop_address: "Mannivakkam, Chennai, Tamil Nadu, 614001, India",
           shop_gstin: "29AAAAA0000A1Z5",
+          items: order.items || [],
+          customer_phone: deliveryInfo.phone,
+          customer_address: deliveryInfo.address,
+          payment_method: order.payment_method || "Online",
+          delivery_slot: order.delivery_time || "Standard",
         },
       ])
       .select()
@@ -215,6 +247,11 @@ router.put("/:id", async (req, res) => {
         shop_name,
         shop_address,
         shop_gstin,
+        items: req.body.items,
+        customer_phone: req.body.customer_phone,
+        customer_address: req.body.customer_address,
+        payment_method: req.body.payment_method,
+        delivery_slot: req.body.delivery_slot,
       })
       .eq("id", id)
       .select()

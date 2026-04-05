@@ -338,7 +338,29 @@ app.get("/api/orders", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+// --- ERROR HANDLERS ---
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+    console.error('❌ Uncaught Exception:', err.message);
+    if (err.code === 'EADDRINUSE') {
+        console.error(`⚠️ PORT ${PORT} IS ALREADY IN USE. PLEASE KILL EXISTING PROCESSES.`);
+    }
+    process.exit(1);
+});
+
+const server = app.listen(PORT, () => {
   console.log(`\n🚀 ARTISAN BACKEND ONLINE → http://localhost:${PORT}`);
   console.log(`📦 MONITORING CHANNEL: cqdxnjhyoxqxofyhzgov.supabase.co\n`);
+});
+
+server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.error(`\n❌ ERROR: PORT ${PORT} IS ALREADY IN USE!`);
+        console.error(`   An Artisan session is already active somewhere else.`);
+        console.error(`   Please close old terminals or use "taskkill /F /IM node.exe" in Windows PowerShell.\n`);
+        process.exit(1);
+    }
 });

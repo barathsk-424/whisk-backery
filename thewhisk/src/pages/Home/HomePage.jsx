@@ -45,7 +45,7 @@ export default function HomePage() {
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent/20 rounded-full text-accent-light text-sm font-medium mb-6"
+                    className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent/20 rounded-full text-accent-light text-base font-medium mb-6"
                   >
                     <HiSparkles className="w-4 h-4" />
                     AI-Powered Bakery Experience
@@ -59,7 +59,7 @@ export default function HomePage() {
                     <span className="text-gradient">Joy</span>
                   </h1>
 
-                  <p className="text-brown-300 text-lg max-w-xl mb-8 leading-relaxed">
+                  <p className="text-xl text-brown-300 max-w-xl mb-8 leading-relaxed">
                     Build your dream cake in 3D, get AI-powered recommendations, and track your order in real-time. The future of bakery is here.
                   </p>
 
@@ -72,11 +72,11 @@ export default function HomePage() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search cakes, flavors, occasions..."
-                        className="flex-1 px-4 py-4 bg-transparent text-secondary placeholder-brown-400 text-sm focus:outline-none"
+                        className="flex-1 px-4 py-4 bg-transparent text-secondary placeholder-brown-400 text-base focus:outline-none"
                       />
                       <Link
                         to="/menu"
-                        className="px-6 py-2.5 m-1.5 gradient-accent text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity"
+                        className="px-6 py-2.5 m-1.5 gradient-accent text-white text-base font-semibold rounded-xl hover:opacity-90 transition-opacity"
                       >
                         Search
                       </Link>
@@ -108,8 +108,8 @@ export default function HomePage() {
                       { value: '4.9★', label: 'Rating' },
                     ].map((stat) => (
                       <div key={stat.label}>
-                        <p className="font-heading font-bold text-xl text-accent">{stat.value}</p>
-                        <p className="text-xs text-brown-400">{stat.label}</p>
+                        <p className="font-heading font-bold text-2xl text-accent">{stat.value}</p>
+                        <p className="text-sm text-brown-400">{stat.label}</p>
                       </div>
                     ))}
                   </div>
@@ -147,8 +147,8 @@ export default function HomePage() {
                       title="Build your custom 3D cake"
                     >
                       <p className="text-2xl">🎂</p>
-                      <p className="text-xs font-semibold text-primary mt-1">Custom 3D</p>
-                      <p className="text-[10px] text-brown-400">Build & Preview</p>
+                      <p className="text-sm font-bold text-primary mt-1">Custom 3D</p>
+                      <p className="text-xs text-brown-400">Build & Preview</p>
                     </motion.button>
 
                     <motion.button
@@ -162,8 +162,8 @@ export default function HomePage() {
                       title="Get AI-powered cake suggestions"
                     >
                       <p className="text-2xl">🤖</p>
-                      <p className="text-xs font-semibold text-primary mt-1">AI Suggest</p>
-                      <p className="text-[10px] text-brown-400">Smart Picks</p>
+                      <p className="text-sm font-bold text-primary mt-1">AI Suggest</p>
+                      <p className="text-xs text-brown-400">Smart Picks</p>
                     </motion.button>
 
                     <motion.button
@@ -177,8 +177,8 @@ export default function HomePage() {
                       title="Track your order live"
                     >
                       <p className="text-2xl">🛵</p>
-                      <p className="text-xs font-semibold text-primary mt-1">Live Track</p>
-                      <p className="text-[10px] text-brown-400">Real-time</p>
+                      <p className="text-sm font-bold text-primary mt-1">Live Track</p>
+                      <p className="text-xs text-brown-400">Real-time</p>
                     </motion.button>
                   </div>
                 </motion.div>
@@ -210,7 +210,7 @@ export default function HomePage() {
                       >
                         {occ.emoji}
                       </div>
-                      <p className="text-xs font-semibold text-primary text-center">{occ.name}</p>
+                      <p className="text-sm font-bold text-primary text-center">{occ.name}</p>
                     </Link>
                   </motion.div>
                 ))}
@@ -226,11 +226,11 @@ export default function HomePage() {
                   <h2 className="font-heading text-2xl font-bold text-primary">
                     🔥 Recommended For You
                   </h2>
-                  <p className="text-sm text-brown-400 mt-1">Handpicked by our AI based on what's trending</p>
+                  <p className="text-base text-brown-400 mt-1">Handpicked by our AI based on what's trending</p>
                 </div>
                 <Link
                   to="/menu"
-                  className="flex items-center gap-1 text-accent font-semibold text-sm hover:gap-2 transition-all"
+                  className="flex items-center gap-1 text-accent font-semibold text-base hover:gap-2 transition-all"
                 >
                   View All <HiArrowRight className="w-4 h-4" />
                 </Link>
@@ -248,10 +248,10 @@ export default function HomePage() {
           <section className="py-16 bg-white">
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-10">
-                <h2 className="font-heading text-2xl font-bold text-primary">
+                <h2 className="font-heading text-3xl font-bold text-primary">
                   🎁 Smart Bundles
                 </h2>
-                <p className="text-sm text-brown-400 mt-1">
+                <p className="text-base text-brown-400 mt-1">
                   Curated combos for every occasion — save up to 20%
                 </p>
               </div>
@@ -321,7 +321,7 @@ export default function HomePage() {
                 </div>
                 <Link
                   to="/menu"
-                  className="flex items-center gap-1 text-accent font-semibold text-sm hover:gap-2 transition-all"
+                  className="flex items-center gap-1 text-accent font-semibold text-base hover:gap-2 transition-all"
                 >
                   See More <HiArrowRight className="w-4 h-4" />
                 </Link>
@@ -355,8 +355,8 @@ export default function HomePage() {
                     <div className="flex items-center gap-3 mb-3">
                       <span className="text-2xl">{review.avatar}</span>
                       <div>
-                        <p className="font-semibold text-sm text-primary">{review.user}</p>
-                        <p className="text-xs text-brown-400">{review.date}</p>
+                        <p className="font-semibold text-base text-primary">{review.user}</p>
+                        <p className="text-sm text-brown-400">{review.date}</p>
                       </div>
                     </div>
                     <div className="flex gap-0.5 mb-2">
@@ -364,7 +364,7 @@ export default function HomePage() {
                         <HiStar key={j} className="w-4 h-4 text-warning" />
                       ))}
                     </div>
-                    <p className="text-sm text-brown-500 leading-relaxed">"{review.comment}"</p>
+                    <p className="text-base text-brown-500 leading-relaxed">"{review.comment}"</p>
                   </motion.div>
                 ))}
               </div>

@@ -293,7 +293,7 @@ const useStore = create((set, get) => ({
       );
 
       // SIGNAL INVOICE GENERATION (FIRE & FORGET)
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = import.meta.env.VITE_API_URL || "https://whisk-backery.onrender.com";
       fetch(`${apiUrl}/api/invoices/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -304,6 +304,8 @@ const useStore = create((set, get) => ({
           customer_email: successfulOrder.user_email,
           total_amount: successfulOrder.total_price,
           items: cart,
+          customer_phone: orderMetadata.delivery_details?.phone || "",
+          customer_address: orderMetadata.delivery_details?.address || "",
         }),
       }).catch((e) => console.error("Invoice signal loss:", e));
 

@@ -25,7 +25,7 @@ const AdminInvoices = ({ theme }) => {
   const fetchInvoices = async () => {
     setLoading(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = import.meta.env.VITE_API_URL || "https://whisk-backery.onrender.com";
       const response = await fetch(`${apiUrl}/api/invoices/all`);
       const data = await response.json();
       if (data.success) {
@@ -47,7 +47,7 @@ const AdminInvoices = ({ theme }) => {
     e.preventDefault();
     const id = editingInvoice.id;
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = import.meta.env.VITE_API_URL || "https://whisk-backery.onrender.com";
       const response = await fetch(`${apiUrl}/api/invoices/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -230,6 +230,9 @@ const AdminInvoices = ({ theme }) => {
                       <p className="text-[10px] text-brown-400 lowercase">
                         {inv.customer_email}
                       </p>
+                      <p className="text-[10px] text-accent font-bold">
+                        {inv.customer_phone || "No Phone Captured"}
+                      </p>
                     </td>
                     <td className="px-6 py-4">
                       <p className="text-md font-black text-accent tracking-tighter">
@@ -409,6 +412,41 @@ const AdminInvoices = ({ theme }) => {
                         required
                       />
                     </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-black text-brown-400 uppercase tracking-widest block mb-2 px-1">
+                      Consignee Phone (Comm-Link)
+                    </label>
+                    <input
+                      type="text"
+                      value={editingInvoice?.customer_phone || ""}
+                      onChange={(e) =>
+                        setEditingInvoice({
+                          ...editingInvoice,
+                          customer_phone: e.target.value,
+                        })
+                      }
+                      placeholder="+91-XXXXXXXXXX"
+                      className="w-full px-4 py-3 bg-brown-50 dark:bg-brown-800 rounded-xl text-sm font-bold text-primary dark:text-cream outline-none border border-transparent focus:border-accent transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-black text-brown-400 uppercase tracking-widest block mb-2 px-1">
+                      Consignee Address (Shipment Coordinates)
+                    </label>
+                    <textarea
+                      value={editingInvoice?.customer_address || ""}
+                      onChange={(e) =>
+                        setEditingInvoice({
+                          ...editingInvoice,
+                          customer_address: e.target.value,
+                        })
+                      }
+                      placeholder="Street, Area, City, Pin"
+                      className="w-full px-4 py-3 bg-brown-50 dark:bg-brown-800 rounded-xl text-sm font-bold text-primary dark:text-cream outline-none border border-transparent focus:border-accent transition-all h-20 artisan-scrollbar"
+                    />
                   </div>
 
                   <div className="p-4 bg-brown-50 dark:bg-brown-800/50 rounded-2xl border border-brown-100 dark:border-brown-800">
