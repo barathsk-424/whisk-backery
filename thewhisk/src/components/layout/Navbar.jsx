@@ -53,11 +53,11 @@ export default function Navbar() {
             </span>
             <div>
               <h1
-                className={`font-heading text-[22px] font-black tracking-tight uppercase ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                className={`font-heading text-[18px] font-black tracking-tight uppercase ${theme === "dark" ? "text-secondary" : "text-primary"}`}
               >
                 The Whisk
               </h1>
-              <p className="text-xs font-black tracking-[0.4em] uppercase text-accent mt-[-4px]">
+              <p className="text-[10px] font-black tracking-[0.4em] uppercase text-accent mt-[-4px]">
                 Baking Artistry
               </p>
             </div>
@@ -79,7 +79,7 @@ export default function Navbar() {
             >
               <HiOutlineShoppingCart />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-accent text-white text-[10px] h-4 w-4 rounded-full flex items-center justify-center font-bold">
+                <span className="absolute -top-1 -right-1 bg-accent text-white text-[8px] h-3.5 w-3.5 rounded-full flex items-center justify-center font-bold">
                   {cartCount}
                 </span>
               )}
@@ -88,7 +88,7 @@ export default function Navbar() {
         </div>
 
         {/* Nav Links */}
-        <div className="flex items-center gap-8 flex-wrap justify-center font-black text-[18px] tracking-[0.1em]">
+        <div className="flex items-center gap-8 flex-wrap justify-center font-black text-[14px] tracking-[0.2em]">
           <button
             onClick={() => navigate("/")}
             className="hover:text-accent transition-all hover:scale-105"
@@ -137,7 +137,7 @@ export default function Navbar() {
               value={searchQuery}
               onChange={handleSearch}
               placeholder="Search blueprints..."
-              className={`w-full py-2 pl-10 pr-4 rounded-full text-sm font-black focus:outline-none transition-all uppercase tracking-widest ${
+              className={`w-full py-2 pl-10 pr-4 rounded-full text-[11px] font-black focus:outline-none transition-all uppercase tracking-widest ${
                 theme === "dark"
                   ? "bg-white/5 text-white placeholder:text-white/20"
                   : "bg-secondary text-primary placeholder:text-brown-200"
@@ -162,7 +162,7 @@ export default function Navbar() {
             title="Artisan Sight"
           >
             <HiOutlineCamera className="text-xl" />
-            <span className="text-xs font-black uppercase tracking-widest hidden xl:block">
+            <span className="text-[10px] font-black uppercase tracking-widest hidden xl:block">
               Scan Artifact
             </span>
           </button>
@@ -186,7 +186,7 @@ export default function Navbar() {
               className={theme === "dark" ? "text-white" : "text-primary"}
             />
             {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-accent text-white text-[11px] font-black h-5 w-5 rounded-full flex items-center justify-center shadow-luxury">
+              <span className="absolute -top-1.5 -right-1.5 bg-accent text-white text-[9px] font-black h-4.5 w-4.5 rounded-full flex items-center justify-center shadow-luxury">
                 {cartCount}
               </span>
             )}
@@ -212,7 +212,7 @@ export default function Navbar() {
           ) : (
             <button
               onClick={() => navigate("/login")}
-              className={`px-4 py-2 border-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
+              className={`px-4 py-2 border-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
                 theme === "dark"
                   ? "border-white/10 text-white hover:bg-shadow-white/5"
                   : "border-brown-100 text-primary hover:bg-secondary"
@@ -230,7 +230,7 @@ export default function Navbar() {
               title="Admin Hub"
             >
               <HiOutlineCog className="group-hover:rotate-90 transition-transform duration-500" />
-              <span className="text-xs font-black uppercase tracking-tighter">
+              <span className="text-[10px] font-black uppercase tracking-tighter">
                 Command
               </span>
             </button>

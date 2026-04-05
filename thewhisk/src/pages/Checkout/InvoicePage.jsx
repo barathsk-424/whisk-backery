@@ -162,10 +162,10 @@ const InvoicePage = () => {
                         <h2 className="text-4xl font-black text-[#4A2A1A] tracking-[-0.04em] uppercase leading-[0.9]">
                             THE WHISK<br/><span className="text-[#A67C52]">BAKERY</span>
                         </h2>
-                        <div className="mt-6 space-y-2 text-sm font-bold text-[#A67C52] uppercase tracking-[0.1em]">
+                        <div className="mt-6 space-y-1 text-[10px] font-bold text-[#A67C52] uppercase tracking-[0.1em]">
                             <p>Mannivakkam, Chennai, Tamil Nadu,</p>
                             <p>614001, India</p>
-                            <div className="mt-3 text-[#FF6B35]">
+                            <div className="mt-2 text-[#FF6B35]">
                                 <p>Ph: +91 6374618833</p>
                                 <p>Email: skbarath424@gmail.com</p>
                                 <p className="font-black mt-1">GSTIN: {invoice?.shop_gstin || "29AAAAA0000A1Z5"}</p>
@@ -176,15 +176,15 @@ const InvoicePage = () => {
 
                 <div className="text-left md:text-right flex flex-col items-start md:items-end">
                     <div className="mb-6">
-                        <p className="text-xs font-black text-brown-300 uppercase tracking-[0.4em] mb-2 pr-1">Acquisition Signal ID</p>
-                        <p className="text-4xl font-black text-primary tracking-tighter uppercase">{invoice?.invoice_id || "INV-2026-0003"}</p>
+                        <p className="text-[10px] font-black text-brown-300 uppercase tracking-[0.4em] mb-2 pr-1">Acquisition Signal ID</p>
+                        <p className="text-3xl font-black text-primary tracking-tighter uppercase">{invoice?.invoice_id || "INV-2026-0003"}</p>
                     </div>
-                    <div className="flex md:flex-col gap-6 md:gap-3">
+                    <div className="flex md:flex-col gap-6 md:gap-2">
                         <div>
-                            <p className="text-xs font-black text-brown-300 uppercase tracking-widest">Timestamp: {new Date(order.created_at).toLocaleString()}</p>
+                            <p className="text-[8px] font-black text-brown-300 uppercase tracking-widest">Timestamp: {new Date(order.created_at).toLocaleString()}</p>
                         </div>
                         <div>
-                            <p className="text-xs font-black text-brown-200 uppercase tracking-widest italic">Order Index: #{order.id.slice(0, 10).toUpperCase()}</p>
+                            <p className="text-[8px] font-black text-brown-200 uppercase tracking-widest italic">Order Index: #{order.id.slice(0, 10).toUpperCase()}</p>
                         </div>
                     </div>
                 </div>
@@ -197,27 +197,27 @@ const InvoicePage = () => {
                 {/* Billing Card */}
                 <div className="bg-[#FAF9F6] rounded-[2.5rem] p-10 border border-[#F0E6D9]/50 relative">
                     <div className="absolute top-6 left-10">
-                        <span className="text-sm font-black text-[#FF6B35] uppercase tracking-[0.4em] bg-white px-4 py-2 rounded-full shadow-sm">Billed to Consignee</span>
+                        <span className="text-[9px] font-black text-[#FF6B35] uppercase tracking-[0.4em] bg-white px-3 py-1 rounded-full shadow-sm">Billed to Consignee</span>
                     </div>
-                    <div className="mt-12">
-                        <p className="text-4xl font-black text-[#4A2A1A] tracking-tighter uppercase mb-2">{invoice?.customer_name || order.customer_name || 'Artisan Guest'}</p>
-                        <p className="text-base font-bold text-brown-400 lowercase mb-8">{invoice?.customer_email || order.user_email || 'Signal Lost'}</p>
+                    <div className="mt-10">
+                        <p className="text-3xl font-black text-[#4A2A1A] tracking-tighter uppercase mb-2">{invoice?.customer_name || order.customer_name || 'Artisan Guest'}</p>
+                        <p className="text-sm font-bold text-brown-400 lowercase mb-8">{invoice?.customer_email || order.user_email || 'Signal Lost'}</p>
                         <div className="flex items-center gap-3">
-                            <span className="text-xs font-black text-brown-300 uppercase tracking-widest">Terminal:</span>
-                            <span className="text-xs font-black text-primary uppercase bg-white border border-brown-100 px-3 py-1 rounded-lg">WEB-CORE-V2</span>
+                            <span className="text-[9px] font-black text-brown-300 uppercase tracking-widest">Terminal:</span>
+                            <span className="text-[9px] font-black text-primary uppercase bg-white border border-brown-100 px-3 py-1 rounded-lg">WEB-CORE-V2</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Shipment Details */}
                 <div className="flex flex-col justify-center">
-                    <p className="text-sm font-black text-brown-200 uppercase tracking-[0.5em] mb-6">Shipment Coordinates</p>
-                    <p className="text-xl font-black text-primary uppercase leading-tight mb-4 max-w-[300px]">
+                    <p className="text-[10px] font-black text-brown-200 uppercase tracking-[0.5em] mb-6">Shipment Coordinates</p>
+                    <p className="text-lg font-black text-primary uppercase leading-tight mb-4 max-w-[300px]">
                         {invoice?.customer_address || formatAddress(order.delivery_details || order.address)}
                     </p>
                     <div className="flex items-center gap-2">
-                        <span className="text-sm font-black text-[#FF6B35] uppercase tracking-widest pr-2">Comm-Link:</span>
-                        <span className="text-lg font-black text-[#FF6B35]">
+                        <span className="text-[10px] font-black text-[#FF6B35] uppercase tracking-widest pr-2">Comm-Link:</span>
+                        <span className="text-sm font-black text-[#FF6B35]">
                              {invoice?.customer_phone || order.phone || order.delivery_details?.phone || order.address?.phone || "Not Provided"}
                         </span>
                     </div>
@@ -228,7 +228,7 @@ const InvoicePage = () => {
              <div className="relative z-10 mb-20 overflow-x-auto">
                 <table className="w-full">
                     <thead>
-                        <tr className="text-xs font-black text-brown-300 uppercase tracking-[0.4em] border-b border-[#F4F1ED]">
+                        <tr className="text-[10px] font-black text-brown-300 uppercase tracking-[0.4em] border-b border-[#F4F1ED]">
                             <th className="text-left pb-10 w-[50%]">Blueprint Description</th>
                             <th className="text-center pb-10">Unit</th>
                             <th className="text-right pb-10">Price</th>
@@ -243,8 +243,8 @@ const InvoicePage = () => {
                                         {item.name || item.product_name}
                                     </p>
                                     <div className="flex gap-2">
-                                        <span className="text-xs font-black text-[#FF6B35] uppercase bg-[#FF6B35]/5 px-2 py-0.5 rounded italic">Flavor: {item.flavor || "Chocolate"}</span>
-                                        <span className="text-xs font-black text-brown-300 uppercase bg-brown-50 px-2 py-0.5 rounded italic">Shape: {item.shape || "Round"}</span>
+                                        <span className="text-[8px] font-black text-[#FF6B35] uppercase bg-[#FF6B35]/5 px-2 py-0.5 rounded italic">Flavor: {item.flavor || "Chocolate"}</span>
+                                        <span className="text-[8px] font-black text-brown-300 uppercase bg-brown-50 px-2 py-0.5 rounded italic">Shape: {item.shape || "Round"}</span>
                                     </div>
                                 </td>
                                 <td className="py-12 text-center text-sm font-black text-brown-400">{item.quantity || item.qty}</td>
@@ -261,29 +261,29 @@ const InvoicePage = () => {
              {/* Settlement Summary */}
              <div className="relative z-10 flex flex-col md:flex-row justify-between items-start gap-12 bg-[#FAF9F6]/30 p-12 rounded-[3.5rem] border border-brown-50 border-dashed">
                 <div className="max-w-xs opacity-40">
-                    <p className="text-sm font-bold text-brown-400 leading-relaxed uppercase tracking-tighter">
+                    <p className="text-[9px] font-bold text-brown-400 leading-relaxed uppercase tracking-tighter">
                         This digital signal serves as a formal treaty between The Whisk Bakery and the consignee. All artisanal calibrations are final upon acquisition.
                     </p>
                 </div>
                 
                 <div className="w-full md:w-[400px] flex flex-col gap-6">
-                    <div className="flex justify-between items-center text-sm font-black text-brown-300 uppercase tracking-widest pb-4 border-b border-brown-50">
+                    <div className="flex justify-between items-center text-[10px] font-black text-brown-300 uppercase tracking-widest pb-4 border-b border-brown-50">
                         <span>Subtotal</span>
-                        <span className="text-primary text-base tracking-tighter">Rs.{invoice?.subtotal || (order.total_price / 1.18).toFixed(2)}</span>
+                        <span className="text-primary text-sm tracking-tighter">Rs.{invoice?.subtotal || (order.total_price / 1.18).toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between items-center text-xs font-bold text-brown-200 uppercase tracking-widest">
+                    <div className="flex justify-between items-center text-[9px] font-bold text-brown-200 uppercase tracking-widest">
                         <span>CGST (9%)</span>
-                        <span className="text-sm">Rs.{(invoice?.gst_amount / 2 || (order.total_price * 0.09)).toFixed(2)}</span>
+                        <span className="text-xs">Rs.{(invoice?.gst_amount / 2 || (order.total_price * 0.09)).toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between items-center text-xs font-bold text-brown-200 uppercase tracking-widest pb-6 border-b-2 border-[#FF6B35]">
+                    <div className="flex justify-between items-center text-[9px] font-bold text-brown-200 uppercase tracking-widest pb-6 border-b-2 border-[#FF6B35]">
                         <span>SGST (9%)</span>
-                        <span className="text-sm">Rs.{(invoice?.gst_amount / 2 || (order.total_price * 0.09)).toFixed(2)}</span>
+                        <span className="text-xs">Rs.{(invoice?.gst_amount / 2 || (order.total_price * 0.09)).toFixed(2)}</span>
                     </div>
                     
                     <div className="flex justify-between items-center pt-4">
                         <div>
-                            <p className="text-sm font-black text-[#FF6B35] uppercase tracking-[0.5em] mb-1">Total Due</p>
-                            <p className="text-xs font-bold text-brown-300 italic opacity-60">Financial Integrity Verified</p>
+                            <p className="text-[10px] font-black text-[#FF6B35] uppercase tracking-[0.5em] mb-1">Total Due</p>
+                            <p className="text-[8px] font-bold text-brown-300 italic opacity-60">Financial Integrity Verified</p>
                         </div>
                         <div className="text-right">
                              <p className="text-5xl font-black text-[#4A2A1A] tracking-tighter leading-none flex items-center justify-end gap-3">
@@ -312,10 +312,10 @@ const InvoicePage = () => {
                  </div>
 
                  <div className="text-center">
-                    <p className="text-sm font-black text-brown-300 uppercase tracking-[0.4em] md:tracking-[1em] mb-4">
+                    <p className="text-[10px] font-black text-brown-300 uppercase tracking-[0.4em] md:tracking-[1em] mb-4">
                         THE WHISK BAKERY // STANDARD ACQUISITION TREATY V2.0
                     </p>
-                    <p className="text-base font-black text-[#4A2A1A] tracking-tighter uppercase opacity-80">
+                    <p className="text-[11px] font-black text-[#4A2A1A] tracking-tighter uppercase opacity-80">
                         Thank you for commissioning an artisan masterpiece. 🍰
                     </p>
                  </div>

@@ -57,7 +57,19 @@ const ProtectedAdminRoute = ({ children }) => {
   if (!token) return <Navigate to="/login" replace />;
 
   try {
-    const decoded = JSON.parse(atob(token.split(".")[1]));
+    const base64Url = token.split(".")[1];
+    if (!base64Url) throw new Error("Invalid Token Structure");
+    
+    // Use safe decoding for web
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    const decoded = JSON.parse(jsonPayload);
+
     if (decoded.role !== "admin") {
       return (
         <div className="min-h-screen flex items-center justify-center bg-secondary">
@@ -80,6 +92,8 @@ const ProtectedAdminRoute = ({ children }) => {
     }
     return children;
   } catch (err) {
+    console.error("[App] Token Verification Interrupted:", err.message);
+    localStorage.removeItem("token"); // Cleanup malformed signal
     return <Navigate to="/login" replace />;
   }
 };

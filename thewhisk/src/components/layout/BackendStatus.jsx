@@ -13,7 +13,10 @@ const BackendStatus = () => {
                         location.pathname.startsWith('/stock');
 
     useEffect(() => {
-        if (!isAdminRoute) return;
+        if (!isAdminRoute) {
+            setStatus('Checking...');
+            return;
+        }
         
         const checkConnection = async () => {
             try {
@@ -52,7 +55,7 @@ const BackendStatus = () => {
         checkConnection();
         const interval = setInterval(checkConnection, 15000); // Check every 15s
         return () => clearInterval(interval);
-    }, []);
+    }, [isAdminRoute]);
 
     if (!isAdminRoute) return null;
 
