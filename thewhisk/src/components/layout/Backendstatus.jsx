@@ -8,9 +8,13 @@ export default function BackendStatus() {
 
   useEffect(() => {
     const fetchStatus = async () => {
-      const health = await checkBackendHealth();
-      setStatus(health.online ? "online" : "offline");
-      setDetails(health);
+      try {
+        const health = await checkBackendHealth();
+        setStatus(health.online ? "online" : "offline");
+        setDetails(health);
+      } catch (err) {
+        setStatus("offline");
+      }
     };
 
     fetchStatus();
@@ -36,7 +40,7 @@ export default function BackendStatus() {
           <span className="flex items-center gap-2">
             Artisan Backend Linked
             <span className="text-[8px] opacity-40">
-              MDB: {details?.mongodb}
+              MDB: {details?.mongodb || "N/A"}
             </span>
           </span>
         ) : status === "offline" ? (
