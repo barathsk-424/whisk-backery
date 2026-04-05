@@ -138,20 +138,21 @@ router.get("/order/:order_id", async (req, res) => {
     if (orderErr) throw orderErr;
 
     const total = order.total_price || 0;
-    const subtotal = (total / 1.18).toFixed(2);
-    const gst = (total - subtotal).toFixed(2);
+    const gstData = calculateGST(total);
+    const invoice_id_formatted = await generateInvoiceNumber();
 
     const { data: newInvoice, error: createError } = await supabase
       .from("invoices")
       .insert([
         {
+          invoice_id: invoice_id_formatted,
           order_id: order.id,
           user_id: order.user_id,
           customer_name: order.customer_name || "Artisan Guest",
           customer_email: order.user_email || "guest@thewhisk.com",
-          total_amount: total,
-          subtotal: subtotal,
-          gst_amount: gst,
+          total_amount: gstData.total_amount,
+          subtotal: gstData.subtotal,
+          gst_amount: gstData.gst_amount,
           status: "Paid",
           shop_name: "The Whisk Bakery",
           shop_address:
@@ -161,6 +162,7 @@ router.get("/order/:order_id", async (req, res) => {
       ])
       .select()
       .single();
+
 
     if (createError) throw createError;
     res.json({ success: true, invoice: newInvoice });
