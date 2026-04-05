@@ -279,11 +279,39 @@ const useStore = create((set, get) => ({
         .select();
       if (error) throw error;
 
+      const successfulOrder = data[0];
+
+      // PERSIST FOR SUCCESS PAGE
+      localStorage.setItem(
+        "lastOrder",
+        JSON.stringify({
+          ...successfulOrder,
+          total: getCartTotal(),
+          items: cart,
+          address: orderMetadata.delivery_details,
+        }),
+      );
+
+      // SIGNAL INVOICE GENERATION (FIRE & FORGET)
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      fetch(`${apiUrl}/api/invoices/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          order_id: successfulOrder.id,
+          user_id: user.id || user.sub,
+          customer_name: successfulOrder.customer_name,
+          customer_email: successfulOrder.user_email,
+          total_amount: successfulOrder.total_price,
+          items: cart,
+        }),
+      }).catch((e) => console.error("Invoice signal loss:", e));
+
       set({ cart: [] });
       localStorage.removeItem("cart");
       get().fetchOrders();
       toast.success("Artisan Order Placed Successfully! 🧁");
-      return data[0];
+      return successfulOrder;
     } catch (err) {
       toast.error("Order failed. Please try again.");
       throw err;

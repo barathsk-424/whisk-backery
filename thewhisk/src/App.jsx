@@ -9,7 +9,7 @@ import Footer from "./components/layout/Footer";
 import CartSidebar from "./components/cart/CartSidebar";
 import VoiceFAB from "./components/voice/VoiceFAB";
 import useStore from "./store/useStore";
-import BackendStatus from "./components/layout/Backendstatus";
+import BackendStatus from "./components/layout/BackendStatus.jsx";
 
 // Pages
 import HomePage from "./pages/Home/HomePage";
@@ -30,6 +30,8 @@ import BundlesPage from "./pages/Bundles/BundlesPage";
 import ContactSection from "./components/home/ContactSection";
 import StockAnalysisDashboard from "./pages/Stock/StockAnalysisDashboard";
 import StockDetailPage from "./pages/Stock/StockDetailPage";
+import InvoicePage from "./pages/Checkout/InvoicePage";
+import OrderSuccessPage from "./pages/Checkout/OrderSuccessPage";
 
 // ─── UNIFIED PROTECTED ROUTE ENGINE (JWT BASED) ─────────────
 const ProtectedRoute = ({ children }) => {
@@ -261,12 +263,28 @@ function App() {
                     }
                   />
                   <Route
+                    path="/order-success"
+                    element={
+                      <ProtectedRoute>
+                        <SafeRender component={OrderSuccessPage} />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
                     path="/product/:id"
                     element={<SafeRender component={ProductDetailsPage} />}
                   />
                   <Route
                     path="/track/:id"
                     element={<SafeRender component={TrackOrderPage} />}
+                  />
+                  <Route
+                    path="/invoice/:orderId"
+                    element={
+                      <ProtectedRoute>
+                        <SafeRender component={InvoicePage} />
+                      </ProtectedRoute>
+                    }
                   />
 
                   {/* ARTISAN FALLBACK */}

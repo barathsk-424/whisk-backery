@@ -66,7 +66,10 @@ const isValidEmail = (email) => {
 
 // ─── Route Registration ──────────────────────────────────────────
 const productRoutes = require("./routes/products");
+const invoiceRoutes = require("./routes/invoices");
+
 app.use("/api/products", productRoutes);
+app.use("/api/invoices", invoiceRoutes);
 
 // ─── ARTISAN MEMBERSHIP (SIGNUP) ──────────────────────
 app.post("/signup", async (req, res) => {
