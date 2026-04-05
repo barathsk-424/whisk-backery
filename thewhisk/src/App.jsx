@@ -9,7 +9,7 @@ import Footer from "./components/layout/Footer";
 import CartSidebar from "./components/cart/CartSidebar";
 import VoiceFAB from "./components/voice/VoiceFAB";
 import useStore from "./store/useStore";
-import BackendStatus from "./components/layout/BackendStatus.jsx";
+import BackendStatus from "./components/layout/BackendStatus";
 
 // Pages
 import HomePage from "./pages/Home/HomePage";
