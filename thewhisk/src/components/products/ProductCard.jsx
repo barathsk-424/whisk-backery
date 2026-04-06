@@ -62,40 +62,40 @@ export default function ProductCard({ product, index = 0 }) {
         theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-50'
       }`}
     >
-      <div className="relative h-56 overflow-hidden">
+      <div className="relative h-40 lg:h-56 overflow-hidden">
          <img 
            src={product.image_url || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop'} 
            alt={product.name} 
            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
          />
-         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
-            <button className="text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-               <HiOutlineChatAlt2 className="text-lg" /> Inspect Artifact
+         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4 lg:p-6">
+            <button className="text-white text-[9px] lg:text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+               <HiOutlineChatAlt2 className="text-base lg:text-lg" /> Inspect Artifact
             </button>
          </div>
-         {product.is_custom && <div className="absolute top-4 right-4 px-3 py-1 bg-accent text-white text-[9px] font-black uppercase rounded-full shadow-lg">Custom Piece</div>}
+         {product.is_custom && <div className="absolute top-2 right-2 lg:top-4 lg:right-4 px-2 lg:px-3 py-0.5 lg:py-1 bg-accent text-white text-[8px] lg:text-[9px] font-black uppercase rounded-full shadow-lg">Custom Piece</div>}
       </div>
 
-      <div className="p-6">
-         <div className="flex justify-between items-start mb-3">
-            <h3 className={`font-black tracking-tight text-sm uppercase ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>{product.name}</h3>
+      <div className="p-3 lg:p-6">
+         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-1 lg:mb-3 gap-1 lg:gap-0">
+            <h3 className={`font-black tracking-tight text-[11px] lg:text-sm uppercase truncate w-full ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>{product.name}</h3>
             <div className="flex items-center gap-1">
-               <HiStar className="text-warning text-sm" />
-               <span className="text-[11px] font-black text-accent">{product.rating || '5.0'}</span>
+               <HiStar className="text-warning text-[10px] lg:text-sm" />
+               <span className="text-[10px] lg:text-[11px] font-black text-accent">{product.rating || '5.0'}</span>
             </div>
          </div>
 
-         <p className={`text-[11px] font-bold leading-relaxed mb-6 line-clamp-2 ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>
-            {product.description || "A masterfully crafted creation using the finest ceremonial ingredients."}
+         <p className={`text-[10px] lg:text-[11px] font-bold leading-tight lg:leading-relaxed mb-3 lg:mb-6 line-clamp-2 ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>
+            {product.description || "A masterfully crafted creation."}
          </p>
 
-         <div className="flex items-center justify-between pt-4 border-t border-brown-50/10">
-            <p className="text-lg font-black text-accent">₹{(product.price || product.base_price || 0).toLocaleString()}</p>
+         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between pt-2 lg:pt-4 border-t border-brown-50/10 gap-2 lg:gap-0">
+            <p className="text-sm lg:text-lg font-black text-accent">₹{(product.price || product.base_price || 0).toLocaleString()}</p>
             <button 
               onClick={handleOpenDetails}
-              className="px-6 py-2 bg-accent text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-accent/20 hover:scale-105 active:scale-95 transition-all"
+              className="w-full lg:w-auto px-4 lg:px-6 py-1.5 lg:py-2 bg-accent text-white rounded-full text-[8px] lg:text-[10px] font-black uppercase tracking-widest shadow-lg shadow-accent/20 hover:scale-105 active:scale-95 transition-all text-center"
             >
-               View Details
+               Order
             </button>
          </div>
       </div>

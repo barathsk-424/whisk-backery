@@ -36,9 +36,20 @@
     box-sizing: border-box;
   }
 
-  html {
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
     scroll-behavior: smooth;
     transition: background-color 0.5s ease, color 0.5s ease;
+    font-size: 16px;
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    html {
+      font-size: 14px;
+    }
   }
 
   html.dark {
@@ -61,6 +72,7 @@
     -moz-osx-font-smoothing: grayscale;
     transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
                 color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -184,8 +196,8 @@
 
 /* 🧁 Cake Builder Advanced Customization */
 .cake-preview {
-  width: 200px;
-  height: 200px;
+  width: clamp(150px, 40vw, 200px);
+  height: clamp(150px, 40vw, 200px);
   border-radius: 50%;
   position: relative;
   display: flex;
@@ -193,7 +205,7 @@
   justify-content: center;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   overflow: hidden;
-  border: 8px solid rgba(255,255,255,0.8);
+  border: clamp(4px, 1vw, 8px) solid rgba(255,255,255,0.8);
   margin: 0 auto;
   transition: all 0.3s ease;
 }

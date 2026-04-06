@@ -74,30 +74,20 @@ export default function AdminDashboard() {
         return;
       }
 
-      // ─── FETCH CORE ANALYTICS ──────────────────────────────────
+      // ─── FETCH CORE ANALYTICS VIA BACKEND (By-passing RLS) ───────
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const response = await fetch(`${apiUrl}/api/admin-dashboard`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
 
-      const [ordRes, prodRes, userRes] = await Promise.all([
-        supabase
-          .from("orders")
-          .select("*")
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("products")
-          .select("*")
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("users")
-          .select("*")
-          .order("created_at", { ascending: false }),
-      ]);
+      if (!response.ok) throw new Error("Intelligence Retrieval Failed");
 
-      if (ordRes.error) throw ordRes.error;
-      if (prodRes.error) throw prodRes.error;
-      if (userRes.error) throw userRes.error;
-
-      setOrders(ordRes.data || []);
-      setProducts(prodRes.data || []);
-      setUsers(userRes.data || []);
+      const data = await response.json();
+      setOrders(data.orders || []);
+      setProducts(data.products || []);
+      setUsers(data.users || []);
     } catch (error) {
       console.error("Dashboard Sync Error:", error);
       toast.error(
@@ -107,6 +97,7 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   };
+
 
   if (!isAdmin) {
     return (
@@ -346,7 +337,7 @@ export default function AdminDashboard() {
           </div>
 
           <div
-            className={`flex items-center gap-2 backdrop-blur-md p-1.5 rounded-2xl border shadow-sm ${
+            className={`flex items-center gap-1 lg:gap-2 backdrop-blur-md p-1 lg:p-1.5 rounded-2xl border shadow-sm overflow-x-auto lg:overflow-x-visible no-scrollbar w-full lg:w-auto ${
               theme === "dark"
                 ? "bg-white/5 border-white/10"
                 : "bg-white/50 border-brown-100"
@@ -378,7 +369,7 @@ export default function AdminDashboard() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-black transition-all ${
+                className={`flex items-center gap-2 px-4 lg:px-6 py-2.5 lg:py-3 rounded-xl text-[10px] lg:text-xs font-black transition-all shrink-0 ${
                   activeTab === tab.id
                     ? "bg-primary text-white shadow-xl scale-105"
                     : "text-brown-400 hover:text-primary"
@@ -396,7 +387,7 @@ export default function AdminDashboard() {
             animate={{ opacity: 1 }}
             className="space-y-12"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
               {[
                 {
                   l: "Daily Revenue",
@@ -425,23 +416,23 @@ export default function AdminDashboard() {
               ].map((stat, i) => (
                 <div
                   key={i}
-                  className={`p-6 rounded-[2rem] border shadow-sm flex items-center gap-5 group hover:shadow-lg transition-all ${
+                  className={`p-4 lg:p-6 rounded-2xl lg:rounded-[2rem] border shadow-sm flex items-center gap-4 lg:gap-5 group hover:shadow-lg transition-all ${
                     theme === "dark"
                       ? "bg-[#1A1110] border-white/5"
                       : "bg-white border-brown-50"
                   }`}
                 >
                   <div
-                    className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg ${stat.c}`}
+                    className={`w-12 h-12 lg:w-14 lg:h-14 rounded-xl lg:rounded-2xl flex items-center justify-center text-white shadow-lg ${stat.c}`}
                   >
                     {stat.i}
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-brown-300 uppercase tracking-widest mb-1">
+                    <p className="text-[9px] lg:text-[10px] font-black text-brown-300 uppercase tracking-widest mb-0.5 lg:mb-1">
                       {stat.l}
                     </p>
                     <p
-                      className={`text-2xl font-black ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                      className={`text-xl lg:text-2xl font-black ${theme === "dark" ? "text-secondary" : "text-primary"}`}
                     >
                       {stat.v}
                     </p>
@@ -553,10 +544,10 @@ export default function AdminDashboard() {
             </div>
 
             <div
-              className={`rounded-[3rem] shadow-luxury border overflow-hidden ${theme === "dark" ? "bg-[#1A1110] border-white/5" : "bg-white border-brown-100"}`}
+              className={`rounded-2xl lg:rounded-[3rem] shadow-luxury border overflow-hidden ${theme === "dark" ? "bg-[#1A1110] border-white/5" : "bg-white border-brown-100"}`}
             >
-              <div className="overflow-x-auto">
-                <table className="w-full">
+              <div className="overflow-x-auto artisan-scrollbar">
+                <table className="w-full text-left min-w-[900px] lg:min-w-0">
                   <thead>
                     <tr
                       className={`text-left text-[10px] font-black text-brown-400 uppercase tracking-[0.2em] border-b ${theme === "dark" ? "bg-white/5 border-white/5" : "bg-secondary/30 border-brown-50"}`}
@@ -736,7 +727,7 @@ export default function AdminDashboard() {
             <div className="grid lg:grid-cols-3 gap-8">
               {/* Main Revenue Chart */}
               <div
-                className={`lg:col-span-2 p-10 rounded-[3rem] border shadow-luxury h-[550px] flex flex-col relative overflow-hidden group ${
+                className={`lg:col-span-2 p-4 lg:p-10 rounded-2xl lg:rounded-[3rem] border shadow-luxury h-[400px] lg:h-[550px] flex flex-col relative overflow-hidden group ${
                   theme === "dark"
                     ? "bg-[#1A1110] border-white/5"
                     : "bg-white border-brown-100"
@@ -745,7 +736,7 @@ export default function AdminDashboard() {
                 <div className="flex items-center justify-between mb-8 z-10">
                   <div>
                     <h3
-                      className={`text-sm font-black uppercase tracking-[0.2em] flex items-center gap-3 ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                      className={`text-[10px] lg:text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2 lg:gap-3 ${theme === "dark" ? "text-secondary" : "text-primary"}`}
                     >
                       <span className="p-2 bg-accent/10 rounded-lg text-accent">
                         <HiOutlinePresentationChartLine />
@@ -774,7 +765,7 @@ export default function AdminDashboard() {
                     ))}
                   </div>
                 </div>
-                <div className="flex-1 z-10 font-black min-h-[350px]">
+                <div className="flex-1 z-10 font-black min-h-[250px] lg:min-h-[350px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
                       data={

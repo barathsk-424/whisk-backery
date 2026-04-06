@@ -88,40 +88,40 @@ export default function Navbar() {
         </div>
 
         {/* Nav Links */}
-        <div className="flex items-center gap-8 flex-wrap justify-center font-black text-[14px] tracking-[0.2em]">
+        <div className="flex items-center gap-4 lg:gap-8 overflow-x-auto lg:overflow-x-visible no-scrollbar pb-2 lg:pb-0 font-black text-[11px] lg:text-[14px] tracking-[0.1em] lg:tracking-[0.2em] w-full lg:w-auto justify-start lg:justify-center">
           <button
             onClick={() => navigate("/")}
-            className="hover:text-accent transition-all hover:scale-105"
+            className="hover:text-accent transition-all hover:scale-105 shrink-0"
           >
             Home
           </button>
           <button
             onClick={() => navigate("/menu")}
-            className="hover:text-accent transition-all hover:scale-105"
+            className="hover:text-accent transition-all hover:scale-105 shrink-0"
           >
             Menu
           </button>
           <button
             onClick={() => navigate("/cake-builder")}
-            className="hover:text-accent transition-all hover:scale-105"
+            className="hover:text-accent transition-all hover:scale-105 shrink-0"
           >
-            Cake Builder
+            Builder
           </button>
           <button
             onClick={() => navigate("/bundles")}
-            className="hover:text-accent transition-all hover:scale-105"
+            className="hover:text-accent transition-all hover:scale-105 shrink-0"
           >
             Bundles
           </button>
           <button
             onClick={() => navigate("/track-orders")}
-            className="hover:text-accent transition-all hover:scale-105"
+            className="hover:text-accent transition-all hover:scale-105 shrink-0"
           >
             Tracking
           </button>
           <button
             onClick={() => navigate("/contact")}
-            className="hover:text-accent transition-all hover:scale-105"
+            className="hover:text-accent transition-all hover:scale-105 shrink-0"
           >
             Contact
           </button>

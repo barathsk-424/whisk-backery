@@ -58,20 +58,20 @@ export default function MenuPage() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-8 p-6 bg-accent/5 border border-accent/20 rounded-2xl flex flex-col md:flex-row items-center gap-6"
+            className="mb-8 p-4 lg:p-6 bg-accent/5 border border-accent/20 rounded-2xl flex flex-col md:flex-row items-center gap-4 lg:gap-6"
           >
             <div className="flex-1 text-center md:text-left">
-              <span className="px-3 py-1 bg-accent text-white text-[10px] font-black rounded-full uppercase tracking-tighter mb-2 inline-block">Featured Choice</span>
-              <h2 className="font-heading text-2xl font-black text-primary mb-2 line-clamp-1 truncate">{filtered[0].name}</h2>
-              <p className="text-sm text-brown-400 mb-4 line-clamp-2">{filtered[0].description}</p>
+              <span className="px-3 py-1 bg-accent text-white text-[9px] lg:text-[10px] font-black rounded-full uppercase tracking-tighter mb-2 inline-block">Featured Choice</span>
+              <h2 className="font-heading text-lg lg:text-2xl font-black text-primary mb-1 lg:mb-2 line-clamp-1 truncate">{filtered[0].name}</h2>
+              <p className="text-[10px] lg:text-sm text-brown-400 mb-3 lg:mb-4 line-clamp-2">{filtered[0].description}</p>
               <button 
                 onClick={() => navigate(`/product/${filtered[0].id}`)}
-                className="px-6 py-2 bg-primary text-secondary text-xs font-bold rounded-xl hover:bg-accent transition-all shadow-md"
+                className="px-4 lg:px-6 py-1.5 lg:py-2 bg-primary text-secondary text-[10px] lg:text-xs font-bold rounded-xl hover:bg-accent transition-all shadow-md"
               >
                 Inspect Artifact Details →
               </button>
             </div>
-            <div className="w-full md:w-48 h-32 rounded-xl overflow-hidden shadow-lg border-2 border-white">
+            <div className="w-full md:w-48 h-24 lg:h-32 rounded-xl overflow-hidden shadow-lg border-2 border-white shrink-0">
               <img src={filtered[0].image_url} alt="Featured" className="w-full h-full object-cover" />
             </div>
           </motion.div>
@@ -175,7 +175,7 @@ export default function MenuPage() {
             <p className="text-brown-400 text-sm">Try adjusting your search or filters</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-6">
             {filtered.map((product, i) => (
               <ProductCard key={product.id} product={product} index={i} />
             ))}

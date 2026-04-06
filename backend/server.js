@@ -64,6 +64,28 @@ const isValidEmail = (email) => {
   return { valid: true };
 };
 
+// ─── AUTHENTICATION MIDDLEWARE ──────────────────────────────────
+const authenticate = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ message: "No token provided" });
+
+  const token = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid or expired session token" });
+  }
+};
+
+const adminOnly = (req, res, next) => {
+  authenticate(req, res, () => {
+    if (req.user && req.user.role === "admin") next();
+    else res.status(403).json({ message: "Admin clearance required" });
+  });
+};
+
 // ─── Route Registration ──────────────────────────────────────────
 const productRoutes = require("./routes/products");
 const invoiceRoutes = require("./routes/invoices");
@@ -232,6 +254,95 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// ─── FINANCE TRANSACTIONS ─────────────────────────────────────────
+app.get("/api/transactions", authenticate, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("transactions")
+      .select("*")
+      .order("date", { ascending: false });
+    
+    if (error) throw error;
+    
+    // Filter by user email if not admin
+    const filtered = req.user.role === "admin" 
+      ? data 
+      : data.filter(t => t.user_email === req.user.email || !t.user_id); // Fallback logic
+      
+    res.json(filtered);
+  } catch (err) {
+    res.status(500).json({ message: "Finance ledger unreachable." });
+  }
+});
+
+app.post("/api/transactions", authenticate, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("transactions")
+      .insert([{ ...req.body, user_email: req.user.email }])
+      .select()
+      .single();
+    if (error) throw error;
+    res.status(201).json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to record transaction." });
+  }
+});
+
+app.put("/api/transactions/:id", authenticate, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("transactions")
+      .update(req.body)
+      .eq("id", req.params.id)
+      .select()
+      .single();
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to calibrate transaction record." });
+  }
+});
+
+app.delete("/api/transactions/:id", authenticate, async (req, res) => {
+  try {
+    const { error } = await supabase
+      .from("transactions")
+      .delete()
+      .eq("id", req.params.id);
+    if (error) throw error;
+    res.json({ message: "Artisan record purged." });
+  } catch (err) {
+    res.status(500).json({ message: "Purge sequence failed." });
+  }
+});
+
+
+// ─── ADMIN DASHBOARD DATA (Bypassing RLS via Backend Logic) ───────────────
+
+app.get("/api/admin-dashboard", adminOnly, async (req, res) => {
+  try {
+    const [orders, products, users] = await Promise.all([
+      supabase.from("orders").select("*").order("created_at", { ascending: false }),
+      supabase.from("products").select("*").order("created_at", { ascending: false }),
+      supabase.from("users").select("*").order("created_at", { ascending: false }),
+    ]);
+
+    if (orders.error) throw orders.error;
+    if (products.error) throw products.error;
+    if (users.error) throw users.error;
+
+    res.json({
+      orders: orders.data,
+      products: products.data,
+      users: users.data,
+    });
+  } catch (err) {
+    console.error("[ADMIN DASHBOARD ERROR]:", err.message);
+    res.status(500).json({ message: "Failed to bridge to vault core." });
+  }
+});
+
 // ─── FORGOT PASSWORD (REQUEST RECOVERY) ───────────────────
 app.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
@@ -337,6 +448,7 @@ app.get("/api/orders", async (req, res) => {
     res.status(500).json({ message: "Failed to bridge to Supabase." });
   }
 });
+
 
 // --- ERROR HANDLERS ---
 process.on('unhandledRejection', (reason, promise) => {

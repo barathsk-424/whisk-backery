@@ -91,21 +91,21 @@ const AdminInvoices = ({ theme }) => {
   return (
     <div className="space-y-8 p-1 font-body">
       {/* Header / Stats Overlay */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-brown-900 p-6 rounded-[2rem] border border-brown-100 dark:border-brown-800 shadow-xl"
+          className="bg-white dark:bg-brown-900 p-4 lg:p-6 rounded-2xl lg:rounded-[2rem] border border-brown-100 dark:border-brown-800 shadow-xl"
         >
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-accent/10 text-accent rounded-2xl">
-              <HiOutlineCurrencyRupee className="w-6 h-6" />
+          <div className="flex items-center gap-3 lg:gap-4 mb-3 lg:mb-4">
+            <div className="p-2 lg:p-3 bg-accent/10 text-accent rounded-xl lg:rounded-2xl">
+              <HiOutlineCurrencyRupee className="w-5 h-5 lg:w-6 lg:h-6" />
             </div>
-            <p className="text-xs font-black uppercase text-brown-400 tracking-widest">
+            <p className="text-[10px] lg:text-xs font-black uppercase text-brown-400 tracking-widest">
               Total Invoiced
             </p>
           </div>
-          <h3 className="text-3xl font-black text-primary dark:text-cream tracking-tighter">
+          <h3 className="text-2xl lg:text-3xl font-black text-primary dark:text-cream tracking-tighter">
             ₹{totalRevenue.toLocaleString()}
           </h3>
         </motion.div>
@@ -114,17 +114,17 @@ const AdminInvoices = ({ theme }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-brown-900 p-6 rounded-[2rem] border border-brown-100 dark:border-brown-800 shadow-xl"
+          className="bg-white dark:bg-brown-900 p-4 lg:p-6 rounded-2xl lg:rounded-[2rem] border border-brown-100 dark:border-brown-800 shadow-xl"
         >
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-success/10 text-success rounded-2xl">
-              <HiOutlineDocumentText className="w-6 h-6" />
+          <div className="flex items-center gap-3 lg:gap-4 mb-3 lg:mb-4">
+            <div className="p-2 lg:p-3 bg-success/10 text-success rounded-xl lg:rounded-2xl">
+              <HiOutlineDocumentText className="w-5 h-5 lg:w-6 lg:h-6" />
             </div>
-            <p className="text-xs font-black uppercase text-brown-400 tracking-widest">
+            <p className="text-[10px] lg:text-xs font-black uppercase text-brown-400 tracking-widest">
               GST Accumulation
             </p>
           </div>
-          <h3 className="text-3xl font-black text-primary dark:text-cream tracking-tighter">
+          <h3 className="text-2xl lg:text-3xl font-black text-primary dark:text-cream tracking-tighter">
             ₹{totalGst.toLocaleString()}
           </h3>
         </motion.div>
@@ -133,29 +133,29 @@ const AdminInvoices = ({ theme }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-primary text-white p-6 rounded-[2rem] shadow-xl relative overflow-hidden"
+          className="bg-primary text-white p-4 lg:p-6 rounded-2xl lg:rounded-[2rem] shadow-xl relative overflow-hidden sm:col-span-2 lg:col-span-1"
         >
           <div className="relative z-10">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="p-3 bg-white/10 rounded-2xl">
-                <HiOutlineFilter className="w-6 h-6" />
+            <div className="flex items-center gap-3 lg:gap-4 mb-3 lg:mb-4">
+              <div className="p-2 lg:p-3 bg-white/10 rounded-xl lg:rounded-2xl">
+                <HiOutlineFilter className="w-5 h-5 lg:w-6 lg:h-6" />
               </div>
-              <p className="text-xs font-black uppercase text-white/60 tracking-widest">
+              <p className="text-[10px] lg:text-xs font-black uppercase text-white/60 tracking-widest">
                 Archive Count
               </p>
             </div>
-            <h3 className="text-3xl font-black tracking-tighter">
+            <h3 className="text-2xl lg:text-3xl font-black tracking-tighter">
               {filteredInvoices.length} Verified Entries
             </h3>
           </div>
-          <div className="absolute -right-4 -bottom-4 text-white/5 text-8xl font-black italic">
+          <div className="absolute -right-4 -bottom-4 text-white/5 text-6xl lg:text-8xl font-black italic">
             FIN
           </div>
         </motion.div>
       </div>
 
       {/* Controls */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-brown-900 p-4 rounded-[2rem] border border-brown-100 dark:border-brown-800 shadow-lg no-print">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-brown-900 p-3 lg:p-4 rounded-xl lg:rounded-[2rem] border border-brown-100 dark:border-brown-800 shadow-lg no-print">
         <div className="relative flex-1 w-full">
           <HiOutlineSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-brown-400" />
           <input
@@ -163,38 +163,38 @@ const AdminInvoices = ({ theme }) => {
             placeholder="Search Invoice ID, Order ID or Consignee..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-brown-50 dark:bg-brown-800 rounded-xl text-sm font-bold text-primary dark:text-cream outline-none border border-transparent focus:border-accent transition-all"
+            className="w-full pl-11 lg:pl-12 pr-4 py-2.5 lg:py-3 bg-brown-50 dark:bg-brown-800 rounded-xl text-xs lg:text-sm font-bold text-primary dark:text-cream outline-none border border-transparent focus:border-accent transition-all"
           />
         </div>
-        <div className="flex gap-4 w-full md:w-auto">
+        <div className="flex gap-2 lg:gap-4 w-full md:w-auto">
           <input
             type="date"
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="flex-1 md:flex-none px-4 py-3 bg-brown-50 dark:bg-brown-800 rounded-xl text-sm font-bold text-primary dark:text-cream outline-none border border-transparent focus:border-accent"
+            className="flex-1 md:flex-none px-3 lg:px-4 py-2.5 lg:py-3 bg-brown-50 dark:bg-brown-800 rounded-xl text-xs lg:text-sm font-bold text-primary dark:text-cream outline-none border border-transparent focus:border-accent"
           />
           <button
             onClick={fetchInvoices}
-            className="p-3 bg-accent text-white rounded-xl shadow-lg shadow-accent/20 hover:scale-105 active:scale-95 transition-all"
+            className="p-2.5 lg:p-3 bg-accent text-white rounded-xl shadow-lg shadow-accent/20 hover:scale-105 active:scale-95 transition-all"
           >
             <HiOutlineRefresh
-              className={`w-5 h-5 ${loading ? "animate-spin" : ""}`}
+              className={`w-4 h-4 lg:w-5 lg:h-5 ${loading ? "animate-spin" : ""}`}
             />
           </button>
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-white dark:bg-brown-900 rounded-[2rem] border border-brown-100 dark:border-brown-800 shadow-xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
+      <div className="bg-white dark:bg-brown-900 rounded-xl lg:rounded-[2rem] border border-brown-100 dark:border-brown-800 shadow-xl overflow-hidden">
+        <div className="overflow-x-auto artisan-scrollbar">
+          <table className="w-full text-left min-w-[800px] lg:min-w-0">
             <thead>
-              <tr className="bg-brown-50 dark:bg-brown-800/50 text-[10px] font-black uppercase text-brown-400 tracking-[0.2em]">
-                <th className="px-6 py-5">Signal ID</th>
-                <th className="px-6 py-5">Consignee</th>
-                <th className="px-6 py-5">Fiscal Total</th>
-                <th className="px-6 py-5">Timestamp</th>
-                <th className="px-6 py-5 text-right">Actions</th>
+              <tr className="bg-brown-50 dark:bg-brown-800/50 text-[9px] lg:text-[10px] font-black uppercase text-brown-400 tracking-[0.1em] lg:tracking-[0.2em]">
+                <th className="px-4 lg:px-6 py-4 lg:py-5">Signal ID</th>
+                <th className="px-4 lg:px-6 py-4 lg:py-5">Consignee</th>
+                <th className="px-4 lg:px-6 py-4 lg:py-5">Fiscal Total</th>
+                <th className="px-4 lg:px-6 py-4 lg:py-5">Timestamp</th>
+                <th className="px-4 lg:px-6 py-4 lg:py-5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-brown-50 dark:divide-brown-800">
