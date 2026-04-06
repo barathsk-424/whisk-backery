@@ -65,17 +65,18 @@ export default function TrackOrdersPage() {
         )
         .subscribe(async (status) => {
           console.log("Channel Status Sync:", status);
-          // Dynamic State Awareness
           const linkStatus = document.getElementById("signal-status");
           const linkDot = document.getElementById("signal-dot");
           if (linkStatus && linkDot) {
             if (status === "SUBSCRIBED") {
               linkStatus.innerText = "BROADCASTING LIVE";
-              linkDot.className =
-                "w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse";
+              linkDot.className = "w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse";
+            } else if (status === "CLOSED" || status === "CHANNEL_ERROR") {
+              linkStatus.innerText = "POLLING MODE (LIVE SILENT)";
+              linkDot.className = "w-1.5 h-1.5 bg-red-400 rounded-full";
             } else {
               linkStatus.innerText = "WAITING FOR SIGNAL...";
-              linkDot.className = "w-1.5 h-1.5 bg-orange-400 rounded-full";
+              linkDot.className = "w-1.5 h-1.5 bg-orange-400 rounded-full animate-bounce";
             }
           }
         });
@@ -243,7 +244,7 @@ export default function TrackOrdersPage() {
                 </button>
               </div>
             ) : (
-              orders.map((order) => {
+              orders.filter(o => o && o.id).map((order) => {
                 const style = statusStyle(order.status);
                 const orderItems = order.items || [];
                 const isActive = selectedOrder?.id === order.id;
@@ -289,7 +290,7 @@ export default function TrackOrdersPage() {
                         <p
                           className={`text-sm font-black ${theme === "dark" ? "text-white" : "text-primary"}`}
                         >
-                          ₹{order.total_price?.toLocaleString()}
+                          ₹{Number(order.total_price || 0).toLocaleString()}
                         </p>
                       </div>
                       <div>

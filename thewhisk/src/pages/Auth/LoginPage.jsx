@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import useStore from "../../store/useStore";
 import toast from "react-hot-toast";
 
-const API_URL =
-  import.meta.env.VITE_API_URL || "https://whisk-backery.onrender.com";
+import { API_URL } from "../../config";
 
 export default function LoginPage() {
   const navigate = useNavigate();

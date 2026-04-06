@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { supabase } from "../lib/supabase";
 import toast from "react-hot-toast";
 import { getOrdersAPI } from "../lib/orderApi";
+import { API_URL } from "../config";
 
 const useStore = create((set, get) => ({
   // ─── INITIAL STATES ─────────────────
@@ -293,8 +294,7 @@ const useStore = create((set, get) => ({
       );
 
       // SIGNAL INVOICE GENERATION (FIRE & FORGET)
-      const apiUrl = import.meta.env.VITE_API_URL || "https://whisk-backery.onrender.com";
-      fetch(`${apiUrl}/api/invoices/generate`, {
+      fetch(`${API_URL}/api/invoices/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

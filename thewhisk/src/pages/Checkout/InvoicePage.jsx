@@ -145,7 +145,7 @@ const InvoicePage = () => {
         </div>
 
         {/* PHYSICAL INVOICE CONTAINER */}
-        <div className="bg-white shadow-[0_40px_100px_rgba(0,0,0,0.06)] rounded-[3rem] border border-brown-100/50 p-12 md:p-20 relative overflow-hidden print:shadow-none print:border-none print:p-0">
+        <div className="bg-white shadow-[0_40px_100px_rgba(0,0,0,0.06)] rounded-[2rem] md:rounded-[3rem] border border-brown-100/50 p-6 md:p-20 relative overflow-hidden print:shadow-none print:border-none print:p-0">
              
              {/* Large Watermark Background */}
              <div className="absolute top-12 right-12 text-[120px] font-black text-[#F4F1ED]/40 tracking-[-0.05em] uppercase pointer-events-none select-none z-0">
@@ -153,13 +153,13 @@ const InvoicePage = () => {
              </div>
 
              {/* Header Section */}
-             <div className="relative z-10 flex flex-col md:flex-row justify-between items-start gap-12 mb-20">
+             <div className="relative z-10 flex flex-col md:flex-row justify-between items-start gap-8 md:gap-12 mb-12 md:mb-20">
                 <div className="flex items-start gap-8">
                     <div className="w-24 h-24 bg-[#FFFBF0] rounded-3xl p-3 shadow-sm border border-brown-50 shrink-0">
                         <img src="/logo.png" alt="Cupcake Logo" className="w-full h-full object-contain" />
                     </div>
                     <div>
-                        <h2 className="text-4xl font-black text-[#4A2A1A] tracking-[-0.04em] uppercase leading-[0.9]">
+                        <h2 className="text-2xl md:text-4xl font-black text-[#4A2A1A] tracking-[-0.04em] uppercase leading-[0.9]">
                             THE WHISK<br/><span className="text-[#A67C52]">BAKERY</span>
                         </h2>
                         <div className="mt-6 space-y-1 text-[10px] font-bold text-[#A67C52] uppercase tracking-[0.1em]">
@@ -193,14 +193,14 @@ const InvoicePage = () => {
              <div className="w-full h-[1px] bg-[#F4F1ED] mb-20"></div>
 
              {/* Consignee & Coordinates Grid */}
-             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-20 mb-28">
+             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 mb-16 md:mb-28">
                 {/* Billing Card */}
                 <div className="bg-[#FAF9F6] rounded-[2.5rem] p-10 border border-[#F0E6D9]/50 relative">
                     <div className="absolute top-6 left-10">
                         <span className="text-[9px] font-black text-[#FF6B35] uppercase tracking-[0.4em] bg-white px-3 py-1 rounded-full shadow-sm">Billed to Consignee</span>
                     </div>
-                    <div className="mt-10">
-                        <p className="text-3xl font-black text-[#4A2A1A] tracking-tighter uppercase mb-2">{invoice?.customer_name || order.customer_name || 'Artisan Guest'}</p>
+                    <div className="mt-8 md:mt-10">
+                        <p className="text-2xl md:text-3xl font-black text-[#4A2A1A] tracking-tighter uppercase mb-2">{invoice?.customer_name || order.customer_name || 'Artisan Guest'}</p>
                         <p className="text-sm font-bold text-brown-400 lowercase mb-8">{invoice?.customer_email || order.user_email || 'Signal Lost'}</p>
                         <div className="flex items-center gap-3">
                             <span className="text-[9px] font-black text-brown-300 uppercase tracking-widest">Terminal:</span>
@@ -259,7 +259,7 @@ const InvoicePage = () => {
              </div>
 
              {/* Settlement Summary */}
-             <div className="relative z-10 flex flex-col md:flex-row justify-between items-start gap-12 bg-[#FAF9F6]/30 p-12 rounded-[3.5rem] border border-brown-50 border-dashed">
+             <div className="relative z-10 flex flex-col md:flex-row justify-between items-start gap-8 md:gap-12 bg-[#FAF9F6]/30 p-6 md:p-12 rounded-[2rem] md:rounded-[3.5rem] border border-brown-50 border-dashed">
                 <div className="max-w-xs opacity-40">
                     <p className="text-[9px] font-bold text-brown-400 leading-relaxed uppercase tracking-tighter">
                         This digital signal serves as a formal treaty between The Whisk Bakery and the consignee. All artisanal calibrations are final upon acquisition.
@@ -287,7 +287,7 @@ const InvoicePage = () => {
                         </div>
                         <div className="text-right">
                              <p className="text-5xl font-black text-[#4A2A1A] tracking-tighter leading-none flex items-center justify-end gap-3">
-                                <span className="text-xl">Rs.</span> {order.total_price || order.amount || 0}
+                                 <span className="text-lg md:text-xl">Rs.</span> {order.total_price || order.amount || 0}
                              </p>
                         </div>
                     </div>
@@ -295,8 +295,8 @@ const InvoicePage = () => {
              </div>
 
              {/* Premium Footer area */}
-             <div className="relative z-10 mt-32 pt-16 border-t border-[#F4F1ED] flex flex-col items-center">
-                 <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-[180px] font-black text-[#F4F1ED]/20 uppercase tracking-tighter pointer-events-none select-none -z-10">
+             <div className="relative z-10 mt-16 md:mt-32 pt-8 md:pt-16 border-t border-[#F4F1ED] flex flex-col items-center">
+                 <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-[80px] md:text-[180px] font-black text-[#F4F1ED]/20 uppercase tracking-tighter pointer-events-none select-none -z-10">
                     WHISK
                  </div>
 

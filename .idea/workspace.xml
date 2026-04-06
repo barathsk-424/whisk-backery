@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c4c30c10-7c7b-4658-91ef-4d8021826bfc" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/thewhisk/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/thewhisk/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thewhisk/src/components/layout/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/thewhisk/src/components/layout/Navbar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thewhisk/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/thewhisk/src/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thewhisk/src/pages/Checkout/InvoicePage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/thewhisk/src/pages/Checkout/InvoicePage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thewhisk/src/pages/Home/HomePage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/thewhisk/src/pages/Home/HomePage.jsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 4
+}]]></component>
+  <component name="ProjectId" id="3BzVodNhEIBaujdhllRHuaX0vp2" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c4c30c10-7c7b-4658-91ef-4d8021826bfc" name="Changes" comment="" />
+      <created>1775492064454</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1775492064454</updated>
+    </task>
+    <servers />
+  </component>
+</project>

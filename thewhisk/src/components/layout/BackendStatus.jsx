@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { checkBackendHealth } from '../../lib/orderApi';
 
 const BackendStatus = () => {
     const location = useLocation();
@@ -29,16 +30,9 @@ const BackendStatus = () => {
                 if (supabaseError) throw new Error('Supabase Off-Signal');
 
                 // 2. Check Backend API connectivity
-                const apiUrl = import.meta.env.VITE_API_URL || "https://whisk-backery.onrender.com";
-                let backendOk = false;
-                try {
-                    const res = await fetch(`${apiUrl}/api/products`);
-                    if (res.ok) backendOk = true;
-                } catch (e) {
-                    console.warn('[BackendStatus] API Link Broken');
-                }
-
-                if (backendOk) {
+                const backendOk = await checkBackendHealth();
+                
+                if (backendOk.online) {
                     setStatus('✅ ALL SYSTEMS ONLINE');
                     setDotColor('#10B981'); // Green
                 } else {

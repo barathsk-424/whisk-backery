@@ -11,7 +11,9 @@ import {
   HiOutlineSun,
   HiOutlineMoon,
   HiOutlineLogin,
+  HiArrowRight,
 } from "react-icons/hi";
+import { motion, AnimatePresence } from "framer-motion";
 import CakeScanner from "../scanner/CakeScanner";
 
 export default function Navbar() {
@@ -27,6 +29,7 @@ export default function Navbar() {
   } = useStore();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -63,32 +66,22 @@ export default function Navbar() {
             </div>
           </a>
 
-          <div className="flex items-center gap-4 lg:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <button
-              onClick={() => setIsScannerOpen(true)}
-              className={`p-2 rounded-full transition-all ${theme === "dark" ? "bg-white/5 text-white" : "bg-secondary text-primary"}`}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={`p-2 rounded-xl transition-all ${theme === "dark" ? "text-white hover:bg-white/5" : "text-primary hover:bg-secondary"}`}
             >
-              <HiOutlineCamera className="text-xl" />
-            </button>
-            <button onClick={() => toggleTheme()} className="text-xl">
-              {theme === "dark" ? <HiOutlineSun /> : <HiOutlineMoon />}
-            </button>
-            <button
-              onClick={() => navigate("/cart")}
-              className="relative text-xl"
-            >
-              <HiOutlineShoppingCart />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-accent text-white text-[8px] h-3.5 w-3.5 rounded-full flex items-center justify-center font-bold">
-                  {cartCount}
-                </span>
-              )}
+              <div className="w-5 h-5 flex flex-col justify-center gap-1">
+                <span className={`h-0.5 bg-current transition-all ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
+                <span className={`h-0.5 bg-current transition-all ${isMobileMenuOpen ? 'opacity-0' : ''}`}></span>
+                <span className={`h-0.5 bg-current transition-all ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+              </div>
             </button>
           </div>
         </div>
 
-        {/* Nav Links */}
-        <div className="flex items-center gap-4 lg:gap-8 overflow-x-auto lg:overflow-x-visible no-scrollbar pb-2 lg:pb-0 font-black text-[11px] lg:text-[14px] tracking-[0.1em] lg:tracking-[0.2em] w-full lg:w-auto justify-start lg:justify-center">
+        {/* Desktop Nav Links */}
+        <div className="hidden lg:flex items-center gap-8 font-black text-[14px] tracking-[0.2em] justify-center">
           <button
             onClick={() => navigate("/")}
             className="hover:text-accent transition-all hover:scale-105 shrink-0"
@@ -127,7 +120,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        <div className="flex items-center gap-4 py-1">
+        <div className="hidden lg:flex items-center gap-4 py-1">
           {/* Search Bar */}
           <div
             className={`relative flex items-center transition-all duration-500 overflow-hidden ${isSearchOpen ? "w-48 lg:w-64" : "w-10"}`}
@@ -236,6 +229,99 @@ export default function Navbar() {
             </button>
           )}
         </div>
+
+        {/* Mobile menu overlay */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className={`lg:hidden fixed inset-x-0 top-[76px] p-6 shadow-2xl border-b z-[9998] flex flex-col gap-6 ${
+                theme === "dark" ? "bg-[#1A1110] border-white/5" : "bg-white border-brown-50"
+              }`}
+            >
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  onClick={() => { navigate("/"); setIsMobileMenuOpen(false); }}
+                  className="p-4 bg-brown-50 dark:bg-white/5 rounded-2xl text-left"
+                >
+                  <p className="text-[10px] font-black uppercase tracking-widest text-brown-400 mb-1">Vault</p>
+                  <p className="text-sm font-black uppercase">Home</p>
+                </button>
+                <button
+                  onClick={() => { navigate("/menu"); setIsMobileMenuOpen(false); }}
+                  className="p-4 bg-brown-50 dark:bg-white/5 rounded-2xl text-left"
+                >
+                  <p className="text-[10px] font-black uppercase tracking-widest text-brown-400 mb-1">Archive</p>
+                  <p className="text-sm font-black uppercase">Menu</p>
+                </button>
+                <button
+                  onClick={() => { navigate("/cake-builder"); setIsMobileMenuOpen(false); }}
+                  className="p-4 bg-brown-50 dark:bg-white/5 rounded-2xl text-left"
+                >
+                  <p className="text-[10px] font-black uppercase tracking-widest text-brown-400 mb-1">Lab</p>
+                  <p className="text-sm font-black uppercase">Builder</p>
+                </button>
+                <button
+                  onClick={() => { navigate("/track-orders"); setIsMobileMenuOpen(false); }}
+                  className="p-4 bg-brown-50 dark:bg-white/5 rounded-2xl text-left"
+                >
+                  <p className="text-[10px] font-black uppercase tracking-widest text-brown-400 mb-1">Radar</p>
+                  <p className="text-sm font-black uppercase">Tracking</p>
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-accent/5 rounded-2xl">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-accent text-white rounded-lg">
+                    <HiOutlineShoppingCart className="text-lg" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-black uppercase">My Cart</p>
+                    <p className="text-[10px] font-bold text-accent uppercase">{cartCount} items</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => { navigate("/cart"); setIsMobileMenuOpen(false); }}
+                  className="px-6 py-2 bg-accent text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-accent/20"
+                >
+                  Open
+                </button>
+              </div>
+
+              <div className="flex gap-4">
+                <button
+                  onClick={() => { setIsScannerOpen(true); setIsMobileMenuOpen(false); }}
+                  className="flex-1 flex items-center justify-center gap-2 p-4 bg-brown-50 dark:bg-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest"
+                >
+                  <HiOutlineCamera className="text-lg" />
+                  Scanner
+                </button>
+                <button
+                  onClick={() => { toggleTheme(); }}
+                  className="flex-1 flex items-center justify-center gap-2 p-4 bg-brown-50 dark:bg-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest"
+                >
+                  {theme === "dark" ? <HiOutlineSun className="text-lg" /> : <HiOutlineMoon className="text-lg" />}
+                  Theme
+                </button>
+              </div>
+
+              {isAuthenticated && (
+                <button
+                  onClick={() => { navigate("/profile"); setIsMobileMenuOpen(false); }}
+                  className="p-4 bg-primary text-white rounded-2xl flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-3">
+                    <HiOutlineUserCircle className="text-2xl" />
+                    <span className="text-[11px] font-black uppercase tracking-widest">Operator Profile</span>
+                  </div>
+                  <HiArrowRight />
+                </button>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Global Scanner Instance */}

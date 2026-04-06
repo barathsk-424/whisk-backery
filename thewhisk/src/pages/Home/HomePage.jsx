@@ -51,7 +51,7 @@ export default function HomePage() {
                     AI-Powered Bakery Experience
                   </motion.div>
 
-                  <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-secondary leading-tight mb-6">
+                  <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold text-secondary leading-tight mb-6">
                     Crafted with{' '}
                     <span className="text-gradient">Love,</span>
                     <br />
@@ -84,32 +84,32 @@ export default function HomePage() {
                   </div>
 
                   {/* CTA Buttons */}
-                  <div className="flex flex-wrap gap-4">
+                  <div className="flex flex-col sm:flex-row gap-4">
                     <Link
                       to="/cake-builder"
-                      className="group flex items-center gap-2 px-8 py-3.5 gradient-accent text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-accent/30"
+                      className="group flex items-center justify-center gap-2 px-8 py-3.5 gradient-accent text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-accent/30"
                     >
                       🎨 Build Your Cake
                       <HiArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Link>
                     <Link
                       to="/menu"
-                      className="flex items-center gap-2 px-8 py-3.5 bg-white/10 border border-white/20 text-secondary font-semibold rounded-xl hover:bg-white/20 transition-all"
+                      className="flex items-center justify-center gap-2 px-8 py-3.5 bg-white/10 border border-white/20 text-secondary font-semibold rounded-xl hover:bg-white/20 transition-all"
                     >
                       Explore Menu
                     </Link>
                   </div>
 
                   {/* Stats */}
-                  <div className="flex items-center gap-8 mt-10">
+                  <div className="grid grid-cols-3 gap-4 mt-10 max-w-sm">
                     {[
                       { value: '10K+', label: 'Happy Customers' },
-                      { value: '500+', label: 'Cake Designs' },
+                      { value: '500+', label: 'Designs' },
                       { value: '4.9★', label: 'Rating' },
                     ].map((stat) => (
                       <div key={stat.label}>
-                        <p className="font-heading font-bold text-xl text-accent">{stat.value}</p>
-                        <p className="text-xs text-brown-400">{stat.label}</p>
+                        <p className="font-heading font-bold text-lg sm:text-xl text-accent">{stat.value}</p>
+                        <p className="text-[10px] text-brown-400">{stat.label}</p>
                       </div>
                     ))}
                   </div>

@@ -12,6 +12,7 @@ import {
 } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { API_URL } from "../../config";
 
 const AdminInvoices = ({ theme }) => {
   const navigate = useNavigate();
@@ -25,8 +26,7 @@ const AdminInvoices = ({ theme }) => {
   const fetchInvoices = async () => {
     setLoading(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "https://whisk-backery.onrender.com";
-      const response = await fetch(`${apiUrl}/api/invoices/all`);
+      const response = await fetch(`${API_URL}/api/invoices/all`);
       const data = await response.json();
       if (data.success) {
         setInvoices(data.invoices);
@@ -47,8 +47,7 @@ const AdminInvoices = ({ theme }) => {
     e.preventDefault();
     const id = editingInvoice.id;
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "https://whisk-backery.onrender.com";
-      const response = await fetch(`${apiUrl}/api/invoices/${id}`, {
+      const response = await fetch(`${API_URL}/api/invoices/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editingInvoice),

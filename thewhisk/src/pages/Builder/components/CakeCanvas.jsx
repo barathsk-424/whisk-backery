@@ -5,12 +5,14 @@ import * as THREE from 'three';
 import CakeModel from './CakeModel';
 import useCakeStore from '../../../store/useCakeStore';
 
-// ─── SUPPRESS THREE.JS DEP WARNINGS ───────────
+// ─── SUPPRESS THREE.JS & CHART DEP WARNINGS ───────────
 const originalWarn = console.warn;
 console.warn = (...args) => {
   if (args[0] && typeof args[0] === 'string' && 
      (args[0].includes('THREE.Clock') || 
-      args[0].includes('PCFSoftShadowMap'))) return;
+      args[0].includes('PCFSoftShadowMap') ||
+      args[0].includes('width(-1)') || 
+      args[0].includes('height(-1)'))) return;
   originalWarn(...args);
 };
 

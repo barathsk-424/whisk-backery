@@ -38,6 +38,7 @@ import {
 } from "recharts";
 import useStore from "../../store/useStore";
 import toast from "react-hot-toast";
+import { API_URL } from "../../config";
 
 const COLORS = [
   "#FF4D6D",
@@ -75,12 +76,28 @@ export default function AdminDashboard() {
       }
 
       // ─── FETCH CORE ANALYTICS VIA BACKEND (By-passing RLS) ───────
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
-      const response = await fetch(`${apiUrl}/api/admin-dashboard`, {
+      const response = await fetch(`${API_URL}/api/admin-dashboard`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
+      
+      // If unauthorized, clear token and redirect
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        useStore.setState({
+          token: null,
+          isAuthenticated: false,
+          isAdmin: false,
+          orders: [],
+          savedDesigns: [],
+          user: null,
+          profile: null
+        });
+        toast.success("Artisan session terminated.");
+        navigate("/login");
+        return;
+      }
 
       if (!response.ok) throw new Error("Intelligence Retrieval Failed");
 
@@ -88,8 +105,15 @@ export default function AdminDashboard() {
       setOrders(data.orders || []);
       setProducts(data.products || []);
       setUsers(data.users || []);
+      toast.success("Intelligence data synchronized.");
     } catch (error) {
       console.error("Dashboard Sync Error:", error);
+      if (error.status === 401) {
+        localStorage.removeItem("token");
+        useStore.getState().logout();
+        navigate("/login");
+        return;
+      }
       toast.error(
         "Dashboard Access Denied: " + (error.message || "Unknown error"),
       );
@@ -102,15 +126,22 @@ export default function AdminDashboard() {
   if (!isAdmin) {
     return (
       <div
-        className={`min-h-screen flex items-center justify-center ${theme === "dark" ? "bg-[#120B0B]" : "bg-secondary"}`}
+        className={`min-h-screen flex items-center justify-center transition-colors duration-500 ${theme === "dark" ? "bg-[#0D0807]" : "bg-secondary"}`}
       >
         <div
-          className={`text-center p-8 rounded-3xl shadow-xl ${theme === "dark" ? "bg-[#1A1110] text-secondary" : "bg-white text-primary"}`}
+          className={`text-center p-12 rounded-[2.5rem] shadow-2xl border transition-all ${theme === "dark" ? "bg-[#1A1110] border-white/5 text-secondary" : "bg-white border-brown-100 text-primary"}`}
         >
-          <h2 className="text-2xl font-black">Access Denied</h2>
-          <p className="mt-2 text-accent font-black uppercase text-[10px] tracking-widest">
-            Administrative clearance required.
+          <div className="w-20 h-20 bg-accent/10 rounded-3xl flex items-center justify-center mx-auto mb-6 text-4xl">🔒</div>
+          <h2 className="text-3xl font-black uppercase tracking-tighter">Access Denied</h2>
+          <p className="mt-4 text-accent font-black uppercase text-[10px] tracking-[0.4em]">
+            Administrative clearance required for protocol access.
           </p>
+          <button 
+            onClick={() => navigate("/")}
+            className="mt-8 px-10 py-4 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-transform"
+          >
+            Abort to Home
+          </button>
         </div>
       </div>
     );
@@ -118,6 +149,19 @@ export default function AdminDashboard() {
 
   // ── ADVANCED ANALYTICS ENGINE ────────────────────────────
   const analytics = useMemo(() => {
+    const defaultStats = {
+      dailyRev: 0,
+      dailySold: 0,
+      monthlySold: 0,
+      peakHour: "N/A",
+      revenueTrend: [],
+      categoryDistribution: [],
+      hourlyTrend: [],
+      orderDensity: [],
+      recentActivity: []
+    };
+
+    if (!orders || orders.length === 0) return defaultStats;
     const validOrders = orders.filter((o) => o.status !== "Cancelled");
     const now = new Date();
     const todayStr = now.toLocaleDateString("en-IN");
@@ -532,13 +576,23 @@ export default function AdminDashboard() {
               <div className="flex gap-3">
                 <button
                   onClick={fetchDashboardData}
-                  className={`px-5 py-2.5 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all ${
+                  disabled={loading}
+                  className={`px-5 py-2.5 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
+                    loading ? "opacity-50 cursor-not-allowed" : ""
+                  } ${
                     theme === "dark"
                       ? "bg-white/5 border-white/10 text-white"
                       : "bg-white border-brown-100 text-primary shadow-sm hover:shadow-md"
                   }`}
                 >
-                  Refresh Logs
+                  {loading ? (
+                    <>
+                      <div className="w-3 h-3 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                      Syncing...
+                    </>
+                  ) : (
+                    "Refresh Logs"
+                  )}
                 </button>
               </div>
             </div>
@@ -744,7 +798,7 @@ export default function AdminDashboard() {
                       Trajectory Synthesis
                     </h3>
                     <p className="text-[10px] font-bold text-brown-400 uppercase mt-1">
-                      Revenue Stream Analysis v4.2
+                    Revenue Stream Analysis v4.2
                     </p>
                   </div>
                   <div className="flex gap-2">
@@ -902,7 +956,7 @@ export default function AdminDashboard() {
                   </span>{" "}
                   Peak Acquisition Hours
                 </h3>
-                <div className="flex-1 min-h-[220px]">
+                <div className="h-[400px] w-full min-h-[400px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={analytics.hourlyTrend}>
                       <XAxis dataKey="hour" hide />
