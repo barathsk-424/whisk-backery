@@ -38,10 +38,10 @@
   }
 
   :root {
-    --primary: #4A2A1A;
-    --primary-light: #6B3F2A;
-    --primary-dark: #3A1E12;
-    --secondary: #FFF8E7;
+    --primary: #000000;
+    --primary-light: #222222;
+    --primary-dark: #000000;
+    --secondary: #FFFFFF;
     --secondary-dark: #F5E6C8;
     
     --fluid-32-64: clamp(2rem, 5vw + 1rem, 4rem);
@@ -51,18 +51,18 @@
 
   .dark {
     color-scheme: dark;
-    --primary: #FFF8E7;
-    --primary-light: #FFFFFF;
-    --primary-dark: #F5E6C8;
-    --secondary: #0A0807;
+    --primary: #FFFFFF;
+    --primary-light: #EEEEEE;
+    --primary-dark: #CCCCCC;
+    --secondary: #000000;
     --secondary-dark: #120C0B;
     
-    /* Lighter browns for better contrast against dark backgrounds */
-    --color-brown-50: #1A1211;
-    --color-brown-100: #2D1E1B;
-    --color-brown-200: #3E2B28;
-    --color-brown-300: #D9BFA1;
-    --color-brown-400: #F3E5D5;
+    /* Strict white for all brown variants in dark mode for maximum contrast */
+    --color-brown-50: #111111;
+    --color-brown-100: #222222;
+    --color-brown-200: #333333;
+    --color-brown-300: #EEEEEE;
+    --color-brown-400: #FFFFFF;
   }
 
   body {

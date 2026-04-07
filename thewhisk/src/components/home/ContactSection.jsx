@@ -77,7 +77,7 @@ export default function ContactSection() {
               transition={{ delay: i * 0.1 }}
               viewport={{ once: true }}
               whileHover={{ y: -8 }}
-              className="bg-white p-8 rounded-3xl shadow-sm border border-brown-100/50 text-center group"
+              className="bg-secondary p-8 rounded-3xl shadow-sm border border-brown-100/50 text-center group"
             >
               <div className="w-14 h-14 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-accent transition-all duration-300">
                 <item.icon className="w-6 h-6 text-accent group-hover:text-white transition-colors duration-300" />
@@ -96,7 +96,7 @@ export default function ContactSection() {
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="bg-white rounded-3xl p-8 shadow-sm border border-brown-100/50"
+            className="bg-secondary rounded-3xl p-8 shadow-sm border border-brown-100/50"
           >
             <h3 className="font-heading text-xl font-bold text-primary mb-6">Send us a Message</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -107,7 +107,7 @@ export default function ContactSection() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-brown-50 border border-transparent focus:border-accent focus:bg-white transition-all outline-none text-sm"
+                  className="w-full px-4 py-3 rounded-xl bg-brown-50 border border-transparent focus:border-accent focus:bg-secondary transition-all outline-none text-sm"
                 />
                 <input
                   type="email"
@@ -115,7 +115,7 @@ export default function ContactSection() {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-brown-50 border border-transparent focus:border-accent focus:bg-white transition-all outline-none text-sm"
+                  className="w-full px-4 py-3 rounded-xl bg-brown-50 border border-transparent focus:border-accent focus:bg-secondary transition-all outline-none text-sm"
                 />
               </div>
               <textarea
@@ -124,7 +124,7 @@ export default function ContactSection() {
                 rows={4}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-brown-50 border border-transparent focus:border-accent focus:bg-white transition-all outline-none text-sm resize-none"
+                className="w-full px-4 py-3 rounded-xl bg-brown-50 border border-transparent focus:border-accent focus:bg-secondary transition-all outline-none text-sm resize-none"
               />
               <button 
                 type="submit" 

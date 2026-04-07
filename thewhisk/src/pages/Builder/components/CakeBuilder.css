@@ -1,0 +1,481 @@
+/* ════════════════════════════════════════════
+   CakeBuilder.css — Premium 2-column layout
+   Supports: round | square | heart | rectangle
+════════════════════════════════════════════ */
+
+/* ── Layout container ───────────────────────── */
+.cb-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: #fff;
+}
+
+/* ── Sidebar ────────────────────────────────── */
+.cb-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255,255,255,0.1);
+  padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cb-sidebar-logo {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  color: #f7c59f;
+}
+
+.cb-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cb-nav-item {
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cb-nav-item:first-child {
+  background: rgba(247,197,159,0.2);
+  color: #f7c59f;
+  border: 1px solid rgba(247,197,159,0.3);
+}
+
+.cb-nav-item:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+/* ── Main content ───────────────────────────── */
+.cb-main {
+  flex: 1;
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  overflow-y: auto;
+}
+
+.cb-title {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 800;
+  background: linear-gradient(90deg, #f7c59f, #e07a5f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  margin: 0;
+}
+
+/* ── Live preview card ──────────────────────── */
+.cb-preview-wrapper {
+  position: relative;
+  width: min(460px, 90vw);
+  height: min(460px, 90vw);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 24px;
+  backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.cb-preview-label {
+  position: absolute;
+  top: 14px;
+  left: 18px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #f7c59f;
+  opacity: 0.8;
+}
+
+/* ── Shape selector grid ────────────────────── */
+.cb-shape-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  width: min(460px, 90vw);
+}
+
+.cb-shape-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.65);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(6px);
+}
+
+.cb-shape-btn:hover {
+  border-color: rgba(247,197,159,0.4);
+  color: #f7c59f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+.cb-shape-btn.active {
+  background: rgba(247,197,159,0.18);
+  border-color: #f7c59f;
+  color: #f7c59f;
+  box-shadow: 0 0 0 1px rgba(247,197,159,0.3), 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.cb-shape-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* ── Text input section ─────────────────────── */
+.cb-text-section {
+  width: min(460px, 90vw);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cb-text-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #f7c59f;
+  opacity: 0.85;
+}
+
+.cb-text-input {
+  width: 100%;
+  padding: 14px 22px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50px;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.cb-text-input::placeholder { color: rgba(255,255,255,0.3); }
+
+.cb-text-input:focus {
+  border-color: #f7c59f;
+  box-shadow: 0 0 0 3px rgba(247,197,159,0.15);
+}
+
+/* ── Action bar ─────────────────────────────── */
+.cb-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: min(460px, 90vw);
+}
+
+.cb-quote {
+  background: rgba(78,205,196,0.18);
+  border: 1px solid rgba(78,205,196,0.35);
+  color: #4ecdc4;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.cb-quote-price {
+  font-size: 1.1rem;
+  display: block;
+  color: #fff;
+}
+
+.cb-btn {
+  padding: 11px 20px;
+  border: none;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cb-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+}
+
+.cb-btn-archive { background: rgba(149,165,166,0.3); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.12); }
+.cb-btn-prev    { background: rgba(52,152,219,0.3);  color: #74b9ff; border: 1px solid rgba(116,185,255,0.3); }
+.cb-btn-next    { background: linear-gradient(135deg, #f7c59f, #e07a5f); color: #1a1a2e; border: none; }
+
+/* ════════════════════════════════════════════
+   CAKE COMPONENTS
+════════════════════════════════════════════ */
+
+/* Shared cake wrapper */
+.cake {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease;
+  cursor: grab;
+}
+
+.cake:hover { transform: scale(1.04); }
+
+/* Shared plate (shadow base) */
+.plate {
+  position: absolute;
+  bottom: -10px;
+  background: rgba(255,255,255,0.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+  z-index: 0;
+}
+
+/* ── Cake text overlay ──────────────────────── */
+.cake-text {
+  position: absolute;
+  /* position values injected via inline style per shape */
+  z-index: 10;
+  color: #fff;
+  font-size: clamp(14px, 4vw, 26px);
+  font-weight: 800;
+  font-style: italic;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 85%;
+  text-shadow:
+    0 2px 4px rgba(0,0,0,0.7),
+    0 0 12px rgba(0,0,0,0.4);
+  pointer-events: none;
+  /* Guarantee visibility */
+  display: block;
+  visibility: visible;
+  opacity: 1;
+}
+
+/* ── Round cake ─────────────────────────────── */
+.round-cake {
+  width: 220px;
+  height: 180px;
+}
+
+.round-plate {
+  width: 250px;
+  height: 24px;
+  border-radius: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -14px;
+}
+
+.round-layer {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.25);
+}
+
+/* Layers stacked bottom→top */
+.round-cake .layer-1 { width: 220px; height: 70px; bottom: 0;   background: linear-gradient(160deg, #ff8fa3, #e85d75); }
+.round-cake .layer-2 { width: 195px; height: 63px; bottom: 62px;background: linear-gradient(160deg, #ff6b88, #d63a5a); }
+.round-cake .layer-3 { width: 170px; height: 56px; bottom: 117px;background: linear-gradient(160deg, #ff8fa3, #e85d75); }
+
+/* ── Square cake ────────────────────────────── */
+.square-cake {
+  width: 220px;
+  height: 185px;
+}
+
+.square-layer {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.2);
+}
+
+.square-cake .layer-1 { width: 220px; height: 68px; bottom: 0;    background: linear-gradient(160deg, #a78bfa, #7c3aed); }
+.square-cake .layer-2 { width: 198px; height: 60px; bottom: 62px; background: linear-gradient(160deg, #8b5cf6, #6d28d9); }
+.square-cake .layer-3 { width: 176px; height: 54px; bottom: 116px;background: linear-gradient(160deg, #a78bfa, #7c3aed); }
+
+/* ── Heart cake ─────────────────────────────── */
+.heart-cake {
+  width: 240px;
+  height: 220px;
+  position: relative;
+}
+
+/*
+  Pure-CSS heart using a single div.
+  The heart is centred within .heart-cake via margin: auto positioning.
+  ::before = left lobe (rotated square)
+  ::after  = right lobe (rotated square)
+  The div itself is the bottom triangle.
+*/
+.heart-body {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-45deg);
+  width: 130px;
+  height: 130px;
+  background: linear-gradient(135deg, #f9a8d4, #ec4899);
+  box-shadow: 0 6px 24px rgba(236,72,153,0.45);
+}
+
+.heart-body::before,
+.heart-body::after {
+  content: '';
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  background: linear-gradient(135deg, #f9a8d4, #ec4899);
+  border-radius: 50%;
+}
+
+.heart-body::before {
+  top: -65px;
+  left: 0;
+}
+
+.heart-body::after {
+  top: 0;
+  left: 65px;
+}
+
+/* ── Rectangle cake ─────────────────────────── */
+.rectangle-cake {
+  width: 280px;
+  height: 170px;
+}
+
+.rect-plate {
+  width: 310px;
+  height: 20px;
+  border-radius: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -12px;
+}
+
+.rect-layer {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.18);
+}
+
+.rectangle-cake .layer-1 { width: 280px; height: 62px; bottom: 0;    background: linear-gradient(160deg, #6ee7b7, #059669); }
+.rectangle-cake .layer-2 { width: 255px; height: 55px; bottom: 57px; background: linear-gradient(160deg, #34d399, #047857); }
+.rectangle-cake .layer-3 { width: 230px; height: 50px; bottom: 107px;background: linear-gradient(160deg, #6ee7b7, #059669); }
+
+/* ════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .cb-container {
+    flex-direction: column;
+  }
+
+  .cb-sidebar {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 20px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .cb-sidebar-logo {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+    margin-right: auto;
+  }
+
+  .cb-sidebar-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .cb-nav-item { padding: 8px 12px; font-size: 0.7rem; }
+
+  .cb-main { padding: 24px 20px; gap: 22px; }
+
+  .cb-shape-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+}
+
+@media (max-width: 600px) {
+  .cb-shape-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .cb-actions { gap: 8px; }
+
+  .cb-btn { padding: 9px 14px; font-size: 0.7rem; }
+
+  .round-cake      { width: 180px; height: 148px; }
+  .round-layer.layer-1 { width: 180px; height: 57px; }
+  .round-layer.layer-2 { width: 160px; height: 51px; bottom: 50px; }
+  .round-layer.layer-3 { width: 140px; height: 46px; bottom: 95px; }
+
+  .square-cake     { width: 180px; height: 152px; }
+  .square-layer.layer-1 { width: 180px; height: 56px; }
+  .square-layer.layer-2 { width: 162px; height: 50px; bottom: 50px; }
+  .square-layer.layer-3 { width: 144px; height: 44px; bottom: 94px; }
+
+  .rectangle-cake  { width: 230px; height: 140px; }
+  .rect-layer.layer-1 { width: 230px; height: 51px; }
+  .rect-layer.layer-2 { width: 208px; height: 45px; bottom: 46px; }
+  .rect-layer.layer-3 { width: 186px; height: 41px; bottom: 86px; }
+
+  .heart-body,
+  .heart-body::before,
+  .heart-body::after { width: 100px; height: 100px; }
+  .heart-body { top: 30px; }
+  .heart-body::before { top: -50px; }
+  .heart-body::after  { left: 50px; }
+}

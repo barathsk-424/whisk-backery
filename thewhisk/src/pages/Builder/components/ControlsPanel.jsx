@@ -298,52 +298,105 @@ const ControlsPanel = ({ currentStep }) => {
                   />
                 ))}
               </div>
+
+              {/* ── Text Size ───────────────────────── */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black text-brown-400 uppercase tracking-widest">Text Size</span>
+                  <span className="text-[11px] font-bold text-primary bg-brown-50 px-3 py-1 rounded-lg">
+                    {Math.round((cake.textSize || 0.22) * 100 / 0.22 * 10)}%
+                  </span>
+                </div>
+                <div className="flex gap-2 items-center">
+                  <button
+                    onClick={() => setTextStyle({ textSize: Math.max(0.06, (cake.textSize || 0.22) - 0.04) })}
+                    className="flex-1 h-11 rounded-xl border-2 border-brown-100 bg-white hover:bg-brown-50 text-xl font-bold text-primary transition-all hover:border-primary flex items-center justify-center"
+                    title="Decrease text size"
+                  >−</button>
+                  <input
+                    type="range"
+                    min={6}
+                    max={40}
+                    value={Math.round((cake.textSize || 0.22) * 100)}
+                    onChange={e => setTextStyle({ textSize: Number(e.target.value) / 100 })}
+                    className="flex-[3] accent-[#E07A5F] h-2 rounded-full cursor-pointer"
+                  />
+                  <button
+                    onClick={() => setTextStyle({ textSize: Math.min(0.40, (cake.textSize || 0.22) + 0.04) })}
+                    className="flex-1 h-11 rounded-xl border-2 border-brown-100 bg-white hover:bg-brown-50 text-xl font-bold text-primary transition-all hover:border-primary flex items-center justify-center"
+                    title="Increase text size"
+                  >+</button>
+                </div>
+              </div>
+
+              {/* ── Text Position ────────────────────── */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black text-brown-400 uppercase tracking-widest">Text Position</span>
+                  <button
+                    onClick={() => setTextStyle({ textX: 0, textZ: 0 })}
+                    className="text-[9px] font-bold text-primary/60 hover:text-primary transition-all uppercase tracking-wider"
+                    title="Reset position to center"
+                  >↺ Reset</button>
+                </div>
+                {/* D-pad style position controller */}
+                <div className="grid grid-cols-3 gap-1.5" style={{ maxWidth: 160, margin: '0 auto' }}>
+                  {/* Row 1: empty, Up, empty */}
+                  <div />
+                  <button
+                    onClick={() => setTextStyle({ textZ: (cake.textZ || 0) - 0.3 })}
+                    className="h-10 rounded-xl border-2 border-brown-100 bg-white hover:bg-brown-50 text-base font-bold text-primary transition-all hover:border-primary flex items-center justify-center"
+                    title="Move text up (away from camera)"
+                  >▲</button>
+                  <div />
+                  {/* Row 2: Left, Center dot, Right */}
+                  <button
+                    onClick={() => setTextStyle({ textX: (cake.textX || 0) - 0.3 })}
+                    className="h-10 rounded-xl border-2 border-brown-100 bg-white hover:bg-brown-50 text-base font-bold text-primary transition-all hover:border-primary flex items-center justify-center"
+                    title="Move text left"
+                  >◀</button>
+                  <div className="h-10 rounded-xl border-2 border-brown-50 bg-brown-50 flex items-center justify-center">
+                    <div className="w-2 h-2 rounded-full bg-primary/30" />
+                  </div>
+                  <button
+                    onClick={() => setTextStyle({ textX: (cake.textX || 0) + 0.3 })}
+                    className="h-10 rounded-xl border-2 border-brown-100 bg-white hover:bg-brown-50 text-base font-bold text-primary transition-all hover:border-primary flex items-center justify-center"
+                    title="Move text right"
+                  >▶</button>
+                  {/* Row 3: empty, Down, empty */}
+                  <div />
+                  <button
+                    onClick={() => setTextStyle({ textZ: (cake.textZ || 0) + 0.3 })}
+                    className="h-10 rounded-xl border-2 border-brown-100 bg-white hover:bg-brown-50 text-base font-bold text-primary transition-all hover:border-primary flex items-center justify-center"
+                    title="Move text down (toward camera)"
+                  >▼</button>
+                  <div />
+                </div>
+              </div>
             </div>
 
             <div className="space-y-4 pt-6 border-t border-brown-50 font-sans">
               <h4 className="text-[10px] font-black text-brown-400 uppercase tracking-widest flex items-center justify-between">
                 🖋️ Typographic Styles
+                <span className="text-[9px] font-bold opacity-50 normal-case tracking-normal">visual style only</span>
               </h4>
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  {
-                    id: "modern",
-                    name: "Modern",
-                    style: {
-                      textSize: 0.1,
-                      bevelSize: 0.01,
-                      bevelThickness: 0.01,
-                    },
-                  },
-                  {
-                    id: "classic",
-                    name: "Classic",
-                    style: {
-                      textSize: 0.14,
-                      bevelSize: 0.02,
-                      bevelThickness: 0.02,
-                    },
-                  },
-                  {
-                    id: "bespoke",
-                    name: "Bespoke",
-                    style: {
-                      textSize: 0.12,
-                      bevelSize: 0.03,
-                      bevelThickness: 0.04,
-                    },
-                  },
+                  { id: "modern",  name: "Modern",  sub: "Light"   },
+                  { id: "classic", name: "Classic", sub: "Italic"  },
+                  { id: "bespoke", name: "Bespoke", sub: "Bold"    },
                 ].map((s) => (
                   <button
                     key={s.id}
-                    onClick={() => setTextStyle(s.style)}
-                    className={`py-3 rounded-xl border-2 text-[10px] font-black uppercase transition-all ${
-                      cake.textSize === s.style.textSize
+                    onClick={() => setTextStyle({ textStyle: s.id })}
+                    className={`py-3 rounded-xl border-2 flex flex-col items-center gap-0.5 transition-all ${
+                      (cake.textStyle || 'classic') === s.id
                         ? "border-primary bg-primary text-white shadow-md"
-                        : "border-brown-50 hover:bg-brown-50"
+                        : "border-brown-50 hover:bg-brown-50 text-primary"
                     }`}
                   >
-                    {s.name}
+                    <span className="text-[10px] font-black uppercase">{s.name}</span>
+                    <span className={`text-[8px] font-medium ${(cake.textStyle || 'classic') === s.id ? 'opacity-80' : 'opacity-40'}`}>{s.sub}</span>
                   </button>
                 ))}
               </div>

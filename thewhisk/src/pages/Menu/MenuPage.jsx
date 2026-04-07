@@ -50,7 +50,7 @@ export default function MenuPage() {
           className="mb-8"
         >
           <h1 className="font-heading text-3xl font-bold text-primary">Our Menu</h1>
-          <p className="text-brown-400 mt-1">Freshly baked happiness, delivered to your doorstep</p>
+          <p className="text-primary/60 mt-1">Freshly baked happiness, delivered to your doorstep</p>
         </motion.div>
 
         {/* ── FEATURED SELECTION (USER REQUESTED PATTERN) ─────── */}
@@ -64,7 +64,7 @@ export default function MenuPage() {
             <div className="flex-1 text-center md:text-left z-10">
               <span className="px-3 py-1 bg-accent text-white text-[9px] font-black rounded-full uppercase tracking-widest mb-3 inline-block shadow-lg shadow-accent/20">Featured</span>
               <h2 className="font-heading text-xl lg:text-3xl font-black text-primary mb-2 line-clamp-1 truncate uppercase tracking-tighter">{filtered[0].name}</h2>
-              <p className="text-[11px] lg:text-sm text-brown-400 mb-5 line-clamp-2 font-bold leading-relaxed">{filtered[0].description}</p>
+              <p className="text-[11px] lg:text-sm text-primary/60 mb-5 line-clamp-2 font-bold leading-relaxed">{filtered[0].description}</p>
               <button 
                 onClick={() => navigate(`/product/${filtered[0].id}`)}
                 className="w-full sm:w-auto px-8 py-3 bg-primary text-secondary text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-accent transition-all shadow-xl active:scale-95"

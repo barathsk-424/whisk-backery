@@ -90,12 +90,12 @@ export default function BuilderPage() {
   ];
 
   return (
-    <div className={`min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 transition-colors duration-500 ${theme === 'dark' ? 'bg-[#0A0807]' : 'bg-secondary'}`}>
+    <div className={`min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 transition-colors duration-500 bg-secondary`}>
       <div className="max-w-[1440px] mx-auto">
         
         {/* Step Header */}
         <div className="mb-12">
-           <div className={`flex justify-between items-center mb-8 ${theme === 'dark' ? 'bg-[#1A1211] border border-white/5' : 'bg-white shadow-sm'} p-6 rounded-2xl overflow-x-auto no-scrollbar gap-8`}>
+           <div className={`flex justify-between items-center mb-8 bg-primary/5 border border-primary/10 p-6 rounded-2xl overflow-x-auto no-scrollbar gap-8`}>
               {steps.map((s) => (
                 <button
                   key={s.n}
@@ -111,19 +111,19 @@ export default function BuilderPage() {
            </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
            
            {/* Left: 3D Visualization */}
-           <div className={`rounded-[2.5rem] p-4 shadow-xl border aspect-square relative overflow-hidden h-[600px] ${theme === 'dark' ? 'bg-[#1A1211] border-white/5' : 'bg-white border-brown-50'}`}>
-              <div className="absolute top-8 left-8 z-10">
-                 <p className="text-[10px] font-black text-brown-400 uppercase tracking-widest mb-1">Live 3D Rendering</p>
-                 <h2 className="text-2xl font-heading font-black capitalize text-primary">{cake.shape} {cake.flavor} Cake</h2>
+           <div className={`rounded-[2rem] sm:rounded-[2.5rem] p-4 shadow-xl border aspect-square relative overflow-hidden h-[350px] sm:h-[450px] lg:h-[600px] bg-primary/5 border-primary/10`}>
+              <div className="absolute top-4 left-4 sm:top-8 sm:left-8 z-10">
+                 <p className="text-[8px] sm:text-[10px] font-black text-accent uppercase tracking-widest mb-1">Live 3D Rendering</p>
+                 <h2 className="text-lg sm:text-2xl font-heading font-black capitalize text-primary">{cake.shape} {cake.flavor} Cake</h2>
               </div>
               <CakeCanvas />
            </div>
 
            {/* Right: Technical Configuration */}
-           <div className={`${theme === 'dark' ? 'bg-white/5 border-white/5' : 'bg-white border-brown-50'} rounded-[2.5rem] p-10 shadow-xl border min-h-[600px] flex flex-col`}>
+           <div className={`rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-10 shadow-xl border min-h-[400px] lg:min-h-[600px] flex flex-col bg-primary/[0.02] border-primary/10`}>
               <div className="flex-1">
                  <ControlsPanel 
                     currentStep={currentStep - 1} 
@@ -133,42 +133,42 @@ export default function BuilderPage() {
               </div>
 
               {/* Interaction Footer */}
-              <div className="pt-10 mt-10 border-t border-brown-50 flex items-center justify-between">
-                 <div className="flex items-center gap-6">
+              <div className="pt-6 sm:pt-10 mt-6 sm:mt-10 border-t border-primary/10 flex flex-col sm:flex-row items-center justify-between gap-6">
+                 <div className="flex items-center justify-between w-full sm:w-auto gap-6 px-1">
                     <div>
-                        <p className="text-[10px] font-black text-brown-300 uppercase tracking-widest mb-1">Estimated Quote</p>
-                        <p className="text-3xl font-black text-accent">₹{totalPrice.toLocaleString()}</p>
+                        <p className="text-[8px] sm:text-[10px] font-black text-primary/40 uppercase tracking-widest mb-1">Estimated Quote</p>
+                        <p className="text-2xl sm:text-3xl font-black text-accent">₹{totalPrice.toLocaleString()}</p>
                     </div>
                     <button 
                        onClick={handleSaveDesign}
                        disabled={isSaving}
-                       className="flex items-center gap-2 text-[10px] font-black text-brown-400 uppercase tracking-widest hover:text-primary transition-colors disabled:opacity-50"
+                       className="flex items-center gap-2 text-[8px] sm:text-[10px] font-black text-primary/60 uppercase tracking-widest hover:text-primary transition-colors disabled:opacity-50"
                     >
-                       <svg className={`w-4 h-4 ${isSaving ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <svg className={`w-3 h-3 sm:w-4 h-4 ${isSaving ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                        </svg>
                        Archive Design
                     </button>
                  </div>
-                 <div className="flex gap-4">
+                 <div className="flex gap-2 sm:gap-4 w-full sm:w-auto justify-end px-1">
                     <button 
                       onClick={() => setCurrentStep(prev => Math.max(1, prev - 1))}
                       disabled={currentStep === 1}
-                      className="px-6 py-3 bg-brown-50 text-brown-400 font-black rounded-xl hover:bg-brown-100 disabled:opacity-30 transition-all uppercase text-[10px] tracking-widest"
+                      className="flex-1 sm:flex-none px-4 sm:px-6 py-2.5 sm:py-3 bg-primary/5 text-primary/40 font-black rounded-xl hover:bg-primary/10 disabled:opacity-30 transition-all uppercase text-[8px] sm:text-[10px] tracking-widest border border-primary/10"
                     >
                        Previous
                     </button>
                     {currentStep < steps.length ? (
                       <button 
                          onClick={() => setCurrentStep(prev => Math.min(steps.length, prev + 1))}
-                         className="px-8 py-3 bg-primary text-white font-black rounded-xl hover:opacity-90 shadow-lg transition-all uppercase text-[10px] tracking-widest"
+                         className="flex-1 sm:flex-none px-6 sm:px-8 py-2.5 sm:py-3 bg-primary text-secondary font-black rounded-xl hover:bg-primary/90 shadow-lg transition-all uppercase text-[8px] sm:text-[10px] tracking-widest"
                       >
                          Next Step
                       </button>
                     ) : (
                       <button 
                          onClick={handleAddToCart}
-                         className="px-8 py-3 bg-accent text-white font-black rounded-xl hover:opacity-90 shadow-lg shadow-accent/20 transition-all uppercase text-[10px] tracking-widest"
+                         className="flex-1 sm:flex-none px-6 sm:px-8 py-2.5 sm:py-3 bg-accent text-white font-black rounded-xl hover:opacity-90 shadow-lg shadow-accent/20 transition-all uppercase text-[8px] sm:text-[10px] tracking-widest"
                       >
                          Add to Cart
                       </button>
@@ -183,12 +183,12 @@ export default function BuilderPage() {
            <motion.div 
              initial={{ opacity: 0, y: 50 }}
              animate={{ opacity: 1, y: 0 }}
-             className="mt-24 pt-12 border-t border-brown-100"
+             className="mt-24 pt-12 border-t border-primary/10"
            >
-              <div className="flex items-center justify-between mb-10">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-6">
                  <div>
-                    <h3 className="text-3xl font-heading font-black text-primary">Artisan Design Vault</h3>
-                    <p className="text-sm text-brown-400 font-bold italic tracking-tight">Your curated masterpieces, archived for eternity.</p>
+                    <h3 className="text-2xl sm:text-3xl font-heading font-black text-primary">Artisan Design Vault</h3>
+                    <p className="text-sm text-primary/40 font-bold italic tracking-tight">Your curated masterpieces, archived for eternity.</p>
                  </div>
                  <div className="px-4 py-1.5 bg-accent/10 rounded-full">
                     <span className="text-[10px] font-black text-accent uppercase tracking-widest">{savedDesigns.length} Archives</span>
@@ -198,11 +198,11 @@ export default function BuilderPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                  {savedDesigns.map((design) => (
                     <motion.div 
-                      key={design.id}
-                      whileHover={{ y: -10 }}
-                      className="bg-white rounded-[2rem] overflow-hidden shadow-luxury border border-brown-50 group transition-all"
+                       key={design.id}
+                       whileHover={{ y: -10 }}
+                       className={`bg-primary/[0.02] border-primary/5 rounded-[2rem] overflow-hidden shadow-luxury border group transition-all`}
                     >
-                       <div className="aspect-[4/3] bg-brown-50 relative overflow-hidden">
+                       <div className="aspect-[4/3] bg-primary/5 relative overflow-hidden">
                           <img 
                              src={design.image_url} 
                              alt={design.name} 
@@ -210,7 +210,7 @@ export default function BuilderPage() {
                           />
                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-4">
                              <button 
-                               className="p-3 bg-white rounded-full text-primary hover:bg-accent hover:text-white transition-all shadow-xl"
+                                className="p-3 bg-secondary rounded-full text-primary hover:bg-accent hover:text-secondary transition-all shadow-xl"
                              >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                              </button>
@@ -220,7 +220,7 @@ export default function BuilderPage() {
                           <h4 className="text-xs font-black text-primary uppercase tracking-widest mb-1 truncate">{design.name}</h4>
                           <div className="flex items-center justify-between">
                              <p className="text-sm font-black text-accent">₹{design.price.toLocaleString()}</p>
-                             <p className="text-[10px] text-brown-300 font-bold italic">{new Date(design.created_at).toLocaleDateString()}</p>
+                             <p className="text-[10px] text-primary/30 font-bold italic">{new Date(design.created_at).toLocaleDateString()}</p>
                           </div>
                        </div>
                     </motion.div>

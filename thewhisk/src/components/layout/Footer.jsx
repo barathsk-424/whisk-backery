@@ -3,7 +3,7 @@ import { HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker, HiOutlineClock 
 
 export default function Footer() {
   return (
-    <footer className="bg-primary text-brown-200">
+    <footer className="bg-secondary text-primary transition-colors duration-500 border-t border-brown-100/10">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
@@ -11,18 +11,18 @@ export default function Footer() {
             <div className="flex items-center gap-2 mb-4">
               <span className="text-3xl">🧁</span>
               <div>
-                <h3 className="font-heading text-xl font-bold text-secondary">The Whisk</h3>
-                <p className="text-xs text-brown-400 tracking-widest uppercase">AI Bakery</p>
+                <h3 className="font-heading text-xl font-bold text-primary">The Whisk</h3>
+                <p className="text-xs text-accent tracking-widest uppercase">AI Bakery</p>
               </div>
             </div>
-            <p className="text-sm text-brown-300 leading-relaxed">
+            <p className="text-sm text-primary/70 leading-relaxed">
               Redefining the bakery experience with AI-powered customization, 3D cake building, and seamless ordering.
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-heading font-semibold text-secondary mb-4">Quick Links</h4>
+            <h4 className="font-heading font-semibold text-primary mb-4">Quick Links</h4>
             <ul className="space-y-2">
               {[
                 { name: 'Home', path: '/' },
@@ -35,7 +35,7 @@ export default function Footer() {
                 <li key={item.name}>
                   <Link
                     to={item.path}
-                    className="text-sm text-brown-300 hover:text-accent transition-colors"
+                    className="text-sm text-primary/60 hover:text-accent transition-colors"
                   >
                     {item.name}
                   </Link>
@@ -47,8 +47,8 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-heading font-semibold text-secondary mb-4">Contact Us</h4>
-            <ul className="space-y-3 text-sm text-brown-300">
+            <h4 className="font-heading font-semibold text-primary mb-4">Contact Us</h4>
+            <ul className="space-y-3 text-sm text-primary/70">
               <li className="flex items-start gap-3">
                 <HiOutlineLocationMarker className="w-5 h-5 text-accent shrink-0 mt-0.5" />
                 <span>Mannivakkam, Chennai</span>
@@ -70,13 +70,13 @@ export default function Footer() {
 
           {/* Newsletter */}
           <div>
-            <h4 className="font-heading font-semibold text-secondary mb-4">Stay Sweet</h4>
-            <p className="text-sm text-brown-300 mb-3">Get exclusive offers and new flavor alerts!</p>
+            <h4 className="font-heading font-semibold text-primary mb-4">Stay Sweet</h4>
+            <p className="text-sm text-primary/70 mb-3">Get exclusive offers and new flavor alerts!</p>
             <div className="flex">
               <input
                 type="email"
                 placeholder="your@email.com"
-                className="flex-1 px-3 py-2 bg-white/10 border border-brown-600 rounded-l-lg text-sm text-secondary placeholder-brown-400 focus:outline-none focus:border-accent"
+                className="flex-1 px-3 py-2 bg-primary/5 border border-primary/10 rounded-l-lg text-sm text-primary placeholder:text-primary/30 focus:outline-none focus:border-accent"
               />
               <button className="px-4 py-2 gradient-accent text-white text-sm font-semibold rounded-r-lg hover:opacity-90 transition-opacity">
                 Join
@@ -86,9 +86,9 @@ export default function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="mt-10 pt-8 border-t border-brown-700 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-brown-400">© 2026 The Whisk. All rights reserved.</p>
-          <div className="flex items-center gap-4 text-sm text-brown-400">
+        <div className="mt-10 pt-8 border-t border-primary/5 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-primary/40">© 2026 The Whisk. All rights reserved.</p>
+          <div className="flex items-center gap-4 text-sm text-primary/40">
             <span className="hover:text-accent cursor-pointer transition-colors">Privacy Policy</span>
             <span className="hover:text-accent cursor-pointer transition-colors">Terms of Service</span>
             <span className="hover:text-accent cursor-pointer transition-colors">Refund Policy</span>

@@ -45,8 +45,8 @@ export default function Navbar() {
       <nav
         className={`px-4 sm:px-6 lg:px-8 py-4 flex flex-col lg:flex-row justify-between items-center sticky top-0 z-[9999] shadow-xl border-b transition-all duration-500 gap-4 ${
           theme === "dark"
-            ? "bg-[#1A1110] border-white/5 text-white"
-            : "bg-white border-brown-50 text-brown-800"
+            ? "bg-secondary border-white/5 text-primary"
+            : "bg-secondary border-brown-50 text-primary"
         }`}
       >
         <div className="flex items-center justify-between w-full lg:w-auto">
@@ -56,7 +56,7 @@ export default function Navbar() {
             </span>
             <div className="min-w-0">
               <h1
-                className={`font-heading text-sm sm:text-[18px] font-black tracking-tight uppercase truncate ${theme === "dark" ? "text-white" : "text-primary"}`}
+                className={`font-heading text-sm sm:text-[18px] font-black tracking-tight uppercase truncate text-primary`}
               >
                 The Whisk
               </h1>
@@ -69,13 +69,13 @@ export default function Navbar() {
           <div className="flex items-center gap-3 lg:hidden">
             <button
               onClick={toggleTheme}
-              className="text-xl text-brown-400"
+              className="text-xl text-accent"
             >
               {theme === "dark" ? <HiOutlineSun /> : <HiOutlineMoon />}
             </button>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`p-2 rounded-xl transition-all ${theme === "dark" ? "text-white bg-white/5" : "text-primary bg-secondary"}`}
+              className={`p-2 rounded-xl transition-all text-primary bg-primary/5`}
             >
               <div className="w-5 h-5 flex flex-col justify-center gap-1.5">
                 <span className={`h-0.5 w-full bg-current rounded-full transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
@@ -87,7 +87,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Nav Links */}
-        <div className="hidden lg:flex items-center gap-8 font-black text-[14px] tracking-[0.2em] justify-center">
+        <div className="hidden lg:flex items-center gap-8 font-black text-[14px] tracking-[0.2em] justify-center text-primary">
           <button
             onClick={() => navigate("/")}
             className="hover:text-accent transition-all hover:scale-105 shrink-0"
@@ -136,11 +136,7 @@ export default function Navbar() {
               value={searchQuery}
               onChange={handleSearch}
               placeholder="Search blueprints..."
-              className={`w-full py-2 pl-10 pr-4 rounded-full text-[11px] font-black focus:outline-none transition-all uppercase tracking-widest ${
-                theme === "dark"
-                  ? "bg-white/5 text-white placeholder:text-white/20"
-                  : "bg-secondary text-primary placeholder:text-brown-200"
-              }`}
+              className={`w-full py-2 pl-10 pr-4 rounded-full text-[11px] font-black focus:outline-none transition-all uppercase tracking-widest bg-primary/5 text-primary placeholder:text-primary/20`}
             />
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -153,11 +149,7 @@ export default function Navbar() {
 
           <button
             onClick={() => setIsScannerOpen(true)}
-            className={`p-2.5 rounded-full hidden lg:flex items-center gap-2 border transition-all hover:scale-105 active:scale-95 ${
-              theme === "dark"
-                ? "bg-white/5 border-white/10 text-white"
-                : "bg-secondary border-brown-50 text-accent shadow-sm"
-            }`}
+            className={`p-2.5 rounded-full hidden lg:flex items-center gap-2 border transition-all hover:scale-105 active:scale-95 bg-primary/5 border-primary/10 text-primary`}
             title="Artisan Sight"
           >
             <HiOutlineCamera className="text-xl" />
@@ -168,22 +160,20 @@ export default function Navbar() {
 
           <button
             onClick={toggleTheme}
-            className="text-2xl hidden lg:block hover:rotate-12 transition-transform text-brown-400"
+            className="text-2xl hidden lg:block hover:rotate-12 transition-transform text-accent"
             title="Wavelength"
           >
             {theme === "dark" ? <HiOutlineSun /> : <HiOutlineMoon />}
           </button>
 
-          <div className="h-6 w-[1px] bg-brown-100/20 mx-1 hidden lg:block" />
+          <div className="h-6 w-[1px] bg-primary/10 mx-1 hidden lg:block" />
 
           <button
             onClick={() => navigate("/cart")}
             className="relative text-2xl hidden lg:block hover:scale-110 active:scale-90 transition-all text-primary"
             title="Cart"
           >
-            <HiOutlineShoppingCart
-              className={theme === "dark" ? "text-white" : "text-primary"}
-            />
+            <HiOutlineShoppingCart />
             {cartCount > 0 && (
               <span className="absolute -top-1.5 -right-1.5 bg-accent text-white text-[9px] font-black h-4.5 w-4.5 rounded-full flex items-center justify-center shadow-luxury">
                 {cartCount}
@@ -193,7 +183,7 @@ export default function Navbar() {
 
           <button
             onClick={() => navigate("/track-orders")}
-            className={`text-2xl hover:scale-110 active:scale-90 transition-all ${theme === "dark" ? "text-white/60" : "text-brown-400"}`}
+            className={`text-2xl hover:scale-110 active:scale-90 transition-all text-primary/60`}
             title="Orders"
           >
             <HiOutlineArchive />
@@ -211,11 +201,7 @@ export default function Navbar() {
           ) : (
             <button
               onClick={() => navigate("/login")}
-              className={`px-4 py-2 border-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
-                theme === "dark"
-                  ? "border-white/10 text-white hover:bg-shadow-white/5"
-                  : "border-brown-100 text-primary hover:bg-secondary"
-              }`}
+              className={`px-4 py-2 border-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border-primary/10 text-primary hover:bg-primary/5`}
             >
               <HiOutlineLogin className="text-lg" />
               Sign In
@@ -225,7 +211,7 @@ export default function Navbar() {
           {isAdmin && (
             <button
               onClick={() => navigate("/admin-dashboard")}
-              className="p-1 px-3 bg-primary text-white rounded-xl text-lg hover:scale-110 active:scale-90 transition-all shadow-lg flex items-center gap-2 group"
+              className="p-1 px-3 bg-accent text-white rounded-xl text-lg hover:scale-110 active:scale-90 transition-all shadow-lg flex items-center gap-2 group"
               title="Admin Hub"
             >
               <HiOutlineCog className="group-hover:rotate-90 transition-transform duration-500" />
@@ -243,48 +229,46 @@ export default function Navbar() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className={`lg:hidden fixed inset-x-0 top-[76px] p-6 shadow-2xl border-b z-[9998] flex flex-col gap-6 ${
-                theme === "dark" ? "bg-[#1A1110] border-white/5" : "bg-white border-brown-50"
-              }`}
+              className={`lg:hidden fixed inset-x-0 top-[76px] p-6 shadow-2xl border-b z-[9998] flex flex-col gap-6 bg-secondary border-primary/5`}
             >
               <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <button
                   onClick={() => { navigate("/"); setIsMobileMenuOpen(false); }}
-                  className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 ${theme === "dark" ? "bg-white/5 border-white/5" : "bg-brown-50 border-brown-100"}`}
+                  className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 bg-primary/5 border-primary/10`}
                 >
                   <p className="text-[9px] font-black uppercase tracking-[0.2em] text-accent mb-auto">Vault</p>
-                  <p className={`text-sm font-black uppercase tracking-tight ${theme === "dark" ? "text-white" : "text-primary"}`}>Home</p>
+                  <p className={`text-sm font-black uppercase tracking-tight text-primary`}>Home</p>
                 </button>
                 <button
                   onClick={() => { navigate("/menu"); setIsMobileMenuOpen(false); }}
-                  className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 ${theme === "dark" ? "bg-white/5 border-white/5" : "bg-brown-50 border-brown-100"}`}
+                  className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 bg-primary/5 border-primary/10`}
                 >
                   <p className="text-[9px] font-black uppercase tracking-[0.2em] text-accent mb-auto">Archive</p>
-                  <p className={`text-sm font-black uppercase tracking-tight ${theme === "dark" ? "text-white" : "text-primary"}`}>Menu</p>
+                  <p className={`text-sm font-black uppercase tracking-tight text-primary`}>Menu</p>
                 </button>
                 <button
                   onClick={() => { navigate("/cake-builder"); setIsMobileMenuOpen(false); }}
-                  className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 ${theme === "dark" ? "bg-white/5 border-white/5" : "bg-brown-50 border-brown-100"}`}
+                  className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 bg-primary/5 border-primary/10`}
                 >
                   <p className="text-[9px] font-black uppercase tracking-[0.2em] text-accent mb-auto">Lab</p>
-                  <p className={`text-sm font-black uppercase tracking-tight ${theme === "dark" ? "text-white" : "text-primary"}`}>Builder</p>
+                  <p className={`text-sm font-black uppercase tracking-tight text-primary`}>Builder</p>
                 </button>
                 <button
                   onClick={() => { navigate("/track-orders"); setIsMobileMenuOpen(false); }}
-                  className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 ${theme === "dark" ? "bg-white/5 border-white/5" : "bg-brown-50 border-brown-100"}`}
+                  className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 bg-primary/5 border-primary/10`}
                 >
                   <p className="text-[9px] font-black uppercase tracking-[0.2em] text-accent mb-auto">Radar</p>
-                  <p className={`text-sm font-black uppercase tracking-tight ${theme === "dark" ? "text-white" : "text-primary"}`}>Tracking</p>
+                  <p className={`text-sm font-black uppercase tracking-tight text-primary`}>Tracking</p>
                 </button>
               </div>
 
-              <div className={`flex items-center justify-between p-4 rounded-2xl border ${theme === "dark" ? "bg-accent/10 border-accent/20" : "bg-accent/5 border-accent/20"}`}>
+              <div className={`flex items-center justify-between p-4 rounded-2xl border bg-accent/10 border-accent/20`}>
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-accent text-white rounded-lg shadow-lg shadow-accent/20">
                     <HiOutlineShoppingCart className="text-xl" />
                   </div>
                   <div>
-                    <p className={`text-xs font-black uppercase tracking-tight ${theme === "dark" ? "text-white" : "text-primary"}`}>My Cart</p>
+                    <p className={`text-xs font-black uppercase tracking-tight text-primary`}>My Cart</p>
                     <p className="text-[10px] font-bold text-accent uppercase tracking-widest">{cartCount} items</p>
                   </div>
                 </div>
@@ -299,14 +283,14 @@ export default function Navbar() {
               <div className="flex gap-3">
                 <button
                   onClick={() => { setIsScannerOpen(true); setIsMobileMenuOpen(false); }}
-                  className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.1em] border ${theme === "dark" ? "bg-white/5 border-white/5 text-white" : "bg-brown-50 border-brown-100 text-primary"}`}
+                  className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.1em] border bg-primary/5 border-primary/10 text-primary`}
                 >
                   <HiOutlineCamera className="text-lg text-accent" />
                   Scanner
                 </button>
                 <button
                   onClick={toggleTheme}
-                  className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.1em] border ${theme === "dark" ? "bg-white/5 border-white/5 text-white" : "bg-brown-50 border-brown-100 text-primary"}`}
+                  className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.1em] border bg-primary/5 border-primary/10 text-primary`}
                 >
                   {theme === "dark" ? <HiOutlineSun className="text-lg text-warning" /> : <HiOutlineMoon className="text-lg text-accent" />}
                   Theme
@@ -316,10 +300,10 @@ export default function Navbar() {
               {isAuthenticated ? (
                 <button
                   onClick={() => { navigate("/profile"); setIsMobileMenuOpen(false); }}
-                  className="p-5 bg-primary text-white rounded-2xl flex items-center justify-between shadow-xl"
+                  className="p-5 bg-primary text-secondary rounded-2xl flex items-center justify-between shadow-xl"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
+                    <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center border border-secondary/20">
                       <HiOutlineUserCircle className="text-2xl" />
                     </div>
                     <span className="text-[11px] font-black uppercase tracking-[0.2em]">Operator Profile</span>

@@ -17,6 +17,7 @@ const initialState = {
   customText: 'The Whisk',
   textColor: '#4A2A1A',
   textSize: 0.22,
+  textStyle: 'classic',   // 'modern' | 'classic' | 'bespoke'  (independent of size)
   textX: 0,
   textZ: 0,
   textFont: '/fonts/font.json',
