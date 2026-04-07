@@ -431,7 +431,7 @@ export default function AdminDashboard() {
             animate={{ opacity: 1 }}
             className="space-y-12"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {[
                 {
                   l: "Daily Revenue",
@@ -486,7 +486,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Quick Look Analytics Mini-Tables or secondary widgets could go here */}
-            <div className="grid lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
               <div
                 className={`p-8 rounded-[2.5rem] border shadow-sm ${theme === "dark" ? "bg-[#1A1110] border-white/5" : "bg-white border-brown-50"}`}
               >

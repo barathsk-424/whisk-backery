@@ -146,24 +146,24 @@ export default function CheckoutPage() {
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2 space-y-8">
               {/* Delivery Details */}
-              <div
-                className={`p-10 rounded-[3rem] border shadow- luxury relative overflow-hidden transition-all ${
-                  theme === "dark"
-                    ? "bg-[#1A1110] border-white/5"
-                    : "bg-white border-brown-50"
-                }`}
-              >
-                <div className="absolute top-0 right-0 p-8 opacity-5 text-8xl">
-                  🚚
-                </div>
-                <h3
-                  className={`text-xl font-black mb-8 flex items-center gap-3 ${theme === "dark" ? "text-white" : "text-primary"}`}
+                <div
+                  className={`p-5 sm:p-10 rounded-[2rem] sm:rounded-[3rem] border shadow-luxury relative overflow-hidden transition-all ${
+                    theme === "dark"
+                      ? "bg-[#1A1110] border-white/5"
+                      : "bg-white border-brown-50"
+                  }`}
                 >
-                  <span className="p-3 bg-accent text-white rounded-2xl shadow-lg shadow-accent/20">
-                    📍
-                  </span>
-                  Destination Port
-                </h3>
+                  <div className="absolute top-0 right-0 p-4 sm:p-8 opacity-5 text-6xl sm:text-8xl">
+                    🚚
+                  </div>
+                  <h3
+                    className={`text-lg sm:text-xl font-black mb-6 sm:mb-8 flex items-center gap-3 ${theme === "dark" ? "text-white" : "text-primary"}`}
+                  >
+                    <span className="p-2 sm:p-3 bg-accent text-white rounded-xl sm:rounded-2xl shadow-lg shadow-accent/20">
+                      📍
+                    </span>
+                    Destination Port
+                  </h3>
 
                 <div className="grid md:grid-cols-2 gap-6 relative z-10">
                   {[
@@ -257,14 +257,14 @@ export default function CheckoutPage() {
             {/* Payment & Summary */}
             <div className="space-y-8">
               <div
-                className={`p-10 rounded-[3rem] border transition-all ${
+                className={`p-5 sm:p-10 rounded-[2rem] sm:rounded-[3rem] border transition-all ${
                   theme === "dark"
                     ? "bg-[#1A1110] border-white/5"
                     : "bg-white border-brown-50"
                 }`}
               >
                 <h3
-                  className={`text-xl font-black mb-8 ${theme === "dark" ? "text-white" : "text-primary"}`}
+                  className={`text-lg sm:text-xl font-black mb-6 sm:mb-8 ${theme === "dark" ? "text-white" : "text-primary"}`}
                 >
                   Settlement
                 </h3>

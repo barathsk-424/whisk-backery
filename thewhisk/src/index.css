@@ -34,11 +34,30 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :root {
+    --fluid-32-64: clamp(2rem, 5vw + 1rem, 4rem);
+    --fluid-16-32: clamp(1rem, 2.5vw + 0.5rem, 2rem);
+    --fluid-10-14: clamp(0.625rem, 0.5vw + 0.5rem, 0.875rem);
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
 
   @media (max-width: 640px) {
     html {
       font-size: 14px;
+    }
+  }
+
+  @media (max-width: 380px) {
+    html {
+      font-size: 13px;
     }
   }
 
@@ -63,11 +82,21 @@
     transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
                 color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     overflow-x: hidden;
+    width: 100%;
+    min-height: 100vh;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
   }
 }
 

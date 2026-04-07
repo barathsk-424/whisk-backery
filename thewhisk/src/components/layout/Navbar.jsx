@@ -43,38 +43,44 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`px-6 py-4 flex flex-col lg:flex-row justify-between items-center sticky top-0 z-[9999] shadow-xl border-b transition-all duration-500 gap-4 ${
+        className={`px-4 sm:px-6 lg:px-8 py-4 flex flex-col lg:flex-row justify-between items-center sticky top-0 z-[9999] shadow-xl border-b transition-all duration-500 gap-4 ${
           theme === "dark"
             ? "bg-[#1A1110] border-white/5 text-white"
-            : "bg-white border-brown-50 text-primary"
+            : "bg-white border-brown-50 text-brown-800"
         }`}
       >
         <div className="flex items-center justify-between w-full lg:w-auto">
-          <a href="/" className="flex items-center gap-3 group shrink-0">
-            <span className="text-3xl group-hover:rotate-12 transition-transform duration-500">
+          <a href="/" className="flex items-center gap-2 sm:gap-3 group shrink-0">
+            <span className="text-2xl sm:text-3xl group-hover:rotate-12 transition-transform duration-500">
               🧁
             </span>
-            <div>
+            <div className="min-w-0">
               <h1
-                className={`font-heading text-[18px] font-black tracking-tight uppercase ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                className={`font-heading text-sm sm:text-[18px] font-black tracking-tight uppercase truncate ${theme === "dark" ? "text-secondary" : "text-primary"}`}
               >
                 The Whisk
               </h1>
-              <p className="text-[10px] font-black tracking-[0.4em] uppercase text-accent mt-[-4px]">
+              <p className="text-[8px] sm:text-[10px] font-black tracking-[0.3em] sm:tracking-[0.4em] uppercase text-accent mt-[-2px] sm:mt-[-4px]">
                 Baking Artistry
               </p>
             </div>
           </a>
 
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex items-center gap-3 lg:hidden">
+            <button
+              onClick={toggleTheme}
+              className="text-xl text-brown-400"
+            >
+              {theme === "dark" ? <HiOutlineSun /> : <HiOutlineMoon />}
+            </button>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`p-2 rounded-xl transition-all ${theme === "dark" ? "text-white hover:bg-white/5" : "text-primary hover:bg-secondary"}`}
+              className={`p-2 rounded-xl transition-all ${theme === "dark" ? "text-white bg-white/5" : "text-primary bg-secondary"}`}
             >
-              <div className="w-5 h-5 flex flex-col justify-center gap-1">
-                <span className={`h-0.5 bg-current transition-all ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
-                <span className={`h-0.5 bg-current transition-all ${isMobileMenuOpen ? 'opacity-0' : ''}`}></span>
-                <span className={`h-0.5 bg-current transition-all ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+              <div className="w-5 h-5 flex flex-col justify-center gap-1.5">
+                <span className={`h-0.5 w-full bg-current rounded-full transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
+                <span className={`h-0.5 w-full bg-current rounded-full transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></span>
+                <span className={`h-0.5 w-full bg-current rounded-full transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
               </div>
             </button>
           </div>

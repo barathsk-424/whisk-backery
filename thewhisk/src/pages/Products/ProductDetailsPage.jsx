@@ -135,7 +135,7 @@ export default function ProductDetailsPage() {
           <div className="space-y-10">
              <div>
                 <span className="px-4 py-1.5 bg-accent/10 text-accent rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 inline-block">Premium Collection</span>
-                <h1 className={`text-5xl font-black tracking-tight mb-4 uppercase ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
+                <h1 className={`text-3xl sm:text-5xl font-black tracking-tighter mb-4 uppercase ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                   {product.name}
                 </h1>
                 <div className="flex items-center gap-6">
@@ -247,18 +247,19 @@ export default function ProductDetailsPage() {
               <div className="space-y-6">
                  <h3 className={`text-2xl font-black uppercase tracking-tighter ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Product Specifications</h3>
                  <div className={`rounded-3xl border divide-y overflow-hidden ${theme === 'dark' ? 'bg-[#1A1110] border-white/5 divide-white/5' : 'bg-white border-brown-50 divide-brown-50'}`}>
-                    {[
-                      { l: 'Type', v: product.category || 'Flavored Artisan Piece' },
-                      { l: 'Base Unit', v: selectedSize },
-                      { l: 'Ingredients', v: 'Pure Cocoa, Organic Dairy, Refined Artisan Sugar' },
-                      { l: 'Certification', v: 'FSSAI Certified, 100% Ceremonial' },
-                      { l: 'Packaging', v: 'Insulated Temporal Container' }
-                    ].map(row => (
-                      <div key={row.l} className="flex p-5 gap-10">
-                         <span className="w-40 text-[10px] font-black uppercase text-brown-400 tracking-widest">{row.l}</span>
-                         <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white/80' : 'text-primary'}`}>{row.v}</span>
-                      </div>
-                    ))}
+                     {/* Specification Rows */}
+                     {[
+                       { l: 'Type', v: product.category || 'Flavored Artisan Piece' },
+                       { l: 'Base Unit', v: selectedSize },
+                       { l: 'Ingredients', v: 'Pure Cocoa, Organic Dairy, Refined Artisan Sugar' },
+                       { l: 'Certification', v: 'FSSAI Certified, 100% Ceremonial' },
+                       { l: 'Packaging', v: 'Insulated Temporal Container' }
+                     ].map(row => (
+                       <div key={row.l} className="flex flex-col sm:flex-row p-5 gap-2 sm:gap-10">
+                          <span className="w-full sm:w-40 text-[10px] font-black uppercase text-brown-400 tracking-widest">{row.l}</span>
+                          <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white/80' : 'text-primary'}`}>{row.v}</span>
+                       </div>
+                     ))}
                  </div>
               </div>
 

@@ -25,33 +25,33 @@ export default function HomePage() {
       ) : (
         <>
           {/* Hero Section */}
-          <section className="relative min-h-[92vh] gradient-hero flex items-center overflow-hidden">
+          <section className="relative min-h-[85vh] lg:min-h-[92vh] gradient-hero flex items-center overflow-hidden py-12 lg:py-0">
             {/* Decorative elements */}
-            <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div className="absolute top-20 left-10 w-64 h-64 bg-accent/10 rounded-full blur-3xl" />
               <div className="absolute bottom-20 right-10 w-96 h-96 bg-warning/10 rounded-full blur-3xl" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/5 rounded-full blur-3xl" />
             </div>
 
-            <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
-              <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                 {/* Left Content */}
                 <motion.div
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8 }}
+                  className="text-center lg:text-left"
                 >
                   <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent/20 rounded-full text-accent-light text-sm font-medium mb-6"
+                    className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 bg-accent/20 rounded-full text-accent-light text-[10px] sm:text-sm font-medium mb-6 uppercase tracking-widest"
                   >
-                    <HiSparkles className="w-4 h-4" />
+                    <HiSparkles className="w-3 h-3 sm:w-4 h-4" />
                     AI-Powered Bakery Experience
                   </motion.div>
 
-                  <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold text-secondary leading-tight mb-6">
+                  <h1 className="font-heading text-4xl sm:text-5xl lg:text-7xl font-black text-secondary leading-[1.1] mb-6 tracking-tighter">
                     Crafted with{' '}
                     <span className="text-gradient">Love,</span>
                     <br />
@@ -59,7 +59,7 @@ export default function HomePage() {
                     <span className="text-gradient">Joy</span>
                   </h1>
 
-                  <p className="text-brown-300 text-lg max-w-xl mb-8 leading-relaxed">
+                  <p className="text-brown-300 text-sm sm:text-lg max-w-xl mb-8 leading-relaxed mx-auto lg:mx-0">
                     Build your dream cake in 3D, get AI-powered recommendations, and track your order in real-time. The future of bakery is here.
                   </p>
 
