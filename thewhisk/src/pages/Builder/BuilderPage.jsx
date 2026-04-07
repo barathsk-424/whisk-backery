@@ -10,7 +10,7 @@ import ControlsPanel from './components/ControlsPanel';
 
 export default function BuilderPage() {
   const navigate = useNavigate();
-  const { addToCart, createCustomProduct, isAuthenticated, saveCakeDesign, savedDesigns, fetchSavedDesigns } = useStore();
+  const { addToCart, createCustomProduct, isAuthenticated, saveCakeDesign, savedDesigns, fetchSavedDesigns, theme } = useStore();
   const { cake, resetCake } = useCakeStore();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSaving, setIsSaving] = useState(false);
@@ -90,18 +90,18 @@ export default function BuilderPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-secondary pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className={`min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 transition-colors duration-500 ${theme === 'dark' ? 'bg-[#0A0807]' : 'bg-secondary'}`}>
       <div className="max-w-[1440px] mx-auto">
         
         {/* Step Header */}
         <div className="mb-12">
-           <div className="flex justify-between items-center mb-8 bg-white p-6 rounded-2xl shadow-sm overflow-x-auto no-scrollbar gap-8">
+           <div className={`flex justify-between items-center mb-8 ${theme === 'dark' ? 'bg-[#1A1211] border border-white/5' : 'bg-white shadow-sm'} p-6 rounded-2xl overflow-x-auto no-scrollbar gap-8`}>
               {steps.map((s) => (
                 <button
                   key={s.n}
                   onClick={() => setCurrentStep(s.n)}
                   className={`flex items-center gap-3 shrink-0 py-2 px-4 rounded-xl transition-all ${
-                    currentStep === s.n ? 'bg-accent text-white shadow-lg' : 'text-brown-400 hover:bg-brown-50'
+                    currentStep === s.n ? 'bg-accent text-white shadow-lg' : 'text-primary/60 hover:bg-primary/5'
                   }`}
                 >
                   <span className="text-xl">{s.icon}</span>
@@ -114,16 +114,16 @@ export default function BuilderPage() {
         <div className="grid lg:grid-cols-2 gap-12 items-start">
            
            {/* Left: 3D Visualization */}
-           <div className="bg-white rounded-[2.5rem] p-4 shadow-xl border border-brown-50 aspect-square relative overflow-hidden h-[600px]">
+           <div className={`rounded-[2.5rem] p-4 shadow-xl border aspect-square relative overflow-hidden h-[600px] ${theme === 'dark' ? 'bg-[#1A1211] border-white/5' : 'bg-white border-brown-50'}`}>
               <div className="absolute top-8 left-8 z-10">
                  <p className="text-[10px] font-black text-brown-400 uppercase tracking-widest mb-1">Live 3D Rendering</p>
-                 <h2 className="text-2xl font-heading font-black text-primary capitalize">{cake.shape} {cake.flavor} Cake</h2>
+                 <h2 className="text-2xl font-heading font-black capitalize text-primary">{cake.shape} {cake.flavor} Cake</h2>
               </div>
               <CakeCanvas />
            </div>
 
            {/* Right: Technical Configuration */}
-           <div className="bg-white rounded-[2.5rem] p-10 shadow-xl border border-brown-50 min-h-[600px] flex flex-col">
+           <div className={`${theme === 'dark' ? 'bg-white/5 border-white/5' : 'bg-white border-brown-50'} rounded-[2.5rem] p-10 shadow-xl border min-h-[600px] flex flex-col`}>
               <div className="flex-1">
                  <ControlsPanel 
                     currentStep={currentStep - 1} 

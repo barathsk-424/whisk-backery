@@ -56,7 +56,7 @@ export default function Navbar() {
             </span>
             <div className="min-w-0">
               <h1
-                className={`font-heading text-sm sm:text-[18px] font-black tracking-tight uppercase truncate ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                className={`font-heading text-sm sm:text-[18px] font-black tracking-tight uppercase truncate ${theme === "dark" ? "text-white" : "text-primary"}`}
               >
                 The Whisk
               </h1>

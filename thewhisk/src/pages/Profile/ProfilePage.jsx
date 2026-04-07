@@ -6,7 +6,7 @@ import { mockOrders } from '../../data/mockData';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { user, isAuthenticated, orders, savedDesigns, deleteDesign, addToCart, logout, deleteOrder, clearOrders } = useStore();
+  const { user, isAuthenticated, orders, savedDesigns, deleteDesign, addToCart, logout, deleteOrder, clearOrders, theme } = useStore();
   const [selectedDesign, setSelectedDesign] = useState(null);
   const [deletedMockIds, setDeletedMockIds] = useState([]);
 
@@ -23,7 +23,7 @@ export default function ProfilePage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
           {/* Profile Header */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-brown-100 mb-8">
+          <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'} rounded-2xl p-6 shadow-sm border mb-8`}>
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full gradient-accent flex items-center justify-center text-white text-2xl font-bold">
                 {user?.full_name?.[0] || 'U'}
@@ -50,7 +50,7 @@ export default function ProfilePage() {
               { label: 'Saved Designs', value: savedDesigns.length, icon: '🎨' },
               { label: 'Reviews', value: 2, icon: '⭐' },
             ].map((stat) => (
-              <div key={stat.label} className="bg-white rounded-xl p-4 shadow-sm border border-brown-100 text-center">
+              <div key={stat.label} className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'} rounded-xl p-4 shadow-sm border text-center`}>
                 <span className="text-2xl block mb-1">{stat.icon}</span>
                 <p className="font-heading text-xl font-bold text-primary">{stat.value}</p>
                 <p className="text-xs text-brown-400">{stat.label}</p>
@@ -93,7 +93,7 @@ export default function ProfilePage() {
             </div>
 
             {savedDesigns.length === 0 ? (
-              <div className="bg-white rounded-2xl p-8 text-center border border-dashed border-brown-200">
+              <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/10' : 'bg-white border-brown-200'} rounded-2xl p-8 text-center border border-dashed`}>
                 <span className="text-4xl block mb-2">🎨</span>
                 <p className="text-sm font-medium text-primary">No saved designs yet</p>
                 <p className="text-xs text-brown-400 mt-1 mb-4">Create your first custom 3D cake!</p>
@@ -111,7 +111,7 @@ export default function ProfilePage() {
                     key={design.id}
                     layoutId={design.id}
                     whileHover={{ y: -4 }}
-                    className="bg-white rounded-2xl overflow-hidden shadow-sm border border-brown-100 flex flex-col group"
+                    className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'} rounded-2xl overflow-hidden shadow-sm border flex flex-col group`}
                   >
                     <div className="aspect-[4/3] relative overflow-hidden bg-brown-50">
                       <img 
@@ -248,9 +248,9 @@ export default function ProfilePage() {
           </AnimatePresence>
 
           {/* Order History */}
-          <div className="bg-white rounded-2xl shadow-sm border border-brown-100 overflow-hidden">
-            <div className="p-6 border-b border-brown-100 flex items-center justify-between">
-              <h3 className="font-heading font-bold text-primary">📦 Order History</h3>
+          <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'} rounded-2xl shadow-sm border overflow-hidden`}>
+            <div className={`p-6 border-b ${theme === 'dark' ? 'border-white/5' : 'border-brown-100'} flex items-center justify-between`}>
+              <h3 className={`font-heading font-bold ${theme === 'dark' ? 'text-secondary' : 'text-primary'}`}>📦 Order History</h3>
               {allOrders.length > 0 && (
                 <button 
                   onClick={() => {
@@ -327,8 +327,8 @@ export default function ProfilePage() {
           </div>
 
           {/* Saved Addresses */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-brown-100 mt-8">
-            <h3 className="font-heading font-bold text-primary mb-4">📍 Saved Addresses</h3>
+          <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'} rounded-2xl p-6 shadow-sm border mt-8`}>
+            <h3 className={`font-heading font-bold ${theme === 'dark' ? 'text-secondary' : 'text-primary'} mb-4`}>📍 Saved Addresses</h3>
             {user?.address ? (
               <div className="flex items-center gap-3 p-3 bg-secondary rounded-xl">
                 <span className="text-xl">🏠</span>

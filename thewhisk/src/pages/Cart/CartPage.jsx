@@ -5,7 +5,7 @@ import { HiOutlineTrash, HiOutlineShoppingBag, HiOutlineArrowRight } from 'react
 
 export default function Cart() {
   const navigate = useNavigate();
-  const { cart, addToCart, removeFromCart, getCartTotal } = useStore();
+  const { cart, addToCart, removeFromCart, getCartTotal, theme } = useStore();
 
   const handleQuantity = (item, delta) => {
     if (item.quantity + delta > 0) {
@@ -20,7 +20,7 @@ export default function Cart() {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-6 bg-secondary">
+    <div className="min-h-screen pt-24 pb-12 px-6 transition-colors duration-500 bg-secondary">
       <div className="max-w-4xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3 mb-8">
@@ -29,7 +29,7 @@ export default function Cart() {
           </div>
 
           {cart.length === 0 ? (
-            <div className="bg-white rounded-3xl p-12 text-center border border-brown-100 shadow-sm">
+            <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'} rounded-3xl p-12 text-center border shadow-sm`}>
               <span className="text-6xl block mb-4">🛒</span>
               <h2 className="text-xl font-bold text-primary mb-2">Your cart is empty</h2>
               <p className="text-brown-400 mb-8">Looks like you haven't added any treats yet!</p>
@@ -44,7 +44,7 @@ export default function Cart() {
             <div className="grid lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-4">
                 {cart.map((item) => (
-                  <div key={`${item.id}-${item.selectedSize || 'std'}`} className="bg-white p-5 rounded-3xl shadow-sm border border-brown-100 flex gap-5 items-center relative group">
+                  <div key={`${item.id}-${item.selectedSize || 'std'}`} className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'} p-5 rounded-3xl shadow-sm border flex gap-5 items-center relative group`}>
                     <div className="w-24 h-24 rounded-2xl overflow-hidden shadow-inner bg-secondary flex-shrink-0">
                       <img src={item.image || item.image_url || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop'} alt={item.name} className="w-full h-full object-cover" />
                     </div>
@@ -68,7 +68,7 @@ export default function Cart() {
                       </div>
                       
                       <div className="flex items-center gap-4 mt-4">
-                        <div className="flex items-center bg-secondary rounded-xl p-1 border border-brown-50">
+                        <div className={`flex items-center ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-secondary border-brown-50'} rounded-xl p-1 border`}>
                           <button onClick={() => handleQuantity(item, -1)} className="w-8 h-8 flex items-center justify-center text-brown-400 font-bold hover:text-accent transition-colors">-</button>
                           <span className="text-sm font-black w-10 text-center text-primary">{item.quantity}</span>
                           <button onClick={() => handleQuantity(item, 1)} className="w-8 h-8 flex items-center justify-center text-brown-400 font-bold hover:text-accent transition-colors">+</button>
@@ -84,7 +84,7 @@ export default function Cart() {
               </div>
 
               <div className="lg:col-span-1">
-                <div className="bg-white p-6 rounded-3xl shadow-sm border border-brown-100 sticky top-28">
+                <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'} p-6 rounded-3xl shadow-sm border sticky top-28`}>
                   <h3 className="font-heading font-bold text-primary mb-6">Order Summary</h3>
                   <div className="space-y-3 mb-6">
                     <div className="flex justify-between text-sm">

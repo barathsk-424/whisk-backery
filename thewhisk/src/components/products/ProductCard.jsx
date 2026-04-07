@@ -26,7 +26,7 @@ export default function ProductCard({ product, index = 0 }) {
 
     addToCart(product);
     toast.success(`${product.name} ready for delivery! 🧁`, {
-      style: theme === 'dark' ? { background: '#2D1F1F', color: '#FFD7BA' } : { background: '#4A2A1A', color: '#FFF8E7' }
+      style: theme === 'dark' ? { background: '#1A1211', color: '#FFF8E7', border: '1px solid rgba(255,255,255,0.1)' } : { background: '#4A2A1A', color: '#FFF8E7' }
     });
   };
 
@@ -59,7 +59,7 @@ export default function ProductCard({ product, index = 0 }) {
       whileHover={{ scale: 1.02 }}
       onClick={handleOpenDetails}
       className={`rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden border shadow-luxury group transition-all duration-500 cursor-pointer ${
-        theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-50'
+        theme === 'dark' ? 'bg-white/5 border-white/5' : 'bg-white border-brown-50'
       }`}
     >
       <div className="relative h-40 lg:h-56 overflow-hidden">
@@ -78,14 +78,14 @@ export default function ProductCard({ product, index = 0 }) {
 
       <div className="p-3 lg:p-6">
          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-1 lg:mb-3 gap-1 lg:gap-0">
-            <h3 className={`font-black tracking-tight text-[11px] lg:text-sm uppercase truncate w-full ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>{product.name}</h3>
+            <h3 className="font-black tracking-tight text-[11px] lg:text-sm uppercase truncate w-full text-primary">{product.name}</h3>
             <div className="flex items-center gap-1">
                <HiStar className="text-warning text-[10px] lg:text-sm" />
                <span className="text-[10px] lg:text-[11px] font-black text-accent">{product.rating || '5.0'}</span>
             </div>
          </div>
 
-         <p className={`text-[10px] lg:text-[11px] font-bold leading-tight lg:leading-relaxed mb-3 lg:mb-6 line-clamp-2 ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>
+         <p className="text-[10px] lg:text-[11px] font-bold leading-tight lg:leading-relaxed mb-3 lg:mb-6 line-clamp-2 text-brown-400">
             {product.description || "A masterfully crafted creation."}
          </p>
 

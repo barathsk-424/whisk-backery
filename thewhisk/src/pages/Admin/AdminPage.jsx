@@ -129,7 +129,7 @@ export default function AdminDashboard() {
         className={`min-h-screen flex items-center justify-center transition-colors duration-500 ${theme === "dark" ? "bg-[#0D0807]" : "bg-secondary"}`}
       >
         <div
-          className={`text-center p-12 rounded-[2.5rem] shadow-2xl border transition-all ${theme === "dark" ? "bg-[#1A1110] border-white/5 text-secondary" : "bg-white border-brown-100 text-primary"}`}
+          className={`text-center p-6 sm:p-12 rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl border transition-all ${theme === "dark" ? "bg-[#1A1110] border-white/5 text-secondary" : "bg-white border-brown-100 text-primary"}`}
         >
           <div className="w-20 h-20 bg-accent/10 rounded-3xl flex items-center justify-center mx-auto mb-6 text-4xl">🔒</div>
           <h2 className="text-3xl font-black uppercase tracking-tighter">Access Denied</h2>
@@ -368,7 +368,7 @@ export default function AdminDashboard() {
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-12">
           <div>
             <h1
-              className={`text-4xl font-black flex items-center gap-3 ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+              className={`text-4xl font-black flex items-center gap-3 ${theme === "dark" ? "text-white" : "text-primary"}`}
             >
               <span className="p-2 bg-primary text-white rounded-2xl shadow-xl">
                 👑

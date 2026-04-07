@@ -22,7 +22,7 @@ const sortOptions = [
 
 export default function MenuPage() {
   const navigate = useNavigate();
-  const { searchQuery, setSearchQuery, activeCategory, setActiveCategory, getFilteredProducts, budgetRange, setBudgetRange, loading } = useStore();
+  const { searchQuery, setSearchQuery, activeCategory, setActiveCategory, getFilteredProducts, budgetRange, setBudgetRange, loading, theme } = useStore();
   const [sortBy, setSortBy] = useState('popular');
   const [showFilters, setShowFilters] = useState(false);
 
@@ -58,7 +58,7 @@ export default function MenuPage() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-8 p-5 lg:p-8 bg-accent/5 border border-accent/20 rounded-[2rem] flex flex-col md:flex-row items-center gap-6 relative overflow-hidden"
+            className={`mb-8 p-5 lg:p-8 ${theme === 'dark' ? 'bg-white/5' : 'bg-accent/5'} border ${theme === 'dark' ? 'border-white/10' : 'border-accent/20'} rounded-[2rem] flex flex-col md:flex-row items-center gap-6 relative overflow-hidden`}
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
             <div className="flex-1 text-center md:text-left z-10">
@@ -87,7 +87,7 @@ export default function MenuPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Filter blueprints..."
-              className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl shadow-sm border border-brown-100 text-[11px] font-black uppercase tracking-widest focus:outline-none focus:border-accent transition-all"
+              className={`w-full pl-12 pr-4 py-4 ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white' : 'bg-white border-brown-100 text-primary'} rounded-2xl shadow-sm border text-[11px] font-black uppercase tracking-widest focus:outline-none focus:border-accent transition-all`}
             />
           </div>
 
@@ -95,7 +95,7 @@ export default function MenuPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="flex-1 sm:flex-none px-4 py-4 bg-white rounded-2xl shadow-sm border border-brown-100 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-accent cursor-pointer"
+              className={`flex-1 sm:flex-none px-4 py-4 ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white' : 'bg-white border-brown-100 text-primary'} rounded-2xl shadow-sm border text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-accent cursor-pointer`}
             >
               {sortOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -105,7 +105,9 @@ export default function MenuPage() {
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-4 rounded-2xl shadow-sm border text-[10px] font-black uppercase tracking-widest transition-all ${
-                showFilters ? 'bg-accent text-white border-accent' : 'bg-white border-brown-100 text-primary'
+                showFilters 
+                  ? 'bg-accent text-white border-accent' 
+                  : `${theme === 'dark' ? 'bg-white/5 border-white/10 text-white' : 'bg-white border-brown-100 text-primary'}`
               }`}
             >
               <HiOutlineFilter className="w-4 h-4" />
@@ -120,9 +122,9 @@ export default function MenuPage() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="bg-white rounded-xl p-6 shadow-sm border border-brown-100 mb-8"
+            className={`rounded-xl p-6 shadow-sm border ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-white border-brown-100'} mb-8`}
           >
-            <h3 className="font-heading font-semibold text-primary mb-4">Budget Slider</h3>
+            <h3 className={`font-heading font-semibold ${theme === 'dark' ? 'text-secondary' : 'text-primary'} mb-4`}>Budget Slider</h3>
             <div className="flex items-center gap-4">
               <span className="text-sm font-medium text-brown-400">₹{budgetRange?.[0] || 0}</span>
               <input
@@ -154,7 +156,7 @@ export default function MenuPage() {
               className={`shrink-0 snap-start flex items-center gap-3 px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
                 activeCategory === cat.id
                   ? 'gradient-accent text-white shadow-lg shadow-accent/20'
-                  : 'bg-white text-primary border border-brown-100 hover:border-accent/30'
+                  : `${theme === 'dark' ? 'bg-white/5 border-white/10 text-primary' : 'bg-white border-brown-100 text-primary'} border hover:border-accent/30`
               }`}
             >
               <span className="text-sm">{cat.emoji}</span>
@@ -164,8 +166,8 @@ export default function MenuPage() {
         </div>
 
         {/* Results count */}
-        <p className="text-sm text-brown-400 mb-6">
-          Showing <span className="font-semibold text-primary">{filtered.length}</span> items
+        <p className="text-sm text-brown-400 mb-6 font-bold">
+          Showing <span className="font-black text-primary">{filtered.length}</span> items
         </p>
 
         {/* Grid */}

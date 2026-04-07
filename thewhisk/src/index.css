@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #4A2A1A;
-  --color-primary-light: #6B3F2A;
-  --color-primary-dark: #3A1E12;
-  --color-secondary: #FFF8E7;
-  --color-secondary-dark: #F5E6C8;
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+  --color-secondary: var(--secondary);
+  --color-secondary-dark: var(--secondary-dark);
   --color-accent: #FF6B35;
   --color-accent-light: #FF8B5E;
   --color-accent-dark: #E55A28;
@@ -38,44 +38,31 @@
   }
 
   :root {
+    --primary: #4A2A1A;
+    --primary-light: #6B3F2A;
+    --primary-dark: #3A1E12;
+    --secondary: #FFF8E7;
+    --secondary-dark: #F5E6C8;
+    
     --fluid-32-64: clamp(2rem, 5vw + 1rem, 4rem);
     --fluid-16-32: clamp(1rem, 2.5vw + 0.5rem, 2rem);
     --fluid-10-14: clamp(0.625rem, 0.5vw + 0.5rem, 0.875rem);
   }
 
-  html {
-    font-size: 16px;
-    scroll-behavior: smooth;
-    -webkit-text-size-adjust: 100%;
-  }
-
-  @media (max-width: 640px) {
-    html {
-      font-size: 14px;
-    }
-    
-    .section-padding {
-      padding-top: 3rem;
-      padding-bottom: 3rem;
-    }
-  }
-
-  @media (max-width: 380px) {
-    html {
-      font-size: 13px;
-    }
-  }
-
-  html.dark {
+  .dark {
     color-scheme: dark;
-    --color-primary: #FFF8E7;
-    --color-secondary: #0A0A0A;
-    --color-secondary-dark: #121212;
-    --color-brown-50: #1A1110;
-    --color-brown-100: #2A1A18;
-    --color-brown-200: #3D2B29;
-    --background: #0A0A0A;
-    --foreground: #FFF8E7;
+    --primary: #FFF8E7;
+    --primary-light: #FFFFFF;
+    --primary-dark: #F5E6C8;
+    --secondary: #0A0807;
+    --secondary-dark: #120C0B;
+    
+    /* Lighter browns for better contrast against dark backgrounds */
+    --color-brown-50: #1A1211;
+    --color-brown-100: #2D1E1B;
+    --color-brown-200: #3E2B28;
+    --color-brown-300: #D9BFA1;
+    --color-brown-400: #F3E5D5;
   }
 
   body {

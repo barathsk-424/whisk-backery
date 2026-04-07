@@ -1,5 +1,6 @@
 import React from "react";
 import useCakeStore from "../../../store/useCakeStore";
+import useStore from "../../../store/useStore";
 
 const ControlsPanel = ({ currentStep }) => {
   const {
@@ -16,6 +17,7 @@ const ControlsPanel = ({ currentStep }) => {
     setReferenceImage,
     setShowCandle,
   } = useCakeStore();
+  const { theme } = useStore();
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -34,7 +36,7 @@ const ControlsPanel = ({ currentStep }) => {
                 className={`p-8 rounded-3xl border-4 transition-all flex flex-col items-center gap-4 group ${
                   cake.shape === s.id
                     ? "border-primary bg-primary/5 ring-8 ring-primary/10 shadow-xl scale-105"
-                    : "border-brown-50 bg-white hover:border-primary hover:bg-brown-50 shadow-sm"
+                    : `${theme === 'dark' ? 'bg-white/5 border-white/5' : 'bg-white border-brown-50'} hover:border-primary hover:opacity-80 shadow-sm`
                 }`}
               >
                 <span className="text-4xl group-hover:scale-125 transition-transform">
@@ -65,7 +67,7 @@ const ControlsPanel = ({ currentStep }) => {
                   className={`w-full p-6 rounded-2xl border-4 transition-all flex items-center justify-between group ${
                     cake.size === sz.v
                       ? "border-primary bg-primary/5 shadow-lg"
-                      : "border-brown-50 bg-white hover:bg-brown-50"
+                      : `${theme === 'dark' ? 'bg-white/5 border-white/5' : 'bg-white border-brown-50'} hover:opacity-80`
                   }`}
                 >
                   <div className="text-left">
@@ -98,7 +100,7 @@ const ControlsPanel = ({ currentStep }) => {
                   className={`p-6 rounded-2xl border-4 flex items-center justify-between transition-all ${
                     cake.layers === l
                       ? "border-primary bg-primary/5 shadow-lg"
-                      : "border-brown-50 bg-white hover:bg-brown-50"
+                      : `${theme === 'dark' ? 'bg-white/5 border-white/5' : 'bg-white border-brown-50'} hover:opacity-80`
                   }`}
                 >
                   <div className="flex flex-col items-start">
@@ -145,7 +147,7 @@ const ControlsPanel = ({ currentStep }) => {
                 className={`p-6 rounded-2xl border-4 transition-all flex flex-col items-start gap-2 ${
                   cake.flavor === f
                     ? "border-primary bg-primary/5 shadow-lg"
-                    : "border-brown-50 bg-white hover:bg-brown-50"
+                    : `${theme === 'dark' ? 'bg-white/5 border-white/5' : 'bg-white border-brown-50'} hover:opacity-80`
                 }`}
               >
                 <div
@@ -196,7 +198,7 @@ const ControlsPanel = ({ currentStep }) => {
                 className={`p-6 rounded-2xl border-4 transition-all text-center ${
                   cake.filling === f
                     ? "border-primary bg-primary/5 shadow-lg"
-                    : "border-brown-50 bg-white hover:bg-brown-50"
+                    : `${theme === 'dark' ? 'bg-white/5 border-white/5' : 'bg-white border-brown-50'} hover:opacity-80`
                 }`}
               >
                 <span className="text-[10px] font-black uppercase text-primary tracking-widest">
@@ -284,7 +286,7 @@ const ControlsPanel = ({ currentStep }) => {
                 value={cake.customText}
                 onChange={(e) => setCustomText(e.target.value)}
                 placeholder="Happy Birthday..."
-                className="w-full bg-white border border-brown-100 rounded-xl px-4 py-4 text-sm font-bold text-primary outline-none focus:border-primary transition-all shadow-sm"
+                className={`w-full ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white' : 'bg-white border-brown-100 text-primary'} rounded-xl px-4 py-4 text-sm font-bold outline-none focus:border-primary transition-all shadow-sm`}
               />
               <div className="flex gap-2">
                 {["#4A2A1A", "#FFFFFF", "#DC2626", "#EAB308"].map((tc) => (
@@ -443,7 +445,7 @@ const ControlsPanel = ({ currentStep }) => {
   };
 
   return (
-    <div className="bg-white/40 backdrop-blur-md rounded-3xl p-8 border border-white/50 shadow-luxury h-full overflow-y-auto artisan-scrollbar">
+    <div className={`${theme === 'dark' ? 'bg-white/10' : 'bg-white/40'} backdrop-blur-md rounded-3xl p-8 border ${theme === 'dark' ? 'border-white/10' : 'border-white/50'} shadow-luxury h-full overflow-y-auto artisan-scrollbar`}>
       {renderStepContent()}
     </div>
   );

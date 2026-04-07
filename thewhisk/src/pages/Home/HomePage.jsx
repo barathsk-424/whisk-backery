@@ -9,7 +9,7 @@ import ContactSection from '../../components/home/ContactSection';
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const { products, searchQuery, setSearchQuery, loading } = useStore();
+  const { products, searchQuery, setSearchQuery, loading, theme } = useStore();
   const menuRef = useRef(null);
   
   const featured = products.slice(0, 4);
@@ -51,7 +51,7 @@ export default function HomePage() {
                     AI-Powered Bakery Experience
                   </motion.div>
 
-                  <h1 className="font-heading text-3xl sm:text-5xl lg:text-7xl font-black text-secondary leading-[1.1] mb-6 tracking-tighter">
+                  <h1 className="font-heading text-3xl sm:text-5xl lg:text-7xl font-black text-[#FFF8E7] leading-[1.1] mb-6 tracking-tighter">
                     Crafted with{' '}
                     <span className="text-gradient block sm:inline">Love,</span>
                     <br className="hidden sm:block" />
@@ -59,7 +59,7 @@ export default function HomePage() {
                     <span className="text-gradient block sm:inline">Joy</span>
                   </h1>
 
-                  <p className="text-brown-300 text-sm sm:text-lg max-w-xl mb-8 leading-relaxed mx-auto lg:mx-0">
+                  <p className="text-[#FFF8E7]/70 text-sm sm:text-lg max-w-xl mb-8 leading-relaxed mx-auto lg:mx-0">
                     Build your dream cake in 3D, get AI-powered recommendations, and track your order in real-time. The future of bakery is here.
                   </p>
 
@@ -73,7 +73,7 @@ export default function HomePage() {
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           placeholder="Search artifacts..."
-                          className="flex-1 bg-transparent text-secondary placeholder-brown-400 text-sm focus:outline-none"
+                          className="flex-1 bg-transparent text-[#FFF8E7] placeholder-[#FFF8E7]/40 text-sm focus:outline-none"
                         />
                       </div>
                       <Link
@@ -96,7 +96,7 @@ export default function HomePage() {
                     </Link>
                     <Link
                       to="/menu"
-                      className="flex items-center justify-center gap-2 px-8 py-3.5 bg-white/10 border border-white/20 text-secondary font-semibold rounded-xl hover:bg-white/20 transition-all"
+                      className="flex items-center justify-center gap-2 px-8 py-3.5 bg-white/10 border border-white/20 text-[#FFF8E7] font-semibold rounded-xl hover:bg-white/20 transition-all"
                     >
                       Explore Menu
                     </Link>
@@ -189,7 +189,7 @@ export default function HomePage() {
           </section>
 
           {/* Occasions Bubbles */}
-          <section className="py-12 bg-white">
+          <section className="py-12 bg-secondary transition-colors duration-500">
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
               <h2 className="font-heading text-2xl font-bold text-primary text-center mb-8">
                 Shop by Occasion
@@ -246,7 +246,7 @@ export default function HomePage() {
           </section>
 
           {/* Smart Bundles */}
-          <section className="py-16 bg-white">
+          <section className="py-16 bg-secondary transition-colors duration-500">
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-10">
                 <h2 className="font-heading text-2xl font-bold text-primary">
@@ -337,7 +337,7 @@ export default function HomePage() {
           </section>
 
           {/* Testimonials */}
-          <section className="py-16 bg-white">
+          <section className="py-16 bg-secondary transition-colors duration-500">
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
               <h2 className="font-heading text-2xl font-bold text-primary text-center mb-10">
                 💬 What Our Customers Say
