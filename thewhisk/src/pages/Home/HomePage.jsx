@@ -51,12 +51,12 @@ export default function HomePage() {
                     AI-Powered Bakery Experience
                   </motion.div>
 
-                  <h1 className="font-heading text-4xl sm:text-5xl lg:text-7xl font-black text-secondary leading-[1.1] mb-6 tracking-tighter">
+                  <h1 className="font-heading text-3xl sm:text-5xl lg:text-7xl font-black text-secondary leading-[1.1] mb-6 tracking-tighter">
                     Crafted with{' '}
-                    <span className="text-gradient">Love,</span>
-                    <br />
+                    <span className="text-gradient block sm:inline">Love,</span>
+                    <br className="hidden sm:block" />
                     Delivered with{' '}
-                    <span className="text-gradient">Joy</span>
+                    <span className="text-gradient block sm:inline">Joy</span>
                   </h1>
 
                   <p className="text-brown-300 text-sm sm:text-lg max-w-xl mb-8 leading-relaxed mx-auto lg:mx-0">
@@ -65,18 +65,20 @@ export default function HomePage() {
 
                   {/* Search */}
                   <div className="relative max-w-lg mb-8">
-                    <div className="flex items-center bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden">
-                      <HiOutlineSearch className="w-5 h-5 text-brown-300 ml-4" />
-                      <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search cakes, flavors, occasions..."
-                        className="flex-1 px-4 py-4 bg-transparent text-secondary placeholder-brown-400 text-sm focus:outline-none"
-                      />
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl sm:rounded-full overflow-hidden p-1 sm:p-0">
+                      <div className="flex items-center flex-1 px-4 py-3 sm:py-0">
+                        <HiOutlineSearch className="w-5 h-5 text-brown-300 mr-2" />
+                        <input
+                          type="text"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          placeholder="Search artifacts..."
+                          className="flex-1 bg-transparent text-secondary placeholder-brown-400 text-sm focus:outline-none"
+                        />
+                      </div>
                       <Link
                         to="/menu"
-                        className="px-6 py-2.5 m-1.5 gradient-accent text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity"
+                        className="px-8 py-3 gradient-accent text-white text-xs font-black uppercase tracking-widest rounded-xl sm:m-1.5 hover:opacity-90 transition-all text-center"
                       >
                         Search
                       </Link>
@@ -101,15 +103,15 @@ export default function HomePage() {
                   </div>
 
                   {/* Stats */}
-                  <div className="grid grid-cols-3 gap-4 mt-10 max-w-sm">
+                  <div className="flex justify-between sm:justify-start gap-4 sm:gap-10 mt-10 max-w-sm">
                     {[
-                      { value: '10K+', label: 'Happy Customers' },
+                      { value: '10K+', label: 'Customers' },
                       { value: '500+', label: 'Designs' },
                       { value: '4.9★', label: 'Rating' },
                     ].map((stat) => (
                       <div key={stat.label}>
-                        <p className="font-heading font-bold text-lg sm:text-xl text-accent">{stat.value}</p>
-                        <p className="text-[10px] text-brown-400">{stat.label}</p>
+                        <p className="font-heading font-black text-xl sm:text-2xl text-accent tracking-tighter">{stat.value}</p>
+                        <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-brown-400">{stat.label}</p>
                       </div>
                     ))}
                   </div>
@@ -192,7 +194,7 @@ export default function HomePage() {
               <h2 className="font-heading text-2xl font-bold text-primary text-center mb-8">
                 Shop by Occasion
               </h2>
-              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide justify-center flex-wrap">
+              <div className="flex gap-4 overflow-x-auto pb-6 no-scrollbar snap-x snap-mandatory px-4">
                 {occasions.map((occ, i) => (
                   <motion.div
                     key={occ.id}
@@ -200,17 +202,16 @@ export default function HomePage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
                     viewport={{ once: true }}
-                    whileHover={{ scale: 1.08, y: -4 }}
-                    className="shrink-0 cursor-pointer"
+                    className="shrink-0 snap-center text-center w-20 sm:w-24"
                   >
-                    <Link to={`/menu?occasion=${occ.id}`}>
+                    <Link to={`/menu?occasion=${occ.id}`} className="block">
                       <div
-                        className="w-24 h-24 rounded-full flex items-center justify-center text-3xl shadow-md mb-2 transition-shadow hover:shadow-lg"
-                        style={{ backgroundColor: occ.color + '15', border: `2px solid ${occ.color}30` }}
+                        className="w-16 h-16 sm:w-24 sm:h-24 rounded-full flex items-center justify-center text-2xl sm:text-3xl shadow-lg mb-3 transition-all hover:scale-110 active:scale-90 mx-auto"
+                        style={{ backgroundColor: occ.color + '15', border: `2px solid ${occ.color}40` }}
                       >
                         {occ.emoji}
                       </div>
-                      <p className="text-xs font-semibold text-primary text-center">{occ.name}</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-primary truncate">{occ.name}</p>
                     </Link>
                   </motion.div>
                 ))}

@@ -122,10 +122,10 @@ export default function ProductDetailsPage() {
                 </div>
              </motion.div>
 
-             <div className="grid grid-cols-4 gap-4">
+             <div className="grid grid-cols-4 gap-3 sm:gap-4">
                 {[1,2,3,4].map(i => (
-                  <div key={i} className={`aspect-square rounded-3xl overflow-hidden border-2 cursor-pointer hover:border-accent transition-all ${theme === 'dark' ? 'border-[#1A1110] bg-[#1A1110]' : 'border-white bg-white'}`}>
-                     <img src={product.image_url || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200&h=200&fit=crop'} className="w-full h-full object-cover opacity-60 hover:opacity-100" />
+                  <div key={i} className={`aspect-square rounded-2xl sm:rounded-3xl overflow-hidden border-2 cursor-pointer hover:border-accent transition-all ${theme === 'dark' ? 'border-[#1A1110] bg-[#1A1110]' : 'border-white bg-white shadow-sm'}`}>
+                     <img src={product.image_url || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200&h=200&fit=crop'} className="w-full h-full object-cover opacity-60 hover:opacity-100 transition-opacity" />
                   </div>
                 ))}
              </div>
@@ -179,45 +179,45 @@ export default function ProductDetailsPage() {
              </div>
 
              {/* Delivery Check */}
-             <div className={`p-8 rounded-[2.5rem] border ${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-50'}`}>
-                <h4 className={`text-[10px] font-black uppercase tracking-widest mb-6 flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
+             <div className={`p-6 sm:p-8 rounded-[2rem] sm:rounded-[2.5rem] border ${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-50 shadow-sm'}`}>
+                <h4 className={`text-[9px] font-black uppercase tracking-widest mb-6 flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                    <HiOutlineLocationMarker className="text-accent text-lg" /> Delivery Logistics
                 </h4>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-3">
                    <input 
                      type="text" 
                      placeholder="Enter Pincode"
                      value={pincode}
                      onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0,6))}
-                     className={`flex-1 p-4 rounded-2xl font-bold border-2 transition-all ${
+                     className={`flex-1 p-4 rounded-xl font-bold border-2 transition-all ${
                        theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:border-accent' : 'bg-secondary border-transparent focus:border-accent'
                      }`}
                    />
-                   <button onClick={checkDelivery} className="px-8 bg-accent text-white font-black rounded-2xl text-[10px] uppercase tracking-widest">Verify</button>
+                   <button onClick={checkDelivery} className="py-4 sm:px-8 bg-accent text-white font-black rounded-xl text-[10px] uppercase tracking-widest shadow-lg shadow-accent/20">Verify</button>
                 </div>
                 {deliveryDate && (
-                  <div className="mt-4 flex items-center gap-3 text-success font-black text-[10px] uppercase animate-in fade-in slide-in-from-top-1">
-                     <HiOutlineBadgeCheck className="text-xl" />
+                  <div className="mt-4 flex items-center gap-3 text-success font-black text-[9px] uppercase animate-in fade-in slide-in-from-top-1">
+                     <HiOutlineBadgeCheck className="text-lg" />
                      Arriving By: {deliveryDate}
                   </div>
                 )}
              </div>
 
              {/* Action Buttons */}
-             <div className="grid grid-cols-2 gap-4">
+             <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4">
                 <button 
                   onClick={handleAddToCart}
-                  className={`py-5 rounded-3xl font-black uppercase tracking-[0.2em] text-[10px] transition-all flex items-center justify-center gap-3 ${
-                    theme === 'dark' ? 'bg-white/5 text-white hover:bg-white/10' : 'bg-secondary text-primary hover:bg-brown-50'
-                  } border-2 border-transparent hover:border-accent shadow-xl`}
+                  className={`py-5 rounded-2xl sm:rounded-3xl font-black uppercase tracking-[0.2em] text-[10px] transition-all flex items-center justify-center gap-3 ${
+                    theme === 'dark' ? 'bg-white/5 text-white hover:bg-white/10' : 'bg-secondary text-primary hover:bg-brown-50 shadow-sm'
+                  } border-2 border-transparent hover:border-accent`}
                 >
-                   <HiOutlineShoppingBag className="text-xl" /> Add to Cart
+                   <HiOutlineShoppingBag className="text-lg sm:text-xl" /> Add to Cart
                 </button>
                 <button 
                   onClick={handleBuyNow}
-                  className="py-5 gradient-accent text-white rounded-3xl font-black uppercase tracking-[0.2em] text-[10px] shadow-2xl shadow-accent/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                  className="py-5 gradient-accent text-white rounded-2xl sm:rounded-3xl font-black uppercase tracking-[0.2em] text-[10px] shadow-xl shadow-accent/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
                 >
-                   <HiOutlineBadgeCheck className="text-xl" /> Buy Now 🚀
+                   <HiOutlineBadgeCheck className="text-lg sm:text-xl" /> Buy Now 🚀
                 </button>
              </div>
 

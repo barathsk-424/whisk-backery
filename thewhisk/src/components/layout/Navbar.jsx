@@ -247,80 +247,95 @@ export default function Navbar() {
                 theme === "dark" ? "bg-[#1A1110] border-white/5" : "bg-white border-brown-50"
               }`}
             >
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <button
                   onClick={() => { navigate("/"); setIsMobileMenuOpen(false); }}
-                  className="p-4 bg-brown-50 dark:bg-white/5 rounded-2xl text-left"
+                  className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 ${theme === "dark" ? "bg-white/5 border-white/5" : "bg-brown-50 border-brown-100"}`}
                 >
-                  <p className="text-[10px] font-black uppercase tracking-widest text-brown-400 mb-1">Vault</p>
-                  <p className="text-sm font-black uppercase">Home</p>
+                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-accent mb-auto">Vault</p>
+                  <p className={`text-sm font-black uppercase tracking-tight ${theme === "dark" ? "text-white" : "text-primary"}`}>Home</p>
                 </button>
                 <button
                   onClick={() => { navigate("/menu"); setIsMobileMenuOpen(false); }}
-                  className="p-4 bg-brown-50 dark:bg-white/5 rounded-2xl text-left"
+                  className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 ${theme === "dark" ? "bg-white/5 border-white/5" : "bg-brown-50 border-brown-100"}`}
                 >
-                  <p className="text-[10px] font-black uppercase tracking-widest text-brown-400 mb-1">Archive</p>
-                  <p className="text-sm font-black uppercase">Menu</p>
+                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-accent mb-auto">Archive</p>
+                  <p className={`text-sm font-black uppercase tracking-tight ${theme === "dark" ? "text-white" : "text-primary"}`}>Menu</p>
                 </button>
                 <button
                   onClick={() => { navigate("/cake-builder"); setIsMobileMenuOpen(false); }}
-                  className="p-4 bg-brown-50 dark:bg-white/5 rounded-2xl text-left"
+                  className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 ${theme === "dark" ? "bg-white/5 border-white/5" : "bg-brown-50 border-brown-100"}`}
                 >
-                  <p className="text-[10px] font-black uppercase tracking-widest text-brown-400 mb-1">Lab</p>
-                  <p className="text-sm font-black uppercase">Builder</p>
+                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-accent mb-auto">Lab</p>
+                  <p className={`text-sm font-black uppercase tracking-tight ${theme === "dark" ? "text-white" : "text-primary"}`}>Builder</p>
                 </button>
                 <button
                   onClick={() => { navigate("/track-orders"); setIsMobileMenuOpen(false); }}
-                  className="p-4 bg-brown-50 dark:bg-white/5 rounded-2xl text-left"
+                  className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 ${theme === "dark" ? "bg-white/5 border-white/5" : "bg-brown-50 border-brown-100"}`}
                 >
-                  <p className="text-[10px] font-black uppercase tracking-widest text-brown-400 mb-1">Radar</p>
-                  <p className="text-sm font-black uppercase">Tracking</p>
+                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-accent mb-auto">Radar</p>
+                  <p className={`text-sm font-black uppercase tracking-tight ${theme === "dark" ? "text-white" : "text-primary"}`}>Tracking</p>
                 </button>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-accent/5 rounded-2xl">
+              <div className={`flex items-center justify-between p-4 rounded-2xl border ${theme === "dark" ? "bg-accent/10 border-accent/20" : "bg-accent/5 border-accent/20"}`}>
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-accent text-white rounded-lg">
-                    <HiOutlineShoppingCart className="text-lg" />
+                  <div className="p-2 bg-accent text-white rounded-lg shadow-lg shadow-accent/20">
+                    <HiOutlineShoppingCart className="text-xl" />
                   </div>
                   <div>
-                    <p className="text-sm font-black uppercase">My Cart</p>
-                    <p className="text-[10px] font-bold text-accent uppercase">{cartCount} items</p>
+                    <p className={`text-xs font-black uppercase tracking-tight ${theme === "dark" ? "text-white" : "text-primary"}`}>My Cart</p>
+                    <p className="text-[10px] font-bold text-accent uppercase tracking-widest">{cartCount} items</p>
                   </div>
                 </div>
                 <button
                   onClick={() => { navigate("/cart"); setIsMobileMenuOpen(false); }}
-                  className="px-6 py-2 bg-accent text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-accent/20"
+                  className="px-5 py-2.5 bg-accent text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-accent/30 active:scale-95 transition-all"
                 >
                   Open
                 </button>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex gap-3">
                 <button
                   onClick={() => { setIsScannerOpen(true); setIsMobileMenuOpen(false); }}
-                  className="flex-1 flex items-center justify-center gap-2 p-4 bg-brown-50 dark:bg-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest"
+                  className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.1em] border ${theme === "dark" ? "bg-white/5 border-white/5 text-white" : "bg-brown-50 border-brown-100 text-primary"}`}
                 >
-                  <HiOutlineCamera className="text-lg" />
+                  <HiOutlineCamera className="text-lg text-accent" />
                   Scanner
                 </button>
                 <button
-                  onClick={() => { toggleTheme(); }}
-                  className="flex-1 flex items-center justify-center gap-2 p-4 bg-brown-50 dark:bg-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest"
+                  onClick={toggleTheme}
+                  className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.1em] border ${theme === "dark" ? "bg-white/5 border-white/5 text-white" : "bg-brown-50 border-brown-100 text-primary"}`}
                 >
-                  {theme === "dark" ? <HiOutlineSun className="text-lg" /> : <HiOutlineMoon className="text-lg" />}
+                  {theme === "dark" ? <HiOutlineSun className="text-lg text-warning" /> : <HiOutlineMoon className="text-lg text-accent" />}
                   Theme
                 </button>
               </div>
 
-              {isAuthenticated && (
+              {isAuthenticated ? (
                 <button
                   onClick={() => { navigate("/profile"); setIsMobileMenuOpen(false); }}
-                  className="p-4 bg-primary text-white rounded-2xl flex items-center justify-between"
+                  className="p-5 bg-primary text-white rounded-2xl flex items-center justify-between shadow-xl"
                 >
-                  <div className="flex items-center gap-3">
-                    <HiOutlineUserCircle className="text-2xl" />
-                    <span className="text-[11px] font-black uppercase tracking-widest">Operator Profile</span>
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
+                      <HiOutlineUserCircle className="text-2xl" />
+                    </div>
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em]">Operator Profile</span>
+                  </div>
+                  <HiArrowRight className="text-accent" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => { navigate("/login"); setIsMobileMenuOpen(false); }}
+                  className="p-5 gradient-accent text-white rounded-2xl flex items-center justify-between shadow-xl"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                      <HiOutlineLogin className="text-2xl" />
+                    </div>
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em]">Sign In</span>
                   </div>
                   <HiArrowRight />
                 </button>

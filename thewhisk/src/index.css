@@ -53,6 +53,11 @@
     html {
       font-size: 14px;
     }
+    
+    .section-padding {
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+    }
   }
 
   @media (max-width: 380px) {
@@ -97,6 +102,13 @@
     max-width: 100%;
     height: auto;
     display: block;
+  }
+
+  /* Prevent horizontal scroll on mobile */
+  .no-horizontal-scroll {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
   }
 }
 
@@ -162,6 +174,18 @@
 
   .pulse-glow {
     animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  .mobile-touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 

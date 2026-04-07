@@ -58,7 +58,7 @@ export default function ProductCard({ product, index = 0 }) {
       transition={{ delay: index * 0.05 }}
       whileHover={{ scale: 1.02 }}
       onClick={handleOpenDetails}
-      className={`rounded-[2.5rem] overflow-hidden border shadow-luxury group transition-all duration-500 cursor-pointer ${
+      className={`rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden border shadow-luxury group transition-all duration-500 cursor-pointer ${
         theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-50'
       }`}
     >

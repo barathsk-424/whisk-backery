@@ -79,7 +79,7 @@ export default function CakeScanner({ isOpen, onClose }) {
              initial={{ scale: 0.9, y: 50, opacity: 0 }}
              animate={{ scale: 1, y: 0, opacity: 1 }}
              exit={{ scale: 0.9, y: 50, opacity: 0 }}
-             className={`relative w-full max-w-5xl h-[85vh] rounded-[3rem] shadow-2xl overflow-hidden border flex flex-col md:flex-row transition-colors duration-500 ${
+             className={`relative w-full max-w-5xl h-[92vh] sm:h-[85vh] rounded-[2rem] sm:rounded-[3rem] shadow-2xl overflow-hidden border flex flex-col md:flex-row transition-colors duration-500 mx-auto ${
                 theme === 'dark' ? 'bg-[#1A1110] border-white/10' : 'bg-white border-brown-50'
              }`}
           >
