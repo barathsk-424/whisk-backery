@@ -114,7 +114,7 @@ export default function ProductDetailsPage() {
                className={`rounded-[3.5rem] overflow-hidden border-4 ${theme === 'dark' ? 'border-[#1A1110] bg-[#1A1110]' : 'border-white bg-white'} shadow-luxury relative group`}
              >
                 <img 
-                  src={product.image_url || product.image || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&h=800&fit=crop'} 
+                  src={product.image_url || product.image || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&h=800&fit=crop&fm=webp&q=80'} 
                   className="w-full h-auto aspect-square object-cover transition-transform duration-1000 group-hover:scale-110"
                 />
                 <div className="absolute top-8 right-8 flex flex-col gap-3">
@@ -125,7 +125,7 @@ export default function ProductDetailsPage() {
              <div className="grid grid-cols-4 gap-3 sm:gap-4">
                 {[1,2,3,4].map(i => (
                   <div key={i} className={`aspect-square rounded-2xl sm:rounded-3xl overflow-hidden border-2 cursor-pointer hover:border-accent transition-all ${theme === 'dark' ? 'border-[#1A1110] bg-[#1A1110]' : 'border-white bg-white shadow-sm'}`}>
-                     <img src={product.image_url || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200&h=200&fit=crop'} className="w-full h-full object-cover opacity-60 hover:opacity-100 transition-opacity" />
+                     <img src={product.image_url || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200&h=200&fit=crop&fm=webp&q=80'} className="w-full h-full object-cover opacity-60 hover:opacity-100 transition-opacity" />
                   </div>
                 ))}
              </div>

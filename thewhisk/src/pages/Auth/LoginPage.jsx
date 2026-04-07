@@ -94,7 +94,7 @@ export default function LoginPage() {
 
   return (
     <div
-      className={`min-h-screen flex items-center justify-center py-24 px-6 transition-colors duration-700 ${theme === "dark" ? "bg-[#0D0807]" : "bg-secondary"}`}
+      className={`min-h-[calc(100vh-80px)] flex items-center justify-center py-12 sm:py-24 px-4 sm:px-6 transition-colors duration-700 ${theme === "dark" ? "bg-[#0D0807]" : "bg-secondary"}`}
     >
       <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -102,27 +102,27 @@ export default function LoginPage() {
         className="w-full max-w-lg"
       >
         <div
-          className={`rounded-[3rem] p-10 shadow-2xl border transition-all ${
+          className={`rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 shadow-2xl border transition-all ${
             theme === "dark"
               ? "bg-[#1A1110] border-white/5 shadow-white/5"
               : "bg-white border-brown-100"
           }`}
         >
-          <div className="text-center mb-10">
+          <div className="text-center mb-6 sm:mb-10">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring" }}
-              className="w-20 h-20 bg-accent/10 rounded-3xl flex items-center justify-center mx-auto mb-6 text-4xl"
+              className="w-16 h-16 sm:w-20 sm:h-20 bg-accent/10 rounded-[1.25rem] sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 text-3xl sm:text-4xl"
             >
               🧁
             </motion.div>
             <h1
-              className={`text-3xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+              className={`text-2xl sm:text-3xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}
             >
               Artisan Gateway
             </h1>
-            <p className="text-accent font-black uppercase text-[10px] tracking-[0.4em] mt-3">
+            <p className="text-accent font-black uppercase text-[8px] sm:text-[10px] tracking-[0.3em] sm:tracking-[0.4em] mt-2 sm:mt-3">
               {isSignUp ? "Create Membership" : "Unified Intelligence Portal"}
             </p>
           </div>
@@ -149,18 +149,18 @@ export default function LoginPage() {
                 <label className="block text-[10px] font-black text-brown-400 uppercase tracking-widest mb-2 ml-4 self-start text-left">
                   Masterpiece Signature (Name)
                 </label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="EX: PIERRE HERMÉ"
-                  className={`w-full px-6 py-4.5 rounded-2xl border font-black text-xs tracking-widest focus:outline-none focus:ring-4 transition-all uppercase ${
-                    theme === "dark"
-                      ? "bg-white/5 border-white/10 text-white focus:ring-white/5 placeholder:text-white/20"
-                      : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5 placeholder:text-brown-200"
-                  }`}
-                />
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="EX: PIERRE HERMÉ"
+                    className={`w-full px-5 py-4 sm:px-6 sm:py-4.5 rounded-xl sm:rounded-2xl border font-black text-[10px] sm:text-xs tracking-widest focus:outline-none focus:ring-4 transition-all uppercase ${
+                      theme === "dark"
+                        ? "bg-white/5 border-white/10 text-white focus:ring-white/5 placeholder:text-white/20"
+                        : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5 placeholder:text-brown-200"
+                    }`}
+                  />
               </motion.div>
             )}
 
@@ -174,7 +174,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="YOU@ARTISAN.COM"
-                className={`w-full px-6 py-4.5 rounded-2xl border font-black text-xs tracking-widest focus:outline-none focus:ring-4 transition-all uppercase ${
+                className={`w-full px-5 py-4 sm:px-6 sm:py-4.5 rounded-xl sm:rounded-2xl border font-black text-[10px] sm:text-xs tracking-widest focus:outline-none focus:ring-4 transition-all uppercase ${
                   theme === "dark"
                     ? "bg-white/5 border-white/10 text-white focus:ring-white/5 placeholder:text-white/20"
                     : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5 placeholder:text-brown-200"
@@ -192,7 +192,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className={`w-full px-6 py-4.5 rounded-2xl border font-black text-xs focus:outline-none focus:ring-4 transition-all ${
+                className={`w-full px-5 py-4 sm:px-6 sm:py-4.5 rounded-xl sm:rounded-2xl border font-black text-[10px] sm:text-xs focus:outline-none focus:ring-4 transition-all ${
                   theme === "dark"
                     ? "bg-white/5 border-white/10 text-white focus:ring-white/5 tracking-widest"
                     : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5"

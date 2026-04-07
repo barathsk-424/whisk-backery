@@ -12,26 +12,29 @@ import useStore from "./store/useStore";
 import BackendStatus from "./components/layout/BackendStatus";
 
 // Pages
-import HomePage from "./pages/Home/HomePage";
-import MenuPage from "./pages/Menu/MenuPage";
-import BuilderPage from "./pages/Builder/BuilderPage";
-import TrackOrdersPage from "./pages/Track/TrackOrdersPage";
-import TrackOrderPage from "./pages/Track/TrackOrderPage";
-import LoginPage from "./pages/Auth/LoginPage";
-import AdminDashboard from "./pages/Admin/AdminPage";
-import EditCakePage from "./pages/Admin/EditCakePage";
-import FinanceDashboard from "./pages/Finance/FinanceDashboard";
-import AddCakePage from "./pages/Products/AddCakePage";
-import ProfilePage from "./pages/Profile/ProfilePage";
-import ProductDetailsPage from "./pages/Products/ProductDetailsPage";
-import Cart from "./pages/Cart/CartPage";
-import CheckoutPage from "./pages/Checkout/CheckoutPage";
-import BundlesPage from "./pages/Bundles/BundlesPage";
+// Pages (Lazy Loaded)
+const HomePage = lazy(() => import("./pages/Home/HomePage"));
+const MenuPage = lazy(() => import("./pages/Menu/MenuPage"));
+const BuilderPage = lazy(() => import("./pages/Builder/BuilderPage"));
+const TrackOrdersPage = lazy(() => import("./pages/Track/TrackOrdersPage"));
+const TrackOrderPage = lazy(() => import("./pages/Track/TrackOrderPage"));
+const LoginPage = lazy(() => import("./pages/Auth/LoginPage"));
+const AdminDashboard = lazy(() => import("./pages/Admin/AdminPage"));
+const EditCakePage = lazy(() => import("./pages/Admin/EditCakePage"));
+const FinanceDashboard = lazy(() => import("./pages/Finance/FinanceDashboard"));
+const AddCakePage = lazy(() => import("./pages/Products/AddCakePage"));
+const ProfilePage = lazy(() => import("./pages/Profile/ProfilePage"));
+const ProductDetailsPage = lazy(() => import("./pages/Products/ProductDetailsPage"));
+const Cart = lazy(() => import("./pages/Cart/CartPage"));
+const CheckoutPage = lazy(() => import("./pages/Checkout/CheckoutPage"));
+const BundlesPage = lazy(() => import("./pages/Bundles/BundlesPage"));
+const StockAnalysisDashboard = lazy(() => import("./pages/Stock/StockAnalysisDashboard"));
+const StockDetailPage = lazy(() => import("./pages/Stock/StockDetailPage"));
+const InvoicePage = lazy(() => import("./pages/Checkout/InvoicePage"));
+const OrderSuccessPage = lazy(() => import("./pages/Checkout/OrderSuccessPage"));
+
+// Standard components
 import ContactSection from "./components/home/ContactSection";
-import StockAnalysisDashboard from "./pages/Stock/StockAnalysisDashboard";
-import StockDetailPage from "./pages/Stock/StockDetailPage";
-import InvoicePage from "./pages/Checkout/InvoicePage";
-import OrderSuccessPage from "./pages/Checkout/OrderSuccessPage";
 
 // ─── UNIFIED PROTECTED ROUTE ENGINE (JWT BASED) ─────────────
 const ProtectedRoute = ({ children }) => {
