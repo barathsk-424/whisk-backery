@@ -381,12 +381,12 @@ export default function TrackOrdersPage() {
                         className={`p-5 rounded-3xl border ${theme === "dark" ? "bg-white/5 border-white/5" : "bg-secondary/50 border-transparent"}`}
                       >
                         <p className="text-[8px] font-black uppercase text-brown-300 mb-2">
-                          Payment ID
+                          Payment Method
                         </p>
                         <p
                           className={`text-[10px] font-mono font-bold break-all ${theme === "dark" ? "text-white/80" : "text-primary"}`}
                         >
-                          {selectedOrder.payment_id || "LOCAL_SIGNAL_0X1"}
+                          {selectedOrder.payment_method || "Online"}
                         </p>
                       </div>
                       <div

@@ -132,7 +132,7 @@ export default function OrderSuccessPage() {
 
           <div className="flex flex-col sm:flex-row gap-4">
             <button
-              onClick={() => navigate("/track-order")}
+              onClick={() => navigate("/track-orders")}
               className="flex-1 py-4 gradient-accent text-white font-bold rounded-xl shadow-lg hover:opacity-90 transition-opacity"
             >
               Track Order Live

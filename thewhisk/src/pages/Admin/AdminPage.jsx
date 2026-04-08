@@ -39,6 +39,7 @@ import {
 import useStore from "../../store/useStore";
 import toast from "react-hot-toast";
 import { API_URL } from "../../config";
+import { bundles } from "../../data/mockData";
 
 const COLORS = [
   "#FF4D6D",
@@ -1194,6 +1195,75 @@ export default function AdminDashboard() {
                             }`}
                           >
                             Edit
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Smart Bundles Management */}
+            <div className={`mt-12 flex justify-between items-center mb-6 px-4`}>
+              <div>
+                <h2 className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                  Bundles Management
+                </h2>
+                <p className="text-accent font-black uppercase text-[9px] tracking-widest mt-1">
+                  Curated Collections & Offers
+                </p>
+              </div>
+            </div>
+
+            <div className={`rounded-[3rem] shadow-luxury border overflow-hidden ${theme === "dark" ? "bg-[#1A1110] border-white/5" : "bg-white border-brown-100"}`}>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className={`border-b ${theme === "dark" ? "bg-[#120B0B] border-white/5" : "bg-secondary/20 border-brown-50"}`}>
+                      <th className="py-6 px-10 text-[10px] uppercase font-black text-brown-400 tracking-widest">Bundle Identity</th>
+                      <th className="py-6 text-[10px] uppercase font-black text-brown-400 tracking-widest">Included Items</th>
+                      <th className="py-6 text-[10px] uppercase font-black text-brown-400 tracking-widest">Pricing Strategy</th>
+                      <th className="py-6 text-[10px] uppercase font-black text-brown-400 tracking-widest text-right px-10">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className={`divide-y ${theme === "dark" ? "divide-white/5" : "divide-brown-50"}`}>
+                    {bundles.map((b) => (
+                      <tr key={b.id} className={`transition-all ${theme === "dark" ? "hover:bg-white/5" : "hover:bg-secondary/10"}`}>
+                        <td className="py-8 px-10 flex items-center gap-5">
+                          <div className={`w-16 h-16 rounded-[1.25rem] overflow-hidden border-4 shadow-md p-0.5 ${theme === "dark" ? "bg-[#120B0B] border-white/10" : "bg-secondary border-white"}`}>
+                            <img src={b.image_url} alt={b.name} className="w-full h-full object-cover rounded-[1rem]" />
+                          </div>
+                          <div>
+                            <p className={`font-black text-sm mb-0.5 uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                              {b.emoji} {b.name}
+                            </p>
+                            <span className="px-2 py-0.5 bg-accent/10 text-accent text-[8px] font-black rounded uppercase tracking-tighter">
+                              {b.discount}% OFF
+                            </span>
+                          </div>
+                        </td>
+                        <td className="py-8">
+                          <ul className="list-disc pl-4 text-xs font-bold text-brown-400 space-y-1">
+                            {b.items.map((item, idx) => (
+                              <li key={idx}>{item}</li>
+                            ))}
+                          </ul>
+                        </td>
+                        <td className="py-8">
+                          <div className="flex flex-col">
+                            <span className="text-xs text-brown-300 line-through font-bold">₹{b.original_price}</span>
+                            <span className="font-black text-accent text-lg">₹{b.final_price}</span>
+                          </div>
+                        </td>
+                        <td className="py-8 px-10 text-right">
+                          <button
+                            onClick={() => toast.error("Bundle edit temporarily locked for sync")}
+                            className={`px-5 py-2.5 border-2 font-black text-[10px] rounded-xl uppercase tracking-widest hover:border-primary hover:text-primary transition-all shadow-sm ${
+                              theme === "dark" ? "bg-white/5 border-white/10 text-white/40" : "bg-white border-brown-50 text-brown-400"
+                            }`}
+                          >
+                            Edit Bundle
                           </button>
                         </td>
                       </tr>

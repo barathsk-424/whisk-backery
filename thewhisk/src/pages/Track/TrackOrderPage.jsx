@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { supabase } from '../../lib/supabase';
+import useStore from '../../store/useStore';
 
 /* ─── Timeline Steps ─────────────────────────────────── */
 const STEPS = [
