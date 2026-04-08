@@ -118,7 +118,7 @@ export default function LoginPage() {
               🧁
             </motion.div>
             <h1
-              className={`text-2xl sm:text-3xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+              className="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-primary"
             >
               Artisan Gateway
             </h1>
@@ -203,11 +203,11 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-5 bg-primary text-white font-black text-xs rounded-2xl shadow-xl hover:translate-y-[-2px] active:translate-y-[1px] transition-all flex items-center justify-center gap-3 uppercase tracking-[0.3em] ${
-                loading
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-primary-light active:bg-primary-dark shadow-luxury"
-              }`}
+              className={`w-full py-5 font-black text-xs rounded-2xl shadow-xl hover:translate-y-[-2px] active:translate-y-[1px] transition-all flex items-center justify-center gap-3 uppercase tracking-[0.3em] ${
+                theme === "dark" 
+                  ? "bg-white text-black hover:bg-white/90 shadow-white/5" 
+                  : "bg-primary text-white hover:bg-primary-light shadow-luxury"
+              } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

@@ -65,6 +65,10 @@ const useCakeStore = create(
          localStorage.removeItem('cake-design-storage');
          set({ cake: initialState });
       },
+
+      loadDesign: (designConfig) => {
+        set({ cake: { ...initialState, ...designConfig } });
+      },
     }),
     {
       name: 'cake-design-storage',

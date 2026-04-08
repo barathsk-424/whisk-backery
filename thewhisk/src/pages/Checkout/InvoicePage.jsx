@@ -155,8 +155,22 @@ const InvoicePage = () => {
              {/* Header Section */}
              <div className="relative z-10 flex flex-col md:flex-row justify-between items-start gap-8 md:gap-12 mb-12 md:mb-20">
                 <div className="flex items-start gap-8">
-                    <div className="w-24 h-24 bg-[#FFFBF0] rounded-3xl p-3 shadow-sm border border-brown-50 shrink-0">
-                        <img src="/logo.png" alt="Cupcake Logo" className="w-full h-full object-contain" />
+                    <div className="w-24 h-24 bg-[#FFFBF0] rounded-3xl p-3 shadow-sm border border-brown-50 shrink-0 flex items-center justify-center overflow-hidden">
+                        <img 
+                          src="/logo.png" 
+                          alt="Cupcake Logo" 
+                          className="w-full h-full object-contain"
+                          onError={(e) => {
+                            // If base-relative fails, try relative to current subpath
+                            if (e.target.src.includes('/logo.png')) {
+                              e.target.src = 'logo.png';
+                            } else {
+                              // If all fail, hide the broken image and show a fallback
+                              e.target.style.display = 'none';
+                              e.target.parentNode.innerHTML = '<span class="text-4xl">🧁</span>';
+                            }
+                          }}
+                        />
                     </div>
                     <div>
                         <h2 className="text-2xl md:text-4xl font-black text-[#4A2A1A] tracking-[-0.04em] uppercase leading-[0.9]">

@@ -49,17 +49,28 @@ export default function Footer() {
           <div>
             <h4 className="font-heading font-semibold text-primary mb-4">Contact Us</h4>
             <ul className="space-y-3 text-sm text-primary/70">
-              <li className="flex items-start gap-3">
+              <li className="flex items-start gap-3 group">
                 <HiOutlineLocationMarker className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                <span>Mannivakkam, Chennai</span>
+                <a 
+                  href="https://www.google.com/maps/search/?api=1&query=Mannivakkam+Chennai" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-accent transition-colors"
+                >
+                  Mannivakkam, Chennai
+                </a>
               </li>
               <li className="flex items-center gap-3">
                 <HiOutlinePhone className="w-5 h-5 text-accent shrink-0" />
-                <span>+91 6374618833</span>
+                <a href="tel:+916374618833" className="hover:text-accent transition-colors">
+                  +91 6374618833
+                </a>
               </li>
               <li className="flex items-center gap-3">
                 <HiOutlineMail className="w-5 h-5 text-accent shrink-0" />
-                <span>skbarath424@gmail.com</span>
+                <a href="mailto:skbarath424@gmail.com" className="hover:text-accent transition-colors">
+                  skbarath424@gmail.com
+                </a>
               </li>
               <li className="flex items-center gap-3">
                 <HiOutlineClock className="w-5 h-5 text-accent shrink-0" />

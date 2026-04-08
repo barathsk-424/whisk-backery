@@ -2,13 +2,17 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import useStore from '../../store/useStore';
+import { supabase } from '../../lib/supabase';
+import toast from 'react-hot-toast';
 import { mockOrders } from '../../data/mockData';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { user, isAuthenticated, orders, savedDesigns, deleteDesign, addToCart, logout, deleteOrder, clearOrders, theme } = useStore();
+  const { user, isAuthenticated, orders, savedDesigns, deleteDesign, addToCart, logout, deleteOrder, clearOrders, theme, addFeedback } = useStore();
   const [selectedDesign, setSelectedDesign] = useState(null);
   const [deletedMockIds, setDeletedMockIds] = useState([]);
+  const [feedbackForm, setFeedbackForm] = useState({ subject: '', message: '', rating: 5 });
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
 
   if (!isAuthenticated) {
     navigate('/login');
@@ -17,6 +21,30 @@ export default function ProfilePage() {
 
   // Merge with mock orders but filter out locally deleted ones
   const allOrders = [...orders, ...mockOrders.filter(mo => !deletedMockIds.includes(mo.id))];
+
+  const handleFeedbackSubmit = async (e) => {
+    e.preventDefault();
+    if (!feedbackForm.subject.trim() || !feedbackForm.message.trim()) {
+      return toast.error("Please provide both subject and message for our artisans.");
+    }
+    
+    setSubmittingFeedback(true);
+    const tid = toast.loading("Transmitting your feedback...");
+    try {
+      await addFeedback({
+        subject: feedbackForm.subject.trim(),
+        message: feedbackForm.message.trim(),
+        rating: feedbackForm.rating
+      });
+
+      toast.success("Feedback received! Thank you for helping us improve.", { id: tid });
+      setFeedbackForm({ subject: '', message: '', rating: 5 });
+    } catch (err) {
+      toast.error("Feedback transmission failed: " + err.message, { id: tid });
+    } finally {
+      setSubmittingFeedback(false);
+    }
+  };
 
   return (
     <div className="min-h-screen pt-20 pb-12">
@@ -324,6 +352,59 @@ export default function ProfilePage() {
                 ))}
               </div>
             )}
+          </div>
+
+          {/* 📬 Service Feedback Section */}
+          <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'} rounded-2xl p-6 shadow-sm border mt-8`}>
+            <h3 className={`font-heading font-bold ${theme === 'dark' ? 'text-secondary' : 'text-primary'} mb-2 flex items-center gap-2`}>
+               📬 Operations Feedback
+            </h3>
+            <p className="text-xs text-brown-400 mb-6 uppercase tracking-widest font-black">Help us refine our artisan protocols</p>
+            
+            <form onSubmit={handleFeedbackSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input 
+                  type="text"
+                  placeholder="Subject (e.g., Delivery Service, Website Experience)"
+                  value={feedbackForm.subject}
+                  onChange={(e) => setFeedbackForm({ ...feedbackForm, subject: e.target.value })}
+                  className={`w-full p-3 rounded-xl border-2 text-sm font-bold transition-all ${
+                    theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:border-accent' : 'bg-secondary border-transparent focus:border-accent'
+                  }`}
+                />
+                <div className="flex items-center gap-4 px-3 bg-secondary rounded-xl">
+                   <span className="text-[10px] font-black uppercase text-brown-400">Rating:</span>
+                   <div className="flex gap-1">
+                      {[1,2,3,4,5].map(star => (
+                        <button 
+                          key={star}
+                          type="button"
+                          onClick={() => setFeedbackForm({ ...feedbackForm, rating: star })}
+                          className={`text-lg transition-transform hover:scale-125 ${feedbackForm.rating >= star ? 'text-accent' : 'text-brown-200'}`}
+                        >
+                          ★
+                        </button>
+                      ))}
+                   </div>
+                </div>
+              </div>
+              <textarea 
+                placeholder="Transcribe your experience details here..."
+                value={feedbackForm.message}
+                onChange={(e) => setFeedbackForm({ ...feedbackForm, message: e.target.value })}
+                rows={3}
+                className={`w-full p-3 rounded-xl border-2 text-sm font-bold transition-all resize-none ${
+                    theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:border-accent' : 'bg-secondary border-transparent focus:border-accent'
+                }`}
+              />
+              <button 
+                type="submit"
+                disabled={submittingFeedback}
+                className="w-full py-3 gradient-accent text-white font-black rounded-xl text-xs uppercase tracking-widest shadow-lg shadow-accent/20 disabled:opacity-50"
+              >
+                {submittingFeedback ? 'Transmitting...' : 'Submit Feedback Signal'}
+              </button>
+            </form>
           </div>
 
           {/* Saved Addresses */}

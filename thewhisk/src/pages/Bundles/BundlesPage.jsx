@@ -1,11 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { bundles } from '../../data/mockData';
+import { bundles as mockBundles } from '../../data/mockData';
+import { supabase } from '../../lib/supabase';
 import useStore from '../../store/useStore';
 import toast from 'react-hot-toast';
 
 export default function BundlesPage() {
   const { addToCart, user, navigate } = useStore();
+  const [bundles, setBundles] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchBundles();
+  }, []);
+
+  const fetchBundles = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('bundles')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      setBundles(data || []);
+    } catch (error) {
+      console.error('Fetch Error:', error);
+      setBundles(mockBundles); // Fallback to mock data on error
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddBundle = (bundle) => {
     if (!user) {
@@ -26,6 +50,17 @@ export default function BundlesPage() {
     });
     toast.success(`${bundle.name} added to cart!`, { icon: '🎁' });
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-secondary">
+        <div className="text-center">
+            <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="font-bold text-primary">Loading Bundles...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-20 pb-12">

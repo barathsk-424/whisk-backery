@@ -26,7 +26,11 @@ const AdminInvoices = ({ theme }) => {
   const fetchInvoices = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/invoices/all`);
+      const response = await fetch(`${API_URL}/api/invoices/all`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        }
+      });
       const data = await response.json();
       if (data.success) {
         setInvoices(data.invoices);
@@ -49,7 +53,10 @@ const AdminInvoices = ({ theme }) => {
     try {
       const response = await fetch(`${API_URL}/api/invoices/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
         body: JSON.stringify(editingInvoice),
       });
       const data = await response.json();

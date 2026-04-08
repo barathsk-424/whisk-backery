@@ -196,6 +196,33 @@ const useStore = create((set, get) => ({
     }
   },
 
+  refundOrder: async (orderId, amount) => {
+    try {
+      const { data, error } = await supabase
+        .from("orders")
+        .update({
+          payment_status: "Refunded",
+          refund_status: "Completed",
+          status: "Cancelled",
+        })
+        .eq("id", orderId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      set((state) => ({
+        orders: state.orders.map((o) => (o.id === orderId ? data : o)),
+      }));
+      
+      toast.success("Refund processed successfully!");
+      return data;
+    } catch (err) {
+      console.error("Refund Error:", err.message);
+      throw err;
+    }
+  },
+
   fetchSavedDesigns: async () => {
     const { user } = get();
     const uID = user?.id || user?.sub;
@@ -323,10 +350,15 @@ const useStore = create((set, get) => ({
   saveCakeDesign: async (designData) => {
     const { user } = get();
     if (!user) throw new Error("Identity required to save blueprints");
+    
+    // Ensure public.users entry exists to prevent FK constraint errors
+    await get().ensureUserProfile();
+    
     try {
+      const uID = user.id || user.sub;
       const { data, error } = await supabase
         .from("saved_designs")
-        .insert([{ user_id: user.id, ...designData }])
+        .insert([{ user_id: uID, ...designData }])
         .select()
         .single();
       if (error) throw error;
@@ -427,20 +459,50 @@ const useStore = create((set, get) => ({
   addReview: async (reviewData) => {
     const { user } = get();
     if (!user) throw new Error("Identity required to leave a review");
+    
+    // Ensure public.users entry exists to prevent FK constraint errors
+    await get().ensureUserProfile();
+    
     try {
+      const uID = user.id || user.sub;
       const { data, error } = await supabase
         .from("reviews")
         .insert([
           {
             ...reviewData,
-            user_id: user.id,
-            user_name: user.name || user.email.split("@")[0],
+            user_id: uID,
+            user_name: user.full_name || user.name || user.user_metadata?.full_name || user.email.split("@")[0],
           },
         ])
         .select()
         .single();
       if (error) throw error;
       set((state) => ({ reviews: [data, ...state.reviews] }));
+      return data;
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  addFeedback: async (feedbackData) => {
+    const { user } = get();
+    if (!user) throw new Error("Identity required to submit feedback");
+
+    // Ensure public.users entry exists to prevent FK constraint errors
+    await get().ensureUserProfile();
+
+    try {
+      const uID = user.id || user.sub;
+      const { data, error } = await supabase
+        .from("feedback")
+        .insert([{
+          ...feedbackData,
+          user_id: uID,
+          user_name: user.full_name || user.name || user.user_metadata?.full_name || user.email.split("@")[0]
+        }])
+        .select()
+        .single();
+      if (error) throw error;
       return data;
     } catch (err) {
       throw err;

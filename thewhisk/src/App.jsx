@@ -21,6 +21,7 @@ const TrackOrderPage = lazy(() => import("./pages/Track/TrackOrderPage"));
 const LoginPage = lazy(() => import("./pages/Auth/LoginPage"));
 const AdminDashboard = lazy(() => import("./pages/Admin/AdminPage"));
 const EditCakePage = lazy(() => import("./pages/Admin/EditCakePage"));
+const EditBundlePage = lazy(() => import("./pages/Admin/EditBundlePage"));
 const FinanceDashboard = lazy(() => import("./pages/Finance/FinanceDashboard"));
 const AddCakePage = lazy(() => import("./pages/Products/AddCakePage"));
 const ProfilePage = lazy(() => import("./pages/Profile/ProfilePage"));
@@ -226,6 +227,14 @@ function App() {
                     element={
                       <ProtectedAdminRoute>
                         <SafeRender component={EditCakePage} />
+                      </ProtectedAdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/edit-bundle/:id"
+                    element={
+                      <ProtectedAdminRoute>
+                        <SafeRender component={EditBundlePage} />
                       </ProtectedAdminRoute>
                     }
                   />

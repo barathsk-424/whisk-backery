@@ -4,20 +4,29 @@ import { cakeSizes } from '../../data/mockData';
 import useStore from '../../store/useStore';
 import useCakeStore from '../../store/useCakeStore';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import CakeCanvas from './components/CakeCanvas';
 import ControlsPanel from './components/ControlsPanel';
 
 export default function BuilderPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { addToCart, createCustomProduct, isAuthenticated, saveCakeDesign, savedDesigns, fetchSavedDesigns, theme } = useStore();
-  const { cake, resetCake } = useCakeStore();
+  const { cake, resetCake, loadDesign } = useCakeStore();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) fetchSavedDesigns();
-  }, [isAuthenticated]);
+    
+    // Check if we came here with a design config to load (e.g. from Profile)
+    if (location.state?.config) {
+      loadDesign(location.state.config);
+      // Clear state after loading to prevent re-loading on refresh
+      window.history.replaceState({}, document.title);
+      toast.success("Design blueprint synchronized!");
+    }
+  }, [isAuthenticated, location.state]);
 
   const totalPrice = useMemo(() => {
     const basePrice = 499; 
@@ -200,7 +209,12 @@ export default function BuilderPage() {
                     <motion.div 
                        key={design.id}
                        whileHover={{ y: -10 }}
-                       className={`bg-primary/[0.02] border-primary/5 rounded-[2rem] overflow-hidden shadow-luxury border group transition-all`}
+                       onClick={() => {
+                         loadDesign(design.config);
+                         window.scrollTo({ top: 0, behavior: 'smooth' });
+                         toast.success(`${design.name} rehydrated in builder!`);
+                       }}
+                       className={`bg-primary/[0.02] border-primary/5 rounded-[2rem] overflow-hidden shadow-luxury border group transition-all cursor-pointer`}
                     >
                        <div className="aspect-[4/3] bg-primary/5 relative overflow-hidden">
                           <img 
@@ -209,11 +223,9 @@ export default function BuilderPage() {
                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                           />
                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-4">
-                             <button 
-                                className="p-3 bg-secondary rounded-full text-primary hover:bg-accent hover:text-secondary transition-all shadow-xl"
-                             >
+                             <div className="p-3 bg-secondary rounded-full text-primary hover:bg-accent hover:text-secondary transition-all shadow-xl">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                             </button>
+                             </div>
                           </div>
                        </div>
                        <div className="p-6">

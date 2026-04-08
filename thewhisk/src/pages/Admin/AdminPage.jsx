@@ -18,6 +18,8 @@ import {
   HiOutlinePencilAlt,
   HiOutlineShoppingBag,
   HiOutlineDocumentReport,
+  HiOutlineChatAlt,
+  HiOutlineAnnotation,
 } from "react-icons/hi";
 import {
   BarChart,
@@ -57,6 +59,10 @@ export default function AdminDashboard() {
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
   const [users, setUsers] = useState([]);
+  const [bundlesList, setBundlesList] = useState([]);
+  const [contacts, setContacts] = useState([]);
+  const [reviewsList, setReviewsList] = useState([]);
+  const [feedbackList, setFeedbackList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [timeFilter, setTimeFilter] = useState("daily"); // daily, monthly, yearly
@@ -106,6 +112,10 @@ export default function AdminDashboard() {
       setOrders(data.orders || []);
       setProducts(data.products || []);
       setUsers(data.users || []);
+      setBundlesList(data.bundles || []);
+      setContacts(data.contacts || []);
+      setReviewsList(data.reviews || []);
+      setFeedbackList(data.feedback || []);
       toast.success("Intelligence data synchronized.");
     } catch (error) {
       console.error("Dashboard Sync Error:", error);
@@ -319,25 +329,20 @@ export default function AdminDashboard() {
       `Synchronizing operational state: ${s.toUpperCase()}...`,
     );
     try {
-      // Direct database override with verification
-      const {
-        data,
-        error,
-        status: httpStatus,
-      } = await supabase
-        .from("orders")
-        .update({ status: s })
-        .eq("id", id)
-        .select();
+      // Transitioned to backend bridge to bypass RLS restrictions
+      const response = await fetch(`${API_URL}/api/orders/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ status: s }),
+      });
 
-      if (error) {
-        throw new Error(`${error.message} (Signal Error ${httpStatus})`);
-      }
+      const data = await response.json();
 
-      if (!data || data.length === 0) {
-        throw new Error(
-          "No record detected at specified coordinates. Verify ID signature.",
-        );
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to bridge synchronize operational state.");
       }
 
       toast.success("Operational state synchronized.", { id: tid });
@@ -410,6 +415,7 @@ export default function AdminDashboard() {
                 icon: <HiOutlinePresentationChartLine />,
               },
               { id: "inventory", label: "Edit", icon: <HiOutlinePencilAlt /> },
+              { id: "messages", label: "Interactions", icon: <HiOutlineChatAlt /> },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -1228,7 +1234,7 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody className={`divide-y ${theme === "dark" ? "divide-white/5" : "divide-brown-50"}`}>
-                    {bundles.map((b) => (
+                    {(bundlesList.length > 0 ? bundlesList : bundles).map((b) => (
                       <tr key={b.id} className={`transition-all ${theme === "dark" ? "hover:bg-white/5" : "hover:bg-secondary/10"}`}>
                         <td className="py-8 px-10 flex items-center gap-5">
                           <div className={`w-16 h-16 rounded-[1.25rem] overflow-hidden border-4 shadow-md p-0.5 ${theme === "dark" ? "bg-[#120B0B] border-white/10" : "bg-secondary border-white"}`}>
@@ -1258,9 +1264,9 @@ export default function AdminDashboard() {
                         </td>
                         <td className="py-8 px-10 text-right">
                           <button
-                            onClick={() => toast.error("Bundle edit temporarily locked for sync")}
+                            onClick={() => navigate(`/edit-bundle/${b.id}`)}
                             className={`px-5 py-2.5 border-2 font-black text-[10px] rounded-xl uppercase tracking-widest hover:border-primary hover:text-primary transition-all shadow-sm ${
-                              theme === "dark" ? "bg-white/5 border-white/10 text-white/40" : "bg-white border-brown-50 text-brown-400"
+                              theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-white border-brown-50 text-brown-400"
                             }`}
                           >
                             Edit Bundle
@@ -1268,6 +1274,190 @@ export default function AdminDashboard() {
                         </td>
                       </tr>
                     ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {activeTab === "messages" && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-12"
+          >
+            {/* MESSAGES / CONTACTS SECTION */}
+            <div className="flex justify-between items-center mb-6 px-4">
+              <div>
+                <h2 className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                  Customer Transmissions
+                </h2>
+                <p className="text-accent font-black uppercase text-[9px] tracking-widest mt-1">
+                  Inbound Support & Inquiry Signals
+                </p>
+              </div>
+            </div>
+
+            <div className={`rounded-[3rem] shadow-luxury border overflow-hidden ${theme === "dark" ? "bg-[#1A1110] border-white/5" : "bg-white border-brown-100"}`}>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className={`border-b ${theme === "dark" ? "bg-[#120B0B] border-white/5" : "bg-secondary/20 border-brown-50"}`}>
+                      <th className="py-6 px-10 text-[10px] uppercase font-black text-brown-400 tracking-widest">Sender Signature</th>
+                      <th className="py-6 text-[10px] uppercase font-black text-brown-400 tracking-widest">Communication Payload</th>
+                      <th className="py-6 text-[10px] uppercase font-black text-brown-400 tracking-widest">Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody className={`divide-y ${theme === "dark" ? "divide-white/5" : "divide-brown-50"}`}>
+                    {contacts.length === 0 ? (
+                      <tr>
+                        <td colSpan="3" className="py-20 text-center text-brown-300 font-bold uppercase text-[10px] tracking-widest">
+                          No communication signals detected.
+                        </td>
+                      </tr>
+                    ) : (
+                      contacts.map((c) => (
+                        <tr key={c.id} className={`transition-all ${theme === "dark" ? "hover:bg-white/5" : "hover:bg-secondary/10"}`}>
+                          <td className="py-8 px-10">
+                            <p className={`font-black text-sm mb-0.5 uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                              {c.name}
+                            </p>
+                            <p className="text-xs text-brown-400 font-bold lowercase">{c.email}</p>
+                          </td>
+                          <td className="py-8 max-w-lg">
+                            <p className={`text-xs font-bold leading-relaxed ${theme === "dark" ? "text-brown-200" : "text-brown-500"}`}>
+                              {c.message}
+                            </p>
+                          </td>
+                          <td className="py-8">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-accent">
+                              {new Date(c.created_at).toLocaleString()}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* FEEDBACK SECTION */}
+            <div className="flex justify-between items-center mb-6 px-4 pt-12">
+              <div>
+                <h2 className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                  Operation Feedback
+                </h2>
+                <p className="text-accent font-black uppercase text-[9px] tracking-widest mt-1">
+                  Artisan Service Experience Analytics
+                </p>
+              </div>
+            </div>
+
+            <div className={`rounded-[3rem] shadow-luxury border overflow-hidden ${theme === "dark" ? "bg-[#1A1110] border-white/5" : "bg-white border-brown-100"}`}>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className={`border-b ${theme === "dark" ? "bg-[#120B0B] border-white/5" : "bg-secondary/20 border-brown-50"}`}>
+                      <th className="py-6 px-10 text-[10px] uppercase font-black text-brown-400 tracking-widest">Artisan Alias</th>
+                      <th className="py-6 text-[10px] uppercase font-black text-brown-400 tracking-widest">Experience Report</th>
+                      <th className="py-6 text-[10px] uppercase font-black text-brown-400 tracking-widest">Sentiment Score</th>
+                    </tr>
+                  </thead>
+                  <tbody className={`divide-y ${theme === "dark" ? "divide-white/5" : "divide-brown-50"}`}>
+                    {feedbackList.length === 0 ? (
+                      <tr>
+                        <td colSpan="3" className="py-20 text-center text-brown-300 font-bold uppercase text-[10px] tracking-widest">
+                          No experience reports synchronized.
+                        </td>
+                      </tr>
+                    ) : (
+                      feedbackList.map((f) => (
+                        <tr key={f.id} className={`transition-all ${theme === "dark" ? "hover:bg-white/5" : "hover:bg-secondary/10"}`}>
+                          <td className="py-8 px-10">
+                            <p className={`font-black text-sm mb-0.5 uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                              {f.user_name || "Anonymous Artisan"}
+                            </p>
+                            <p className="text-xs text-accent font-black uppercase tracking-tighter">{f.subject}</p>
+                          </td>
+                          <td className="py-8 max-w-lg">
+                            <p className={`text-xs font-bold leading-relaxed ${theme === "dark" ? "text-brown-200" : "text-brown-500"}`}>
+                              {f.message}
+                            </p>
+                          </td>
+                          <td className="py-8">
+                            <div className="flex gap-1">
+                              {[...Array(5)].map((_, i) => (
+                                <HiOutlineAnnotation key={i} className={`text-lg ${i < f.rating ? 'text-accent' : 'text-brown-100'}`} />
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* PRODUCT REVIEWS SECTION */}
+            <div className="flex justify-between items-center mb-6 px-4 pt-12">
+              <div>
+                <h2 className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                  Artifact Reviews
+                </h2>
+                <p className="text-accent font-black uppercase text-[9px] tracking-widest mt-1">
+                  Granular Product Sentiment Logs
+                </p>
+              </div>
+            </div>
+
+            <div className={`rounded-[3rem] shadow-luxury border overflow-hidden ${theme === "dark" ? "bg-[#1A1110] border-white/5" : "bg-white border-brown-100"}`}>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className={`border-b ${theme === "dark" ? "bg-[#120B0B] border-white/5" : "bg-secondary/20 border-brown-50"}`}>
+                      <th className="py-6 px-10 text-[10px] uppercase font-black text-brown-400 tracking-widest">Subject Item</th>
+                      <th className="py-6 text-[10px] uppercase font-black text-brown-400 tracking-widest">Review Content</th>
+                      <th className="py-6 text-[10px] uppercase font-black text-brown-400 tracking-widest">Quality Rating</th>
+                    </tr>
+                  </thead>
+                  <tbody className={`divide-y ${theme === "dark" ? "divide-white/5" : "divide-brown-50"}`}>
+                    {reviewsList.length === 0 ? (
+                      <tr>
+                        <td colSpan="3" className="py-20 text-center text-brown-300 font-bold uppercase text-[10px] tracking-widest">
+                          No product sentiment logs archived.
+                        </td>
+                      </tr>
+                    ) : (
+                      reviewsList.map((r) => {
+                        const prod = products.find(p => p.id === r.product_id);
+                        return (
+                          <tr key={r.id} className={`transition-all ${theme === "dark" ? "hover:bg-white/5" : "hover:bg-secondary/10"}`}>
+                            <td className="py-8 px-10">
+                              <p className={`font-black text-sm mb-0.5 uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                                {prod?.name || "Unknown Product"}
+                              </p>
+                              <p className="text-[10px] text-brown-400 font-black uppercase tracking-widest">ID: {r.id.slice(0,8)}</p>
+                            </td>
+                            <td className="py-8 max-w-lg">
+                              <p className="text-[10px] font-black text-accent uppercase tracking-widest mb-1">{r.user_name}</p>
+                              <p className={`text-xs font-bold leading-relaxed ${theme === "dark" ? "text-brown-200" : "text-brown-500"}`}>
+                                {r.comment}
+                              </p>
+                            </td>
+                            <td className="py-8">
+                              <div className="flex gap-1">
+                                {[...Array(5)].map((_, i) => (
+                                  <HiOutlineSparkles key={i} className={`text-lg ${i < r.rating ? 'text-accent' : 'text-brown-100'}`} />
+                                ))}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>

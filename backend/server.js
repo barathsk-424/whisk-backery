@@ -322,24 +322,52 @@ app.delete("/api/transactions/:id", authenticate, async (req, res) => {
 
 app.get("/api/admin-dashboard", adminOnly, async (req, res) => {
   try {
-    const [orders, products, users] = await Promise.all([
+    const [orders, products, users, bundles] = await Promise.all([
       supabase.from("orders").select("*").order("created_at", { ascending: false }),
       supabase.from("products").select("*").order("created_at", { ascending: false }),
       supabase.from("users").select("*").order("created_at", { ascending: false }),
+      supabase.from("bundles").select("*").order("created_at", { ascending: false }),
     ]);
 
     if (orders.error) throw orders.error;
     if (products.error) throw products.error;
     if (users.error) throw users.error;
+    if (bundles.error) throw bundles.error;
+
+    // 5. Fetch Contacts/Messages
+    const { data: contacts, error: contactsErr } = await supabase
+      .from("contacts")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    // 6. Fetch Global Reviews
+    const { data: reviews, error: reviewsErr } = await supabase
+      .from("reviews")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    // 7. Fetch Feedback
+    const { data: feedback, error: feedbackErr } = await supabase
+      .from("feedback")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (orders.error || products.error || users.error || bundles.error || contactsErr || reviewsErr || feedbackErr) {
+      throw new Error("Complex Data Retrieval Interrupted");
+    }
 
     res.json({
       orders: orders.data,
       products: products.data,
       users: users.data,
+      bundles: bundles.data,
+      contacts,
+      reviews,
+      feedback
     });
   } catch (err) {
-    console.error("[ADMIN DASHBOARD ERROR]:", err.message);
-    res.status(500).json({ message: "Failed to bridge to vault core." });
+    console.error("[MONITORING ERROR]:", err.message);
+    res.status(500).json({ message: "Failed to harmonize artisan intelligence: " + err.message });
   }
 });
 
@@ -425,6 +453,33 @@ app.get("/", async (req, res) => {
     mongodb: mongodbStatus,
     timestamp: new Date(),
   });
+});
+
+app.patch("/api/orders/:id", adminOnly, async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  console.log(`[ADMIN] Status sync triggered for order ${id} -> ${status}`);
+
+  try {
+    const { data, error } = await supabase
+      .from("orders")
+      .update({ status })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    
+    if (!data) {
+      return res.status(404).json({ message: "No record detected at specified coordinates. Verify ID signature." });
+    }
+
+    res.json(data);
+  } catch (err) {
+    console.error("[SYNC ERROR]:", err.message);
+    res.status(500).json({ message: "Failed to bridge synchronize operational state: " + err.message });
+  }
 });
 
 // ─── ARTISAN ORDER PROXY (RELIABILITY BRIDGE) ──────────────────────

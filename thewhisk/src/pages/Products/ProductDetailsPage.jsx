@@ -13,18 +13,22 @@ import {
   HiOutlineClock
 } from 'react-icons/hi';
 import useStore from '../../store/useStore';
+import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { products, theme, addToCart, fetchReviews, reviews, user } = useStore();
+  const { products, theme, addToCart, fetchReviews, reviews, user, addReview } = useStore();
   
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState('1kg');
   const [pincode, setPincode] = useState('');
   const [deliveryDate, setDeliveryDate] = useState(null);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' });
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -57,6 +61,30 @@ export default function ProductDetailsPage() {
     if (!product) return;
     addToCart({ ...product, selectedSize, price: currentPrice });
     navigate('/checkout');
+  };
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!user) return toast.error("Please login to transmit your sentiment.");
+    if (!reviewForm.comment.trim()) return toast.error("Archival records require a message.");
+    
+    setSubmittingReview(true);
+    const tid = toast.loading("Archiving transmission...");
+    try {
+      await addReview({
+        product_id: id,
+        rating: reviewForm.rating,
+        comment: reviewForm.comment.trim()
+      });
+      toast.success("Sentiment archived successfully!", { id: tid });
+      setReviewForm({ rating: 5, comment: '' });
+      setShowReviewForm(false);
+      // No need to fetchReviews(id) as addReview updates the store state
+    } catch (err) {
+      toast.error("Transmission failed: " + err.message, { id: tid });
+    } finally {
+      setSubmittingReview(false);
+    }
   };
 
   const checkDelivery = () => {
@@ -265,10 +293,59 @@ export default function ProductDetailsPage() {
 
               {/* Reviews Section */}
               <div className="space-y-10">
-                 <div className="flex justify-between items-end">
+                  <div className="flex justify-between items-end">
                     <h3 className={`text-2xl font-black uppercase tracking-tighter ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Temporal Records (Reviews)</h3>
-                    <button className="text-accent text-[10px] font-black uppercase tracking-widest">Post Transmission</button>
-                 </div>
+                    <button 
+                      onClick={() => setShowReviewForm(!showReviewForm)}
+                      className="text-accent text-[10px] font-black uppercase tracking-widest hover:underline"
+                    >
+                      {showReviewForm ? 'Cancel Transmission' : 'Post Transmission'}
+                    </button>
+                  </div>
+
+                  <AnimatePresence>
+                    {showReviewForm && (
+                      <motion.form
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        onSubmit={handleReviewSubmit}
+                        className={`p-8 rounded-[2.5rem] border overflow-hidden ${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-50 shadow-luxury'}`}
+                      >
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-accent mb-6">Transmitting New Sentiment</h4>
+                        <div className="space-y-6">
+                           <div className="flex gap-2">
+                              {[1,2,3,4,5].map(star => (
+                                <button 
+                                  key={star}
+                                  type="button"
+                                  onClick={() => setReviewForm({ ...reviewForm, rating: star })}
+                                  className={`text-2xl transition-all ${reviewForm.rating >= star ? 'text-warning scale-110' : 'text-brown-100'}`}
+                                >
+                                  <HiStar />
+                                </button>
+                              ))}
+                           </div>
+                           <textarea 
+                             placeholder="Capture your artisan experience..."
+                             required
+                             value={reviewForm.comment}
+                             onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
+                             className={`w-full p-5 rounded-2xl border-2 font-bold transition-all min-h-[120px] ${
+                               theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:border-accent' : 'bg-secondary border-transparent focus:border-accent text-primary'
+                             }`}
+                           />
+                           <button 
+                             type="submit"
+                             disabled={submittingReview}
+                             className="w-full py-4 gradient-accent text-white font-black rounded-xl text-[10px] uppercase tracking-widest shadow-lg shadow-accent/20 disabled:opacity-50"
+                           >
+                             {submittingReview ? 'Transmitting...' : 'Archive Signal'}
+                           </button>
+                        </div>
+                      </motion.form>
+                    )}
+                  </AnimatePresence>
                  
                  <div className="grid sm:grid-cols-2 gap-6">
                     {reviews.length === 0 ? (

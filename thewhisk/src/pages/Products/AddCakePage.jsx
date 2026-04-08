@@ -42,7 +42,7 @@ const Field = ({ label, error, children, required }) => (
 export default function AddCakePage() {
   const navigate = useNavigate();
   const fileRef  = useRef(null);
-  const { fetchProducts } = useStore();
+  const { fetchProducts, theme } = useStore();
 
   // ── Form state ─────────────────────────────────────────────────
   const [form, setForm] = useState({
@@ -171,7 +171,7 @@ export default function AddCakePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16" style={{ fontFamily: "'Inter',sans-serif" }}>
+    <div className={`min-h-screen transition-colors duration-700 pt-16 ${theme === 'dark' ? 'bg-[#0D0807]' : 'bg-gray-50'}`} style={{ fontFamily: "'Inter',sans-serif" }}>
 
       {/* ── Header ──────────────────────────────────────────── */}
       <div className="relative overflow-hidden bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 text-white shadow-lg">
@@ -206,13 +206,17 @@ export default function AddCakePage() {
 
           {/* ── Image Upload Section ────────────────────────── */}
           <motion.div initial={{opacity:0,y:20}} animate={{opacity:1,y:0}}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            className={`rounded-2xl shadow-sm border p-6 transition-all ${
+              theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'
+            }`}>
+            <h2 className={`text-lg font-bold mb-4 flex items-center gap-2 ${theme === 'dark' ? 'text-secondary' : 'text-gray-800'}`}>
               📷 Cake Image
             </h2>
             <div className="flex flex-col sm:flex-row items-center gap-6">
               {/* Preview */}
-              <div className="relative w-48 h-48 rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 flex-shrink-0 group cursor-pointer"
+              <div className={`relative w-48 h-48 rounded-2xl overflow-hidden border-2 border-dashed flex-shrink-0 group cursor-pointer transition-all ${
+                theme === 'dark' ? 'border-white/10 bg-white/5' : 'border-gray-200 bg-gray-50'
+              }`}
                 onClick={() => fileRef.current?.click()}>
                 {imagePreview ? (
                   <img src={imagePreview} alt="Preview" className="w-full h-full object-cover"/>
@@ -249,8 +253,10 @@ export default function AddCakePage() {
 
           {/* ── Basic Details ───────────────────────────────── */}
           <motion.div initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{delay:0.1}}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            className={`rounded-2xl shadow-sm border p-6 transition-all ${
+              theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'
+            }`}>
+            <h2 className={`text-lg font-bold mb-4 flex items-center gap-2 ${theme === 'dark' ? 'text-secondary' : 'text-gray-800'}`}>
               🎂 Basic Details
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -281,7 +287,9 @@ export default function AddCakePage() {
                 <input type="number" min="0" value={form.stock} onChange={e => updateField('stock', e.target.value)}
                   placeholder="e.g. 100"
                   className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:ring-4 transition-all ${
-                    errors.stock ? 'border-red-300 focus:border-red-400 focus:ring-red-50' : 'border-gray-200 focus:border-pink-400 focus:ring-pink-50'
+                    theme === 'dark' 
+                      ? (errors.stock ? 'bg-white/5 border-red-500/50 text-white focus:ring-red-500/10' : 'bg-white/5 border-white/10 text-white focus:border-pink-500 focus:ring-pink-500/10')
+                      : (errors.stock ? 'bg-secondary/30 border-red-400 text-red-700' : 'border-gray-200 focus:border-pink-400 focus:ring-pink-50')
                   }`} />
               </Field>
             </div>
@@ -291,7 +299,9 @@ export default function AddCakePage() {
                 <textarea rows={3} value={form.description} onChange={e => updateField('description', e.target.value)}
                   placeholder="Describe this cake — ingredients, taste, occasion..."
                   className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:ring-4 transition-all resize-none ${
-                    errors.description ? 'border-red-300 focus:border-red-400 focus:ring-red-50' : 'border-gray-200 focus:border-pink-400 focus:ring-pink-50'
+                    theme === 'dark' 
+                      ? (errors.description ? 'bg-white/5 border-red-500/50 text-white' : 'bg-white/5 border-white/10 text-white focus:border-pink-500')
+                      : (errors.description ? 'border-red-300 focus:border-red-400' : 'border-gray-200 focus:border-pink-400')
                   }`} />
               </Field>
             </div>
@@ -299,8 +309,10 @@ export default function AddCakePage() {
 
           {/* ── Cake Specifications ─────────────────────────── */}
           <motion.div initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{delay:0.2}}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            className={`rounded-2xl shadow-sm border p-6 transition-all ${
+              theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'
+            }`}>
+            <h2 className={`text-lg font-bold mb-4 flex items-center gap-2 ${theme === 'dark' ? 'text-secondary' : 'text-gray-800'}`}>
               ✨ Specifications
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
@@ -313,8 +325,10 @@ export default function AddCakePage() {
 
               <Field label="Shape">
                 <select value={form.shape} onChange={e => updateField('shape', e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-50">
-                  {SHAPES.map(s => <option key={s}>{s}</option>)}
+                  className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:ring-4 transition-all ${
+                    theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:border-pink-500' : 'bg-white border-gray-200 focus:border-pink-400'
+                  }`}>
+                  {SHAPES.map(s => <option key={s} className={theme === 'dark' ? 'bg-[#1A1110]' : ''}>{s}</option>)}
                 </select>
               </Field>
 
