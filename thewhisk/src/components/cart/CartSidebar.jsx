@@ -63,7 +63,7 @@ export default function CartSidebar() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: 100 }}
-                      className="flex gap-3 p-3 bg-white rounded-xl shadow-sm"
+                      className="flex gap-3 p-3 bg-white dark:bg-white/5 rounded-xl shadow-sm border border-transparent dark:border-white/5"
                     >
                       <img
                         src={item.image_url || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop'}
@@ -114,16 +114,16 @@ export default function CartSidebar() {
 
             {/* Footer */}
             {cart.length > 0 && (
-              <div className="p-5 border-t border-brown-100 bg-white">
+              <div className="p-5 border-t border-brown-100 dark:border-white/10 bg-white dark:bg-[#120C0B]">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-brown-400">Subtotal</span>
                   <span className="font-bold text-primary">₹{total.toLocaleString()}</span>
                 </div>
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm text-brown-400">Delivery</span>
-                  <span className="text-sm text-success font-medium">FREE</span>
+                  <span className="text-sm text-brown-400 font-medium">Delivery</span>
+                  <span className="text-sm text-success font-bold">FREE</span>
                 </div>
-                <div className="flex items-center justify-between mb-5 pt-3 border-t border-brown-100">
+                <div className="flex items-center justify-between mb-5 pt-3 border-t border-brown-100 dark:border-white/10">
                   <span className="font-heading font-bold text-lg text-primary">Total</span>
                   <span className="font-heading font-bold text-xl text-accent">
                     ₹{total.toLocaleString()}

@@ -40,7 +40,7 @@ export default function OrderSuccessPage() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, type: "spring" }}
-          className="bg-white rounded-3xl shadow-xl border border-brown-100 p-8 md:p-12"
+          className="bg-white dark:bg-[#120C0B] rounded-3xl shadow-xl border border-brown-100 dark:border-white/10 p-8 md:p-12"
         >
           {/* Header */}
           <div className="text-center mb-10">
@@ -62,15 +62,15 @@ export default function OrderSuccessPage() {
           </div>
 
           {/* Items Summary with Images */}
-          <div className="bg-brown-50 rounded-2xl p-6 mb-8">
-            <h3 className="font-bold text-primary mb-4 border-b border-brown-200 pb-2">
+          <div className="bg-brown-50 dark:bg-white/5 rounded-2xl p-6 mb-8">
+            <h3 className="font-bold text-primary mb-4 border-b border-brown-200 dark:border-white/10 pb-2">
               Order Details
             </h3>
             <div className="space-y-4">
               {order.items.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center gap-4 bg-white p-3 rounded-xl shadow-sm"
+                  className="flex items-center gap-4 bg-white dark:bg-white/5 p-3 rounded-xl shadow-sm"
                 >
                   <img
                     src={
@@ -79,7 +79,7 @@ export default function OrderSuccessPage() {
                       "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop"
                     }
                     alt="Cake"
-                    className="w-20 h-20 rounded-lg object-cover bg-brown-50 border border-brown-100"
+                    className="w-20 h-20 rounded-lg object-cover bg-brown-50 dark:bg-white/5 border border-brown-100 dark:border-white/10"
                   />
                   <div className="flex-1">
                     <p className="font-bold text-primary leading-tight">
@@ -104,7 +104,7 @@ export default function OrderSuccessPage() {
                 </div>
               ))}
             </div>
-            <div className="mt-6 flex justify-between items-center pt-4 border-t border-brown-200">
+            <div className="mt-6 flex justify-between items-center pt-4 border-t border-brown-200 dark:border-white/10">
               <span className="text-brown-400 font-medium">Grand Total</span>
               <span className="text-2xl font-bold text-accent">
                 ₹{order.total.toLocaleString()}
@@ -114,7 +114,7 @@ export default function OrderSuccessPage() {
 
           {/* Address & Actions */}
           <div className="grid md:grid-cols-2 gap-6 mb-8">
-            <div className="flex items-start gap-3 bg-white p-4 rounded-2xl border border-brown-100 shadow-sm">
+            <div className="flex items-start gap-3 bg-white dark:bg-white/5 p-4 rounded-2xl border border-brown-100 dark:border-white/10 shadow-sm">
               <HiOutlineLocationMarker className="w-6 h-6 text-accent shrink-0 mt-0.5" />
               <div>
                 <p className="text-xs font-bold text-brown-400 uppercase tracking-wider mb-1">
@@ -139,7 +139,7 @@ export default function OrderSuccessPage() {
             </button>
             <button
               onClick={handleGoToInvoice}
-              className="flex-1 py-4 bg-brown-50 text-primary font-bold rounded-xl border border-brown-200 flex items-center justify-center gap-2 hover:bg-brown-100 transition-colors"
+              className="flex-1 py-4 bg-brown-50 dark:bg-white/5 text-primary font-bold rounded-xl border border-brown-200 dark:border-white/10 flex items-center justify-center gap-2 hover:bg-brown-100 dark:hover:bg-white/10 transition-colors"
               id="view_invoice_btn"
             >
               <HiOutlineClipboardList className="w-5 h-5" />
