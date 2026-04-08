@@ -1,16 +1,16 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { supabase } from '../../lib/supabase';
 import useStore from '../../store/useStore';
+import { HiArrowLeft, HiMagnifyingGlass, HiOutlineShoppingCart, HiChevronRight, HiOutlineShieldCheck } from 'react-icons/hi2';
 
-/* ─── Timeline Steps ─────────────────────────────────── */
 const STEPS = [
-  { key: 'placed',       label: 'Order Placed',     icon: '📋', desc: 'We received your order!' },
-  { key: 'preparing',    label: 'Preparing',         icon: '👩‍🍳', desc: 'Chef is baking your cake' },
-  { key: 'out_delivery', label: 'Out for Delivery',  icon: '🛵', desc: 'Ravi is on the way' },
-  { key: 'delivered',    label: 'Delivered',         icon: '🏠', desc: 'Enjoy your cake! 🎂' },
+  { key: 'placed', label: 'Ordered', dateKey: 'date' },
+  { key: 'preparing', label: 'Packed', dateKey: 'packedDate' },
+  { key: 'out_delivery', label: 'Shipped', dateKey: 'shippedDate' },
+  { key: 'delivered', label: 'Delivery', dateKey: 'deliveryDate' },
 ];
 
 const STATUS_SEQ = STEPS.map((s) => s.key);
@@ -20,80 +20,26 @@ function getStepIdx(key) {
   return i === -1 ? 0 : i;
 }
 
-/* ─── Invoice helper ─────────────────────────────────── */
-function downloadInvoice(order) {
-  const lines = [
-    '╔══════════════════════════════╗',
-    '║     THE WHISK – INVOICE      ║',
-    '╚══════════════════════════════╝',
-    '',
-    `Order ID   : ${order.id}`,
-    `Date       : ${new Date(order.date || order.createdAt).toLocaleString()}`,
-    `Status     : Delivered`,
-    '',
-    '── Items ──────────────────────',
-    ...(order.items || []).map(
-      (it) => `• ${it.name} x${it.quantity}  ₹${((it.base_price || it.price || 0) * it.quantity).toLocaleString()}`
-    ),
-    '',
-    '── Address ────────────────────',
-    order.address
-      ? `${order.address.line1}, ${order.address.city} – ${order.address.pincode}`
-      : 'N/A',
-    '',
-    `Payment    : ${(order.payment_method || 'N/A').toUpperCase()}`,
-    `TOTAL PAID : ₹${(order.total || 0).toLocaleString()}`,
-    '',
-    'Thank you for choosing The Whisk!',
-  ].join('\n');
-
-  const blob = new Blob([lines], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `TheWhisk_Invoice_${order.id}.txt`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  toast.success('Invoice downloaded!');
-}
-
-/* ─── Main Component ─────────────────────────────────── */
 export default function TrackOrderPage() {
   const navigate = useNavigate();
-  const timerRefs = useRef([]);
+  const { id: routeId } = useParams();
   const [inputId, setInputId] = useState('');
   const [order, setOrder] = useState(null);
   const [statusKey, setStatusKey] = useState('placed');
   const [loading, setLoading] = useState(false);
-  const [notified, setNotified] = useState({});
-  const { orders, fetchOrders } = useStore();
+  const { fetchOrders } = useStore();
 
-  /* Load order from Supabase */
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const id = params.get('id');
-    if (id) {
-      setInputId(id);
-      loadOrder(id);
-    }
-    fetchOrders(); // Sync sidebar history
-  }, []);
+    const searchId = params.get('id');
+    const targetId = routeId || searchId;
 
-  const history = orders.map(data => ({
-    id: data.id,
-    items: [{
-      name: data.product_name || data.products?.name || 'Custom Cake',
-      quantity: data.quantity,
-      price: data.price,
-      image_url: data.image_url || data.products?.image_url
-    }],
-    total: data.total_price,
-    address: data.address,
-    status: data.status,
-    date: data.created_at
-  }));
+    if (targetId) {
+       setInputId(targetId);
+       loadOrder(targetId);
+    }
+    fetchOrders();
+  }, [routeId]);
 
   const loadOrder = async (id) => {
     setLoading(true);
@@ -106,7 +52,6 @@ export default function TrackOrderPage() {
 
       if (error) throw error;
       if (data) {
-        // Map Supabase data to the format used in this page
         const mappedOrder = {
           id: data.id,
           items: [{
@@ -123,304 +68,177 @@ export default function TrackOrderPage() {
         setOrder(mappedOrder);
         setStatusKey(data.status?.toLowerCase()?.replace(' ', '_') || 'placed');
       } else {
-        toast.error('Order not found');
+        toast.error('Order ID not recognized in registry.');
       }
     } catch (err) {
-      console.error('Fetch order error:', err);
-      toast.error('Failed to fetch order details');
+      toast.error('Synchronization failed.');
     } finally {
       setLoading(false);
     }
   };
 
-  /* Search handler */
-  const handleSearch = () => {
-    if (!inputId.trim()) { toast.error('Enter an Order ID'); return; }
-    loadOrder(inputId.trim());
-  };
-
-  const stepIdx = getStepIdx(statusKey);
-  const progressPct = Math.max(5, (stepIdx / (STEPS.length - 1)) * 100);
+  const currentStepIdx = getStepIdx(statusKey);
 
   return (
-    <div className="min-h-screen pt-24 pb-16" style={{ background: 'linear-gradient(135deg, #FFF8E7 0%, #FFF0D6 100%)' }}>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
-          <h1 className="font-heading text-4xl font-bold text-primary">📦 Track Order</h1>
-          <p className="text-brown-400 mt-2">Real-time delivery status updates</p>
-        </motion.div>
-
-        <div className="flex flex-col lg:flex-row gap-8">
-
-          {/* ── Left Column ── */}
-          <div className="flex-1 space-y-6">
-
-            {/* Search Box */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-              className="flex gap-2 bg-white rounded-2xl p-2 shadow border border-brown-100">
-              <input
-                type="text"
-                value={inputId}
-                onChange={(e) => setInputId(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                placeholder="Enter Order ID (e.g., ORD-1234567890)"
-                className="flex-1 px-4 py-3 bg-transparent text-sm focus:outline-none placeholder:text-brown-300"
-              />
-              <button
-                onClick={handleSearch}
-                className="px-8 py-3 gradient-accent text-white font-bold rounded-xl text-sm hover:opacity-90 transition-opacity shadow-lg shadow-accent/20"
-              >
-                Track
-              </button>
-            </motion.div>
-
-            <AnimatePresence mode="wait">
-              {order ? (
-                <motion.div key="order" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
-
-                  {/* Status Card */}
-                  <div className="bg-white rounded-3xl p-6 md:p-8 shadow border border-brown-100">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <p className="text-[11px] font-bold text-brown-400 uppercase tracking-widest mb-1">Current Status</p>
-                        <h2 className="font-heading text-2xl font-bold text-primary">
-                          {STEPS[stepIdx].label}
-                        </h2>
-                      </div>
-                      <span className="hidden md:block text-xs font-bold text-brown-300 bg-brown-50 border border-brown-100 px-3 py-1.5 rounded-full">
-                        {order.id}
-                      </span>
-                    </div>
-
-                    {/* Animated Progress Bar */}
-                    <div className="h-2 bg-brown-50 rounded-full my-6 overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${progressPct}%` }}
-                        transition={{ duration: 0.9, ease: 'easeInOut' }}
-                        className="h-full gradient-accent rounded-full"
-                      />
-                    </div>
-
-                    {/* Steps */}
-                    <div className="space-y-0">
-                      {STEPS.map((step, i) => {
-                        const isComplete = i < stepIdx;
-                        const isCurrent  = i === stepIdx;
-                        const isPending  = i > stepIdx;
-                        return (
-                          <div key={step.key} className="flex gap-4 relative">
-                            {/* Connector line */}
-                            {i < STEPS.length - 1 && (
-                              <div className={`absolute left-[19px] top-10 w-0.5 h-10 z-0 transition-colors duration-700 ${isComplete ? 'bg-accent' : 'bg-brown-100'}`} />
-                            )}
-                            {/* Icon dot */}
-                            <motion.div
-                              animate={isCurrent ? { scale: [1, 1.18, 1], boxShadow: ['0 0 0px rgba(255,107,53,0)', '0 0 18px rgba(255,107,53,0.4)', '0 0 0px rgba(255,107,53,0)'] } : {}}
-                              transition={{ repeat: Infinity, duration: 1.8 }}
-                              className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 z-10 border-2 transition-all duration-500 ${
-                                isComplete ? 'bg-accent border-accent text-white'
-                                : isCurrent ? 'bg-white border-accent text-accent'
-                                : 'bg-white border-brown-200 text-brown-300'
-                              }`}
-                            >
-                              {isComplete ? (
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                              ) : (
-                                <span className="text-lg leading-none">{step.icon}</span>
-                              )}
-                            </motion.div>
-                            {/* Label */}
-                            <div className={`pb-8 pt-1.5 flex-1 ${isPending ? 'opacity-40' : ''}`}>
-                              <p className={`font-bold text-sm ${isCurrent ? 'text-accent' : 'text-primary'}`}>{step.label}</p>
-                              <p className="text-xs text-brown-400 mt-0.5">{step.desc}</p>
-                              {isCurrent && (
-                                <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                                  className="inline-block mt-2 px-2.5 py-0.5 bg-accent/10 text-accent text-[10px] font-bold rounded-full uppercase tracking-wide">
-                                  In Progress
-                                </motion.span>
-                              )}
-                              {/* Delivery boy card */}
-                              {isCurrent && step.key === 'out_delivery' && (
-                                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-                                  className="mt-4 p-4 bg-orange-50 border border-orange-100 rounded-2xl flex items-center gap-4">
-                                  <div className="w-14 h-14 bg-white rounded-full border-2 border-orange-200 flex items-center justify-center text-3xl shadow">
-                                    🛵
-                                  </div>
-                                  <div className="flex-1">
-                                    <p className="text-[10px] font-bold text-brown-400 uppercase tracking-widest">Delivery Partner</p>
-                                    <p className="font-bold text-primary text-base mt-0.5">Ravi Kumar</p>
-                                    <p className="text-xs text-brown-400 mt-0.5">📞 +91 98765 43210 &nbsp;·&nbsp; Arriving ~15 min</p>
-                                  </div>
-                                  <div className="text-right">
-                                    <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center text-white text-sm shadow">📱</div>
-                                  </div>
-                                </motion.div>
-                              )}
-                              {/* "On the way" animation */}
-                              {isCurrent && step.key === 'out_delivery' && (
-                                <div className="mt-4 bg-brown-50 rounded-xl h-16 relative overflow-hidden flex items-center">
-                                  <motion.span
-                                    initial={{ x: -50 }}
-                                    animate={{ x: '90vw' }}
-                                    transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-                                    className="absolute text-2xl"
-                                  >🛵</motion.span>
-                                  <div className="absolute right-4 text-2xl">🏠</div>
-                                  <div className="w-full h-0.5 bg-brown-200 absolute bottom-3" />
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Items & Bill */}
-                  <div className="bg-white rounded-3xl p-6 shadow border border-brown-100">
-                    <div className="flex justify-between items-center mb-5 pb-4 border-b border-brown-50">
-                      <h3 className="font-bold text-primary">Items & Bill</h3>
-                      <button
-                        onClick={() => downloadInvoice(order)}
-                        className="text-xs font-bold text-accent border border-accent/20 bg-accent/5 px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-accent hover:text-white transition-all"
-                      >
-                        ⬇ Download Invoice
-                      </button>
-                    </div>
-                    <div className="space-y-4">
-                      {order.items?.map((item, idx) => (
-                        <div key={idx} className="flex items-center gap-4">
-                          <img
-                            src={item.image_url || item.image || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200&h=200&fit=crop'}
-                            alt={item.name}
-                            className="w-16 h-16 rounded-xl object-cover border border-brown-50 shadow-sm bg-brown-50"
-                          />
-                          <div className="flex-1">
-                            <p className="font-bold text-primary text-sm">{item.name}</p>
-                            {item.message && <p className="text-xs text-accent font-medium mt-0.5">"{item.message}"</p>}
-                            <p className="text-xs text-brown-400 mt-0.5">Qty: {item.quantity}</p>
-                          </div>
-                          <p className="font-bold text-primary text-sm">
-                            ₹{((item.base_price || item.price || 0) * item.quantity).toLocaleString()}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-5 pt-4 border-t border-brown-50 flex justify-between items-center">
-                      <span className="text-brown-400 font-medium text-sm">Grand Total</span>
-                      <span className="text-xl font-bold text-accent">₹{order.total?.toLocaleString()}</span>
-                    </div>
-                  </div>
-
-                  {/* Address */}
-                  {order.address && (
-                    <div className="bg-white rounded-3xl p-6 shadow border border-brown-100">
-                      <h3 className="font-bold text-primary mb-3">📍 Delivery Address</h3>
-                      <p className="text-sm text-brown-500">
-                        {order.address.line1}, {order.address.city} – {order.address.pincode}
-                      </p>
-                      <div className="mt-4 h-32 bg-brown-50 rounded-xl flex items-center justify-center border border-brown-100 overflow-hidden relative">
-                        <motion.span
-                          animate={{ x: [0, 10, -10, 0] }}
-                          transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-                          className="text-4xl"
-                        >🗺️</motion.span>
-                        <p className="absolute bottom-3 text-xs text-brown-400">Live map — On the way!</p>
-                      </div>
-                    </div>
-                  )}
-
-                </motion.div>
-              ) : (
-                <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                  className="bg-white rounded-3xl p-12 text-center shadow border border-brown-100">
-                  <div className="w-20 h-20 bg-brown-50 rounded-full flex items-center justify-center text-4xl mx-auto mb-5">🔍</div>
-                  <h3 className="font-heading text-xl font-bold text-primary mb-2">No Order Found</h3>
-                  <p className="text-sm text-brown-400 mb-6">Enter your Order ID above or place an order first.</p>
-                  <button
-                    onClick={() => navigate('/menu')}
-                    className="px-6 py-3 gradient-accent text-white font-bold rounded-xl text-sm hover:opacity-90 transition-opacity"
-                  >
-                    Browse Menu
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* ── Right Sidebar: Order History ── */}
-          <div className="lg:w-80 shrink-0">
-            <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}
-              className="bg-white rounded-3xl p-6 shadow border border-brown-100 sticky top-24">
-              <h3 className="font-heading font-bold text-primary text-lg mb-5">🕐 Order History</h3>
-
-              {history.length > 0 ? (
-                <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1">
-                  {[...history].reverse().map((h, i) => (
-                    <button
-                      key={i}
-                      onClick={() => {
-                        setOrder(h);
-                        setInputId(h.id);
-                        setStatusKey('delivered');
-                        setNotified({});
-                      }}
-                      className={`w-full text-left p-4 rounded-2xl border transition-all ${
-                        order?.id === h.id
-                          ? 'border-accent bg-accent/5'
-                          : 'border-brown-100 hover:border-accent/40 bg-brown-50/30 hover:bg-brown-50'
-                      }`}
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <p className="text-[10px] font-bold text-brown-400 uppercase tracking-widest truncate pr-2 max-w-[120px]">
-                          {h.id}
-                        </p>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-50 text-green-600 shrink-0">
-                          {h.status || 'Confirmed'}
-                        </span>
-                      </div>
-                      <p className="text-sm font-bold text-primary leading-tight line-clamp-1">
-                        {h.items?.[0]?.name || 'Custom Cake'}
-                      </p>
-                      <div className="flex justify-between items-center mt-2">
-                        <p className="text-xs text-brown-400">
-                          {new Date(h.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
-                        </p>
-                        <p className="text-sm font-bold text-accent">₹{h.total?.toLocaleString()}</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="py-8 text-center border-2 border-dashed border-brown-100 rounded-2xl">
-                  <p className="text-4xl mb-3">🛒</p>
-                  <p className="text-xs text-brown-400 font-medium px-4">
-                    Your past orders will appear here after you place an order.
-                  </p>
-                  <button
-                    onClick={() => navigate('/menu')}
-                    className="mt-4 px-5 py-2 bg-white border border-brown-200 text-primary text-xs font-bold rounded-lg hover:border-accent transition-colors shadow-sm"
-                  >
-                    Order Now →
-                  </button>
-                </div>
-              )}
-
-              {history.length > 0 && (
-                <button
-                  onClick={() => navigate('/menu')}
-                  className="w-full mt-4 py-3 text-sm font-bold text-accent border border-accent/20 rounded-xl hover:bg-accent/5 transition-colors"
-                >
-                  + Place New Order
-                </button>
-              )}
-            </motion.div>
-          </div>
-
+    <div className="min-h-screen bg-white">
+      {/* ─── FIXED HEADER ─── */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-[#2874F0] text-white px-4 py-4 flex items-center justify-between shadow-md">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate(-1)} className="p-1 hover:bg-white/10 rounded-full transition-colors">
+            <HiArrowLeft className="text-2xl" />
+          </button>
+          <h1 className="text-lg font-bold">Order Details</h1>
         </div>
+        <div className="flex items-center gap-5">
+           <HiMagnifyingGlass className="text-xl" />
+           <HiOutlineShoppingCart className="text-xl" />
+        </div>
+      </div>
+
+      <div className="pt-[72px] pb-10">
+        <AnimatePresence mode="wait">
+          {!order ? (
+            <motion.div 
+               initial={{ opacity: 0 }} 
+               animate={{ opacity: 1 }} 
+               className="max-w-md mx-auto mt-10 p-6 text-center"
+            >
+               <div className="mb-6">
+                 <img src="https://cdni.iconscout.com/illustration/premium/thumb/empty-cart-2130356-1800917.png" alt="Empty" className="w-48 mx-auto opacity-50" />
+               </div>
+               <h3 className="text-xl font-bold text-gray-800 mb-2">Track Your Artisan Piece</h3>
+               <p className="text-gray-500 text-sm mb-6">Enter your unique order signature to monitor your fulfillment phase.</p>
+               
+               <div className="flex gap-2 overflow-hidden border border-[#2874F0]/20 rounded-xl bg-gray-50 p-1 mb-4 focus-within:border-[#2874F0] transition-all">
+                 <input 
+                   type="text" 
+                   value={inputId}
+                   onChange={(e) => setInputId(e.target.value)}
+                   onKeyDown={(e) => e.key === 'Enter' && loadOrder(inputId)}
+                   placeholder="Enter Order ID"
+                   className="flex-1 bg-transparent px-4 py-3 text-sm focus:outline-none"
+                 />
+                 <button 
+                   onClick={() => loadOrder(inputId)}
+                   className="bg-[#2874F0] text-white px-6 py-3 rounded-lg font-bold text-sm"
+                 >
+                   TRACK
+                 </button>
+               </div>
+            </motion.div>
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }} 
+              animate={{ opacity: 1, x: 0 }}
+              className="max-w-2xl mx-auto"
+            >
+              {/* ORDER INFO SECTION */}
+              <div className="p-4 border-b border-gray-100 mb-2">
+                 <p className="text-[11px] font-bold text-gray-400 mb-1">Order ID - {order.id}</p>
+                 <div className="flex justify-between items-start mt-4">
+                    <div className="flex-1 pr-4">
+                       <h2 className="text-base font-bold text-gray-800 line-clamp-1">{order.items[0]?.name}</h2>
+                       <p className="text-sm text-gray-400 mt-1">Quantity: {order.items[0]?.quantity}</p>
+                       <p className="text-sm text-gray-400 mt-0.5">Seller: The Whisk Artisan</p>
+                       <p className="text-lg font-bold text-gray-900 mt-2">₹{order.total?.toLocaleString()}</p>
+                    </div>
+                    <div className="w-20 h-20 bg-gray-50 rounded-lg overflow-hidden border border-gray-100 shrink-0">
+                       <img src={order.items[0]?.image_url} alt="Item" className="w-full h-full object-cover" />
+                    </div>
+                 </div>
+              </div>
+
+              {/* STEPPER SECTION */}
+              <div className="px-6 py-8">
+                <div className="relative">
+                  {STEPS.map((step, idx) => {
+                    const isCompleted = idx <= currentStepIdx;
+                    const isLast = idx === STEPS.length - 1;
+                    
+                    return (
+                      <div key={step.key} className="flex gap-6 min-h-[80px] relative">
+                        {/* LINE */}
+                        {!isLast && (
+                          <div className={`absolute left-[5px] top-[14px] w-[2px] h-[calc(100%-14px)] ${idx < currentStepIdx ? 'bg-[#388E3C]' : 'bg-gray-200'}`} />
+                        )}
+
+                        {/* DOT */}
+                        <div className={`w-[12px] h-[12px] rounded-full mt-[6px] relative z-10 shrink-0 ${isCompleted ? 'bg-[#388E3C]' : 'bg-gray-200'} ${idx === currentStepIdx ? 'ring-8 ring-[#388E3C]/10 ring-offset-0' : ''}`} />
+
+                        {/* CONTENT */}
+                        <div className="pb-8">
+                           <div className="flex items-center gap-1">
+                              <p className={`text-sm font-bold ${isCompleted ? 'text-gray-800' : 'text-gray-400'}`}>{step.label}</p>
+                              {idx === 3 && <HiChevronRight className="text-gray-400" />}
+                           </div>
+                           <p className="text-xs text-gray-400 mt-1">
+                             {isCompleted ? new Date(order.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: "2y" }).replace(/ /g, ', ') : 'Pending'}
+                           </p>
+                           {idx === 3 && isCompleted && (
+                             <div className="mt-2">
+                                <p className="text-[11px] text-gray-500">Enjoy your artisan piece!</p>
+                             </div>
+                           )}
+                           {idx === 3 && !isCompleted && (
+                             <div className="mt-2">
+                                <p className="text-[11px] text-gray-500">Expected soon</p>
+                             </div>
+                           )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* ACTION BUTTONS */}
+              <div className="flex border-t border-b border-gray-100">
+                 <button className="flex-1 py-4 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors border-r border-gray-100">
+                    Cancel
+                 </button>
+                 <button className="flex-1 py-4 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+                    Need help?
+                 </button>
+              </div>
+
+              {/* SAFETY BANNER */}
+              <div className="m-4 p-4 bg-[#E1F1FF] rounded-lg border border-[#2874F0]/10 flex items-center gap-4 cursor-pointer hover:bg-[#D5E9FF] transition-colors">
+                 <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#2874F0] text-xl shrink-0">
+                    <HiOutlineShieldCheck />
+                 </div>
+                 <div className="flex-1">
+                    <p className="text-sm font-bold text-[#1A4B8B]">Your Safety Comes First</p>
+                    <p className="text-[10px] text-[#1A4B8B]/70">We are taking important measures to keep you safe</p>
+                 </div>
+                 <HiChevronRight className="text-gray-400" />
+              </div>
+
+              {/* ISSUES SECTION */}
+              <div className="bg-gray-50 p-4">
+                 <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Your issues with this item</p>
+                 
+                 <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-8">
+                    <div className="flex items-start justify-between">
+                       <div>
+                          <p className="text-sm font-bold text-gray-800">I have a delivery related issues</p>
+                          <div className="flex items-center gap-2 mt-4 text-[#2874F0]">
+                             <div className="w-4 h-4 rounded-full border-2 border-[#2874F0] flex items-center justify-center">
+                                <div className="w-1.5 h-1.5 bg-[#2874F0] rounded-full" />
+                             </div>
+                             <p className="text-xs font-bold font-sans">Issue will be resolved by Today, Aug 22.</p>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+
+                 <button className="w-full p-4 flex items-center justify-between text-sm font-bold text-gray-700 bg-white rounded-xl shadow-sm border border-gray-100">
+                    <span>View All Issues</span>
+                    <HiChevronRight className="text-gray-400" />
+                 </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

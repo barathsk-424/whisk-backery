@@ -69,7 +69,40 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (isAdmin) {
+      console.log("Admin Sentinel Protocol → Initializing Secure Uplink...");
       fetchDashboardData();
+
+      // Implement real-time order sentinel for the artisan command center
+      const ordersChannel = supabase
+        .channel('admin-pulse')
+        .on('postgres_changes', { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'orders' 
+        }, payload => {
+          console.log("Admin Sentinel Protocol → New Transmission Detected:", payload.new.id);
+          toast.success(`AUTHENTICATION ALERT: New Order Protocol Initiated (ID: ${payload.new.id.slice(0, 8)})`, {
+            duration: 8000,
+            icon: '🍰',
+            position: 'top-right'
+          });
+          fetchDashboardData(); // Rapid synchronization of intelligence state
+        })
+        .subscribe((status, err) => {
+          if (status === 'SUBSCRIBED') {
+            console.log("Admin Sentinel Protocol → Secure Uplink ESTABLISHED");
+          } else if (status === 'CHANNEL_ERROR') {
+            console.error("Admin Sentinel Protocol → Signal FAILURE:", err);
+            toast.error("Telemetry link failure. Attempting reconnection...");
+          } else {
+            console.log("Admin Sentinel Protocol Status Update:", status);
+          }
+        });
+
+      return () => {
+        console.log("Admin Sentinel Protocol → Disconnecting Uplink...");
+        supabase.removeChannel(ordersChannel);
+      };
     }
   }, [isAdmin]);
 

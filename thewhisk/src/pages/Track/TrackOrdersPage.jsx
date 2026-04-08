@@ -350,6 +350,46 @@ export default function TrackOrdersPage() {
                   exit={{ opacity: 0, x: 20 }}
                   className="space-y-8"
                 >
+                  {/* Fulfillment Chronology (New Feature) */}
+                  <div className={`p-8 rounded-[2.5rem] border shadow-xl ${theme === "dark" ? "bg-[#1A1110] border-white/5" : "bg-white border-brown-50"}`}>
+                    <h3 className={`font-black text-lg uppercase tracking-tighter mb-6 ${theme === "dark" ? "text-white" : "text-primary"}`}>Fulfillment Chronology</h3>
+                    <div className="space-y-0">
+                      {[
+                        { key: 'pending', label: 'Ordered', date: selectedOrder.created_at },
+                        { key: 'preparing', label: 'Packed', date: null },
+                        { key: 'out for delivery', label: 'Shipped', date: null },
+                        { key: 'delivered', label: 'Delivery', date: null },
+                      ].map((step, idx, arr) => {
+                        const orderStatus = selectedOrder.status?.toLowerCase();
+                        const statusSequence = ['pending', 'order confirmed', 'preparing', 'out for delivery', 'delivered'];
+                        const currentStatusIdx = statusSequence.indexOf(orderStatus);
+                        const stepTargetIdx = statusSequence.indexOf(step.key);
+                        
+                        // Rule: completed if currentStatusIdx >= stepTargetIdx
+                        const isCompleted = currentStatusIdx >= (step.key === 'pending' ? 0 : stepTargetIdx);
+                        const isLast = idx === arr.length - 1;
+
+                        return (
+                          <div key={step.key} className="flex gap-6 min-h-[70px] relative">
+                             {/* Connector Line */}
+                             {!isLast && (
+                               <div className={`absolute left-[5px] top-[14px] w-[2px] h-[calc(100%-14px)] ${currentStatusIdx > stepTargetIdx ? 'bg-[#388E3C]' : 'bg-gray-100'}`} />
+                             )}
+                             {/* Status Indicator */}
+                             <div className={`w-[12px] h-[12px] rounded-full mt-[6px] relative z-10 shrink-0 ${isCompleted ? 'bg-[#388E3C]' : 'bg-gray-100'} ${orderStatus === step.key ? 'ring-8 ring-[#388E3C]/10' : ''}`} />
+                             {/* Stepper Content */}
+                             <div className="pb-6">
+                                <p className={`text-xs font-black uppercase tracking-widest ${isCompleted ? (theme === "dark" ? "text-white" : "text-primary") : "text-brown-200"}`}>{step.label}</p>
+                                <p className="text-[10px] text-brown-400 font-bold mt-1">
+                                   {isCompleted ? (step.date ? new Date(step.date).toLocaleDateString() : "Processing Complete") : "Awaiting Protocol"}
+                                </p>
+                             </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
                   {/* Financial Detail Card */}
                   <div
                     className={`p-8 rounded-[2.5rem] border shadow-2xl relative overflow-hidden transition-all duration-700 ${
@@ -436,50 +476,31 @@ export default function TrackOrdersPage() {
                     <div className="absolute top-[-50%] right-[-10%] w-64 h-64 bg-accent/10 blur-[100px] rounded-full" />
                   </div>
 
-                  {/* Map Mock */}
+                  {/* Map Mock & Coordinates */}
                   <div
-                    className={`rounded-[3rem] overflow-hidden border shadow-luxury relative ${
+                    onClick={() => {
+                        const details = selectedOrder.delivery_details || selectedOrder.address || {};
+                        const addr = details.address || details.line1 || (typeof selectedOrder.address === 'string' ? selectedOrder.address : "");
+                        const city = details.city || "";
+                        const pin = details.pincode || "";
+                        const fullAddr = [addr, city, pin].filter(Boolean).join(", ");
+                        
+                        if (fullAddr) {
+                            window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddr)}`, "_blank");
+                        } else {
+                            toast.error("Navigational Signal Lost: Address incomplete.");
+                        }
+                    }}
+                    className={`rounded-[3rem] overflow-hidden border shadow-luxury relative cursor-pointer group hover:scale-[1.01] transition-all duration-500 ${
                       theme === "dark"
                         ? "bg-[#1A1110] border-white/5"
                         : "bg-white border-brown-100"
                     }`}
                   >
-                    <div className="h-80 w-full relative bg-secondary/50 grayscale-[0.5] brightness-90 flex items-center justify-center overflow-hidden">
-                      {/* Stylish Background Pattern */}
-                      <div
-                        className="absolute inset-0 opacity-10"
-                        style={{
-                          backgroundImage:
-                            "radial-gradient(#4A2A1A 1px, transparent 1px)",
-                          backgroundSize: "20px 20px",
-                        }}
-                      />
-
-                      {/* Coordinate Grid Lines */}
-                      <div
-                        className="absolute inset-0 border-[40px] border-transparent opacity-5"
-                        style={{
-                          backgroundImage:
-                            "linear-gradient(to right, #4A2A1A 1px, transparent 1px), linear-gradient(to bottom, #4A2A1A 1px, transparent 1px)",
-                          backgroundSize: "40px 40px",
-                        }}
-                      />
-
-                      <div className="relative scale-125 z-10">
-                        <div className="w-16 h-16 bg-accent/20 rounded-full animate-ping absolute -inset-2" />
-                        <div className="w-12 h-12 bg-white rounded-full p-2 relative shadow-2xl flex items-center justify-center text-3xl">
-                          🧁
-                        </div>
-                      </div>
-
-                      <div className="absolute bottom-6 left-6 right-6 p-4 bg-black/60 backdrop-blur-md rounded-2xl border border-white/10">
-                        <p className="text-[8px] font-black text-white uppercase tracking-[0.3em] mb-1">
-                          Signal Locked
-                        </p>
-                        <div className="flex justify-between items-center text-[10px] text-white/60 font-mono">
-                          <span>LAT: 28.6139° N</span>
-                          <span>LON: 77.2090° E</span>
-                        </div>
+                    <div className="h-48 w-full relative bg-secondary/50 grayscale-[0.5] brightness-90 flex items-center justify-center overflow-hidden text-4xl group-hover:brightness-100 transition-all">
+                      🧁
+                      <div className="absolute inset-0 bg-accent/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                         <p className="text-[10px] font-black text-white bg-accent px-4 py-2 rounded-full uppercase tracking-widest shadow-xl">Open in Satellite View</p>
                       </div>
                     </div>
 
@@ -500,15 +521,14 @@ export default function TrackOrdersPage() {
                         </div>
                       </div>
 
-                      <div className="p-6 rounded-3xl bg-secondary/30 border border-brown-50/50">
+                      <div className="p-6 rounded-3xl bg-secondary/30 border border-brown-50/50 group-hover:bg-accent/5 transition-colors">
                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brown-300 mb-3 ml-1">
                           Archive Destination
                         </p>
                         <p
                           className={`text-sm font-bold leading-relaxed ${theme === "dark" ? "text-white/80" : "text-primary"}`}
                         >
-                          {selectedOrder.delivery_details?.address ||
-                            "Loading encrypted delivery path..."}
+                          {(selectedOrder.delivery_details?.address || selectedOrder.address?.line1 || (typeof selectedOrder.address === 'string' ? selectedOrder.address : "")) || "Loading encrypted delivery path..."}
                         </p>
                       </div>
                     </div>
@@ -539,3 +559,4 @@ export default function TrackOrdersPage() {
     </div>
   );
 }
+
