@@ -6,7 +6,7 @@ import useStore from '../../store/useStore';
 import toast from 'react-hot-toast';
 
 export default function BundlesPage() {
-  const { addToCart, user, navigate } = useStore();
+  const { addToCart, user, navigate, theme } = useStore();
   const [bundles, setBundles] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +53,7 @@ export default function BundlesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-secondary">
+      <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-[#0D0807]' : 'bg-secondary'}`}>
         <div className="text-center">
             <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
             <p className="font-bold text-primary">Loading Bundles...</p>
@@ -83,7 +83,7 @@ export default function BundlesPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="bg-white rounded-2xl overflow-hidden shadow-lg group hover:shadow-xl transition-shadow"
+              className={`rounded-2xl overflow-hidden shadow-lg group hover:shadow-xl transition-shadow ${theme === 'dark' ? 'bg-[#1A1110] border border-white/5' : 'bg-white'}`}
             >
               <div className="grid sm:grid-cols-2">
                 {/* Image */}
@@ -97,7 +97,7 @@ export default function BundlesPage() {
                   <div className="absolute top-4 left-4 bg-success text-white text-sm font-bold px-3 py-1 rounded-full shadow-md">
                     {bundle.discount}% OFF
                   </div>
-                  <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-semibold">
+                  <div className={`absolute bottom-4 left-4 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-semibold ${theme === 'dark' ? 'bg-black/60 text-white' : 'bg-white/90'}`}>
                     {bundle.emoji} {bundle.occasion}
                   </div>
                 </div>
@@ -119,7 +119,7 @@ export default function BundlesPage() {
                     </ul>
                   </div>
 
-                  <div className="mt-6 pt-4 border-t border-brown-100">
+                  <div className={`mt-6 pt-4 border-t ${theme === 'dark' ? 'border-white/5' : 'border-brown-100'}`}>
                     <div className="flex items-center gap-3 mb-4">
                       <span className="text-lg text-brown-300 line-through">₹{bundle.original_price}</span>
                       <span className="font-heading text-2xl font-bold text-accent">₹{bundle.final_price}</span>

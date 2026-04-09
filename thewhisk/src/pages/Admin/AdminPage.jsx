@@ -414,7 +414,7 @@ export default function AdminDashboard() {
               </span>{" "}
               Artisan Dashboard
             </h1>
-            <p className="text-accent font-black uppercase text-[10px] tracking-[0.4em] mt-2">
+            <p className={`font-black uppercase text-[10px] tracking-[0.4em] mt-2 ${theme === 'dark' ? 'text-accent' : 'text-accent'}`}>
               Live analytics, sales milestones & granular reporting.
             </p>
           </div>
@@ -455,8 +455,8 @@ export default function AdminDashboard() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 lg:px-6 py-2.5 lg:py-3 rounded-xl text-[10px] lg:text-xs font-black transition-all shrink-0 ${
                   activeTab === tab.id
-                    ? "bg-primary text-white shadow-xl scale-105"
-                    : "text-brown-400 hover:text-primary"
+                    ? (theme === "dark" ? "bg-accent text-white shadow-xl scale-105" : "bg-primary text-white shadow-xl scale-105")
+                    : (theme === 'dark' ? "text-white/40 hover:text-white" : "text-brown-400 hover:text-primary")
                 }`}
               >
                 {tab.icon} {tab.label}
@@ -512,11 +512,11 @@ export default function AdminDashboard() {
                     {stat.i}
                   </div>
                   <div>
-                    <p className="text-[9px] lg:text-[10px] font-black text-brown-300 uppercase tracking-widest mb-0.5 lg:mb-1">
+                    <p className={`text-[9px] lg:text-[10px] font-black uppercase tracking-widest mb-0.5 lg:mb-1 ${theme === 'dark' ? 'text-white/30' : 'text-brown-300'}`}>
                       {stat.l}
                     </p>
                     <p
-                      className={`text-xl lg:text-2xl font-black ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                      className={`text-xl lg:text-2xl font-black ${theme === "dark" ? "text-white" : "text-primary"}`}
                     >
                       {stat.v}
                     </p>
@@ -530,16 +530,16 @@ export default function AdminDashboard() {
               <div
                 className={`p-8 rounded-[2.5rem] border shadow-sm ${theme === "dark" ? "bg-[#1A1110] border-white/5" : "bg-white border-brown-50"}`}
               >
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-brown-300 mb-6">
+                <h4 className={`text-[10px] font-black uppercase tracking-widest mb-6 ${theme === 'dark' ? 'text-white/30' : 'text-brown-300'}`}>
                   Recent Command Pulses
                 </h4>
                 <div className="space-y-4">
                   {orders.slice(0, 5).map((o) => (
                     <div
                       key={o.id}
-                      className="flex items-center justify-between py-2 border-b border-brown-50/10"
+                      className={`flex items-center justify-between py-2 border-b border-brown-50/10 ${theme === 'dark' ? 'border-white/5' : ''}`}
                     >
-                      <span className="text-[10px] font-black text-brown-400 font-mono">
+                      <span className={`text-[10px] font-black font-mono ${theme === 'dark' ? 'text-white/30' : 'text-brown-400'}`}>
                         #{o.id.slice(0, 8)}
                       </span>
                       <span
@@ -547,7 +547,7 @@ export default function AdminDashboard() {
                       >
                         {o.status}
                       </span>
-                      <span className="text-[10px] font-black text-primary">
+                      <span className={`text-[10px] font-black ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                         ₹{o.total_price}
                       </span>
                     </div>
@@ -563,16 +563,16 @@ export default function AdminDashboard() {
               <div
                 className={`p-8 rounded-[2.5rem] border shadow-sm ${theme === "dark" ? "bg-[#1A1110] border-white/5" : "bg-white border-brown-50"}`}
               >
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-brown-300 mb-6">
+                <h4 className={`text-[10px] font-black uppercase tracking-widest mb-6 ${theme === 'dark' ? 'text-white/30' : 'text-brown-300'}`}>
                   Inventory Health Snapshot
                 </h4>
                 <div className="space-y-4">
                   {products.slice(0, 5).map((p) => (
                     <div
                       key={p.id}
-                      className="flex items-center justify-between py-2 border-b border-brown-50/10"
+                      className={`flex items-center justify-between py-2 border-b border-brown-50/10 ${theme === 'dark' ? 'border-white/5' : ''}`}
                     >
-                      <span className="text-[10px] font-black text-primary truncate max-w-[150px] uppercase">
+                      <span className={`text-[10px] font-black truncate max-w-[150px] uppercase ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                         {p.name}
                       </span>
                       <span
@@ -580,7 +580,7 @@ export default function AdminDashboard() {
                       >
                         {p.stock_quantity} IN STOCK
                       </span>
-                      <div className="w-16 h-1 bg-brown-50 rounded-full overflow-hidden">
+                      <div className={`w-16 h-1 rounded-full overflow-hidden ${theme === 'dark' ? 'bg-white/10' : 'bg-brown-50'}`}>
                         <div
                           className="h-full bg-accent"
                           style={{
@@ -605,7 +605,7 @@ export default function AdminDashboard() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 px-4">
               <div>
                 <h2
-                  className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                  className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-white" : "text-primary"}`}
                 >
                   Logistics Command Center
                 </h2>
@@ -671,7 +671,7 @@ export default function AdminDashboard() {
                           key={o.id}
                           className={`align-top transition-all ${theme === "dark" ? "hover:bg-white/5" : "hover:bg-secondary/10"}`}
                         >
-                          <td className="py-8 px-8 font-mono text-[11px] text-brown-300">
+                          <td className={`py-8 px-8 font-mono text-[11px] ${theme === 'dark' ? 'text-white/30' : 'text-brown-300'}`}>
                             #{o.id.slice(0, 10)}
                           </td>
                           <td className="py-8 min-w-[300px]">
@@ -693,11 +693,11 @@ export default function AdminDashboard() {
                                   </div>
                                   <div className="min-w-0">
                                     <p
-                                      className={`text-[11px] font-black uppercase truncate ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                                      className={`text-[11px] font-black uppercase truncate ${theme === "dark" ? "text-white" : "text-primary"}`}
                                     >
                                       {item.name}
                                     </p>
-                                    <p className="text-[9px] font-bold text-brown-400 italic">
+                                    <p className={`text-[9px] font-bold italic ${theme === "dark" ? "text-white/30" : "text-brown-400"}`}>
                                       Qty: {item.qty || item.quantity} | ₹
                                       {item.price}
                                     </p>
@@ -718,13 +718,13 @@ export default function AdminDashboard() {
                           </td>
                           <td className="py-8">
                             <p
-                              className={`text-[11px] font-black uppercase mb-1 ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                              className={`text-[11px] font-black uppercase mb-1 ${theme === "dark" ? "text-white" : "text-primary"}`}
                             >
                               {o.customer_name ||
                                 o.user_email ||
                                 "Artisan Guest"}
                             </p>
-                            <p className="text-[10px] text-brown-400 font-bold leading-relaxed max-w-[200px]">
+                            <p className={`text-[10px] font-bold leading-relaxed max-w-[200px] ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>
                               {o.delivery_details?.address ||
                                 o.address?.address ||
                                 (typeof o.address === "string"
@@ -733,7 +733,7 @@ export default function AdminDashboard() {
                                 "No location signature detected"}
                             </p>
                             {o.delivery_details?.phone && (
-                              <p className="text-[9px] font-black text-brown-300 mt-1">
+                              <p className={`text-[9px] font-black mt-1 ${theme === 'dark' ? 'text-white/30' : 'text-brown-300'}`}>
                                 📞 {o.delivery_details.phone}
                               </p>
                             )}
@@ -830,14 +830,14 @@ export default function AdminDashboard() {
                 <div className="flex items-center justify-between mb-8 z-10">
                   <div>
                     <h3
-                      className={`text-[10px] lg:text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2 lg:gap-3 ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                      className={`text-[10px] lg:text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2 lg:gap-3 ${theme === "dark" ? "text-white" : "text-primary"}`}
                     >
                       <span className="p-2 bg-accent/10 rounded-lg text-accent">
                         <HiOutlinePresentationChartLine />
                       </span>
                       Trajectory Synthesis
                     </h3>
-                    <p className="text-[10px] font-bold text-brown-400 uppercase mt-1">
+                    <p className={`text-[10px] font-bold uppercase mt-1 ${theme === 'dark' ? 'text-white/30' : 'text-brown-400'}`}>
                     Revenue Stream Analysis v4.2
                     </p>
                   </div>
@@ -860,7 +860,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div className="flex-1 z-10 font-black min-h-[250px] lg:min-h-[350px]">
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width="100%" height="100%" minHeight={1} minWidth={1}>
                     <AreaChart
                       data={
                         timeFilter === "daily"
@@ -899,12 +899,12 @@ export default function AdminDashboard() {
                         dataKey="name"
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fontSize: 9, fontWeight: 900, fill: "#8B5E3C" }}
+                        tick={{ fontSize: 9, fontWeight: 900, fill: theme === 'dark' ? '#ffffff40' : '#8B5E3C' }}
                       />
                       <YAxis
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fontSize: 9, fontWeight: 900, fill: "#8B5E3C" }}
+                        tick={{ fontSize: 9, fontWeight: 900, fill: theme === 'dark' ? '#ffffff40' : '#8B5E3C' }}
                       />
                       <Tooltip
                         contentStyle={{
@@ -935,7 +935,9 @@ export default function AdminDashboard() {
               </div>
 
               {/* Revenue Growth Card */}
-              <div className="bg-primary p-10 rounded-[3rem] shadow-luxury text-white flex flex-col justify-between relative overflow-hidden">
+              <div className={`p-10 rounded-[3rem] shadow-luxury flex flex-col justify-between relative overflow-hidden transition-all ${
+                theme === "dark" ? "bg-[#1A1110] border border-white/5 text-white" : "bg-primary text-white dark:bg-[#1A1110] dark:border-white/5"
+              }`}>
                 <div className="relative z-10">
                   <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-10">
                     Velocity Report
@@ -989,15 +991,15 @@ export default function AdminDashboard() {
                 }`}
               >
                 <h3
-                  className={`text-sm font-black uppercase tracking-[0.2em] mb-10 flex items-center gap-3 ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                  className={`text-sm font-black uppercase tracking-[0.2em] mb-10 flex items-center gap-3 ${theme === "dark" ? "text-white" : "text-primary"}`}
                 >
                   <span className="p-2 bg-blue-500/10 rounded-lg text-blue-500">
                     <HiOutlineClock />
                   </span>{" "}
                   Peak Acquisition Hours
                 </h3>
-                <div className="h-[400px] w-full min-h-[400px]">
-                  <ResponsiveContainer width="100%" height="100%">
+                <div className="flex-1 w-full min-h-0">
+                  <ResponsiveContainer width="100%" height="100%" minHeight={1} minWidth={1}>
                     <BarChart data={analytics.hourlyTrend}>
                       <XAxis dataKey="hour" hide />
                       <Tooltip
@@ -1017,7 +1019,7 @@ export default function AdminDashboard() {
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-                <p className="text-[9px] font-black text-brown-300 uppercase text-center mt-4">
+                <p className={`text-[9px] font-black uppercase text-center mt-4 ${theme === 'dark' ? 'text-white/30' : 'text-brown-300'}`}>
                   Peak Activity Detected at{" "}
                   <span className="text-accent">{analytics.peakHour}</span>
                 </p>
@@ -1032,7 +1034,7 @@ export default function AdminDashboard() {
                 }`}
               >
                 <h3
-                  className={`text-sm font-black uppercase tracking-[0.2em] mb-10 flex items-center gap-3 ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                  className={`text-sm font-black uppercase tracking-[0.2em] mb-10 flex items-center gap-3 ${theme === "dark" ? "text-white" : "text-primary"}`}
                 >
                   <span className="p-2 bg-orange-500/10 rounded-lg text-orange-500">
                     <HiOutlineSparkles />
@@ -1051,12 +1053,12 @@ export default function AdminDashboard() {
                     >
                       <div className="flex items-center gap-3">
                         <span
-                          className={`w-6 h-6 flex items-center justify-center rounded-lg text-[10px] font-black ${i === 0 ? "bg-accent text-white" : "bg-white text-brown-300"}`}
+                          className={`w-6 h-6 flex items-center justify-center rounded-lg text-[10px] font-black ${i === 0 ? "bg-accent text-white" : (theme === 'dark' ? "bg-white/10 text-white/40" : "bg-white text-brown-300 shadow-sm")}`}
                         >
                           {i + 1}
                         </span>
                         <span
-                          className={`text-[10px] font-black uppercase truncate max-w-[120px] ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                          className={`text-[10px] font-black uppercase truncate max-w-[120px] ${theme === "dark" ? "text-white" : "text-primary"}`}
                         >
                           {p.name}
                         </span>
@@ -1078,7 +1080,7 @@ export default function AdminDashboard() {
                 }`}
               >
                 <h3
-                  className={`text-sm font-black uppercase tracking-[0.2em] mb-10 flex items-center gap-3 ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                  className={`text-sm font-black uppercase tracking-[0.2em] mb-10 flex items-center gap-3 ${theme === "dark" ? "text-white" : "text-primary"}`}
                 >
                   <span className="p-2 bg-pink-500/10 rounded-lg text-pink-500">
                     <HiOutlineChartPie />
@@ -1086,7 +1088,7 @@ export default function AdminDashboard() {
                   Flavor DNA Map
                 </h3>
                 <div className="flex-1 flex flex-col items-center justify-center min-h-[200px]">
-                  <ResponsiveContainer width="100%" height={180}>
+                  <ResponsiveContainer width="100%" height={180} minHeight={1} minWidth={1}>
                     <PieChart>
                       <Pie
                         data={analytics.flavorData}
@@ -1114,7 +1116,7 @@ export default function AdminDashboard() {
                           className="w-1.5 h-1.5 rounded-full"
                           style={{ backgroundColor: COLORS[i % COLORS.length] }}
                         />
-                        <span className="text-[9px] font-black text-brown-300 uppercase tracking-tighter truncate">
+                        <span className={`text-[9px] font-black uppercase tracking-tighter truncate ${theme === 'dark' ? 'text-white/40' : 'text-brown-300'}`}>
                           {f.name}
                         </span>
                       </div>
@@ -1131,7 +1133,7 @@ export default function AdminDashboard() {
             <div className="flex justify-between items-center mb-6 px-4">
               <div>
                 <h2
-                  className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                  className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-white" : "text-primary"}`}
                 >
                   Catalog Management
                 </h2>
@@ -1141,7 +1143,9 @@ export default function AdminDashboard() {
               </div>
               <button
                 onClick={() => navigate("/add-cake")}
-                className="px-8 py-3.5 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-luxury hover:scale-105 active:scale-95 transition-all flex items-center gap-3"
+                className={`px-8 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-luxury hover:scale-105 active:scale-95 transition-all flex items-center gap-3 ${
+                  theme === "dark" ? "bg-accent text-white" : "bg-primary text-white"
+                }`}
               >
                 <span className="text-xl">🎂</span> Create New Blueprint
               </button>
@@ -1156,16 +1160,16 @@ export default function AdminDashboard() {
                     <tr
                       className={`border-b ${theme === "dark" ? "bg-[#120B0B] border-white/5" : "bg-secondary/20 border-brown-50"}`}
                     >
-                      <th className="py-6 px-10 text-[10px] uppercase font-black text-brown-400 tracking-widest">
+                      <th className={`py-6 px-10 text-[10px] uppercase font-black tracking-widest ${theme === 'dark' ? 'text-white/30' : 'text-brown-400'}`}>
                         Cake Profile
                       </th>
-                      <th className="py-6 text-[10px] uppercase font-black text-brown-400 tracking-widest">
+                      <th className={`py-6 text-[10px] uppercase font-black tracking-widest ${theme === 'dark' ? 'text-white/30' : 'text-brown-400'}`}>
                         Pricing Matrix
                       </th>
-                      <th className="py-6 text-[10px] uppercase font-black text-brown-400 tracking-widest">
+                      <th className={`py-6 text-[10px] uppercase font-black tracking-widest ${theme === 'dark' ? 'text-white/30' : 'text-brown-400'}`}>
                         Stock Health
                       </th>
-                      <th className="py-4 text-[10px] uppercase font-black text-brown-400 tracking-widest">
+                      <th className={`py-4 text-[10px] uppercase font-black tracking-widest ${theme === 'dark' ? 'text-white/30' : 'text-brown-400'}`}>
                         Actions
                       </th>
                     </tr>
@@ -1190,11 +1194,11 @@ export default function AdminDashboard() {
                           </div>
                           <div>
                             <p
-                              className={`font-black text-sm mb-0.5 uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}
+                              className={`font-black text-sm mb-0.5 uppercase tracking-tighter ${theme === "dark" ? "text-white" : "text-primary"}`}
                             >
                               {p.name}
                             </p>
-                            <span className="px-2 py-0.5 bg-primary/10 text-primary text-[8px] font-black rounded uppercase tracking-tighter">
+                            <span className={`px-2 py-0.5 text-[8px] font-black rounded uppercase tracking-tighter ${theme === 'dark' ? 'bg-white/10 text-white/60' : 'bg-primary/10 text-primary'}`}>
                               {p.category}
                             </span>
                           </div>
@@ -1215,7 +1219,7 @@ export default function AdminDashboard() {
                               />
                             </div>
                             <span
-                              className={`text-xs font-black ${theme === "dark" ? "text-secondary/50" : "text-primary"}`}
+                              className={`text-xs font-black ${theme === "dark" ? "text-white/70" : "text-primary"}`}
                             >
                               {p.stock_quantity}{" "}
                               <span className="opacity-30 text-[10px]">
@@ -1246,7 +1250,7 @@ export default function AdminDashboard() {
             {/* Smart Bundles Management */}
             <div className={`mt-12 flex justify-between items-center mb-6 px-4`}>
               <div>
-                <h2 className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                <h2 className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-white" : "text-primary"}`}>
                   Bundles Management
                 </h2>
                 <p className="text-accent font-black uppercase text-[9px] tracking-widest mt-1">
@@ -1274,7 +1278,7 @@ export default function AdminDashboard() {
                             <img src={b.image_url} alt={b.name} className="w-full h-full object-cover rounded-[1rem]" />
                           </div>
                           <div>
-                            <p className={`font-black text-sm mb-0.5 uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                            <p className={`font-black text-sm mb-0.5 uppercase tracking-tighter ${theme === "dark" ? "text-white" : "text-primary"}`}>
                               {b.emoji} {b.name}
                             </p>
                             <span className="px-2 py-0.5 bg-accent/10 text-accent text-[8px] font-black rounded uppercase tracking-tighter">
@@ -1283,7 +1287,7 @@ export default function AdminDashboard() {
                           </div>
                         </td>
                         <td className="py-8">
-                          <ul className="list-disc pl-4 text-xs font-bold text-brown-400 space-y-1">
+                          <ul className={`list-disc pl-4 text-xs font-bold space-y-1 ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>
                             {b.items.map((item, idx) => (
                               <li key={idx}>{item}</li>
                             ))}
@@ -1291,7 +1295,7 @@ export default function AdminDashboard() {
                         </td>
                         <td className="py-8">
                           <div className="flex flex-col">
-                            <span className="text-xs text-brown-300 line-through font-bold">₹{b.original_price}</span>
+                            <span className={`text-xs font-bold line-through ${theme === 'dark' ? 'text-white/20' : 'text-brown-300'}`}>₹{b.original_price}</span>
                             <span className="font-black text-accent text-lg">₹{b.final_price}</span>
                           </div>
                         </td>
@@ -1323,7 +1327,7 @@ export default function AdminDashboard() {
             {/* MESSAGES / CONTACTS SECTION */}
             <div className="flex justify-between items-center mb-6 px-4">
               <div>
-                <h2 className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                <h2 className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-white" : "text-primary"}`}>
                   Customer Transmissions
                 </h2>
                 <p className="text-accent font-black uppercase text-[9px] tracking-widest mt-1">
@@ -1351,15 +1355,15 @@ export default function AdminDashboard() {
                       </tr>
                     ) : (
                       contacts.map((c) => (
-                        <tr key={c.id} className={`transition-all ${theme === "dark" ? "hover:bg-white/5" : "hover:bg-secondary/10"}`}>
+                         <tr key={c.id} className={`transition-all ${theme === "dark" ? "hover:bg-white/5" : "hover:bg-secondary/10"}`}>
                           <td className="py-8 px-10">
-                            <p className={`font-black text-sm mb-0.5 uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                            <p className={`font-black text-sm mb-0.5 uppercase tracking-tighter ${theme === "dark" ? "text-white" : "text-primary"}`}>
                               {c.name}
                             </p>
-                            <p className="text-xs text-brown-400 font-bold lowercase">{c.email}</p>
+                            <p className={`text-xs font-bold lowercase ${theme === 'dark' ? 'text-white/30' : 'text-brown-400'}`}>{c.email}</p>
                           </td>
                           <td className="py-8 max-w-lg">
-                            <p className={`text-xs font-bold leading-relaxed ${theme === "dark" ? "text-brown-200" : "text-brown-500"}`}>
+                            <p className={`text-xs font-bold leading-relaxed ${theme === "dark" ? "text-white/60" : "text-brown-500"}`}>
                               {c.message}
                             </p>
                           </td>
@@ -1379,7 +1383,7 @@ export default function AdminDashboard() {
             {/* FEEDBACK SECTION */}
             <div className="flex justify-between items-center mb-6 px-4 pt-12">
               <div>
-                <h2 className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                <h2 className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-white" : "text-primary"}`}>
                   Operation Feedback
                 </h2>
                 <p className="text-accent font-black uppercase text-[9px] tracking-widest mt-1">
@@ -1407,15 +1411,15 @@ export default function AdminDashboard() {
                       </tr>
                     ) : (
                       feedbackList.map((f) => (
-                        <tr key={f.id} className={`transition-all ${theme === "dark" ? "hover:bg-white/5" : "hover:bg-secondary/10"}`}>
+                         <tr key={f.id} className={`transition-all ${theme === "dark" ? "hover:bg-white/5" : "hover:bg-secondary/10"}`}>
                           <td className="py-8 px-10">
-                            <p className={`font-black text-sm mb-0.5 uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                            <p className={`font-black text-sm mb-0.5 uppercase tracking-tighter ${theme === "dark" ? "text-white" : "text-primary"}`}>
                               {f.user_name || "Anonymous Artisan"}
                             </p>
                             <p className="text-xs text-accent font-black uppercase tracking-tighter">{f.subject}</p>
                           </td>
                           <td className="py-8 max-w-lg">
-                            <p className={`text-xs font-bold leading-relaxed ${theme === "dark" ? "text-brown-200" : "text-brown-500"}`}>
+                            <p className={`text-xs font-bold leading-relaxed ${theme === "dark" ? "text-white/60" : "text-brown-500"}`}>
                               {f.message}
                             </p>
                           </td>
@@ -1437,7 +1441,7 @@ export default function AdminDashboard() {
             {/* PRODUCT REVIEWS SECTION */}
             <div className="flex justify-between items-center mb-6 px-4 pt-12">
               <div>
-                <h2 className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                <h2 className={`text-2xl font-black uppercase tracking-tighter ${theme === "dark" ? "text-white" : "text-primary"}`}>
                   Artifact Reviews
                 </h2>
                 <p className="text-accent font-black uppercase text-[9px] tracking-widest mt-1">
@@ -1469,10 +1473,10 @@ export default function AdminDashboard() {
                         return (
                           <tr key={r.id} className={`transition-all ${theme === "dark" ? "hover:bg-white/5" : "hover:bg-secondary/10"}`}>
                             <td className="py-8 px-10">
-                              <p className={`font-black text-sm mb-0.5 uppercase tracking-tighter ${theme === "dark" ? "text-secondary" : "text-primary"}`}>
+                              <p className={`font-black text-sm mb-0.5 uppercase tracking-tighter ${theme === "dark" ? "text-white" : "text-primary"}`}>
                                 {prod?.name || "Unknown Product"}
                               </p>
-                              <p className="text-[10px] text-brown-400 font-black uppercase tracking-widest">ID: {r.id.slice(0,8)}</p>
+                              <p className={`text-[10px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-white/20' : 'text-brown-400'}`}>ID: {r.id.slice(0,8)}</p>
                             </td>
                             <td className="py-8 max-w-lg">
                               <p className="text-[10px] font-black text-accent uppercase tracking-widest mb-1">{r.user_name}</p>

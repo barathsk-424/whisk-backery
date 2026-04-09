@@ -53,8 +53,8 @@ const emptyForm = () => ({
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-3 text-sm">
-      <p className="font-semibold text-gray-700 mb-1">{label}</p>
+    <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-xl shadow-lg border p-3 text-sm`}>
+      <p className={`font-semibold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>{label}</p>
       {payload.map((p) => (
         <p key={p.dataKey} style={{ color: p.color }} className="font-medium">
           {p.name}: {fmt(p.value)}
@@ -67,7 +67,7 @@ function CustomTooltip({ active, payload, label }) {
 // ════════════════════════════════════════════════════════════════
 export default function FinanceDashboard() {
   const navigate              = useNavigate();
-  const { isAuthenticated, user } = useStore();
+  const { isAuthenticated, user, theme } = useStore();
 
   const [transactions, setTransactions] = useState([]);
   const [summary,      setSummary]      = useState({ income:0, expense:0, balance:0, count:0 });
@@ -380,7 +380,7 @@ export default function FinanceDashboard() {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16" style={{ fontFamily:"'Inter',sans-serif" }}>
+    <div className={`min-h-screen transition-colors duration-500 ${theme === 'dark' ? 'bg-[#0D0807]' : 'bg-gray-50'} pt-16`} style={{ fontFamily:"'Inter',sans-serif" }}>
 
       {/* ── Header ───────────────────────────────────────────── */}
       <div className="relative overflow-hidden bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 text-white shadow-lg">
@@ -466,11 +466,11 @@ export default function FinanceDashboard() {
         {summary.balance < LOW_BALANCE_THRESHOLD && summary.count > 0 && (
           <motion.div initial={{y:-20,opacity:0}} animate={{y:0,opacity:1}} exit={{y:-20,opacity:0}}
             className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-            <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-2xl px-5 py-3">
+            <div className={`flex items-center gap-3 border rounded-2xl px-5 py-3 ${theme === 'dark' ? 'bg-red-900/20 border-red-500/20' : 'bg-red-50 border-red-200'}`}>
               <span className="text-2xl">⚠️</span>
               <div className="flex-1">
-                <p className="text-sm font-bold text-red-700">Low Balance Warning</p>
-                <p className="text-xs text-red-500">Your balance is {fmt(summary.balance)} — below the ₹{LOW_BALANCE_THRESHOLD} threshold.</p>
+                <p className={`text-sm font-bold ${theme === 'dark' ? 'text-red-400' : 'text-red-700'}`}>Low Balance Warning</p>
+                <p className={`text-xs ${theme === 'dark' ? 'text-red-300' : 'text-red-500'}`}>Your balance is {fmt(summary.balance)} — below the ₹{LOW_BALANCE_THRESHOLD} threshold.</p>
               </div>
             </div>
           </motion.div>
@@ -504,7 +504,7 @@ export default function FinanceDashboard() {
 
         {/* ── Empty State ──────────────────────────────────── */}
         {!loading && !fetchError && transactions.length === 0 && (
-          <div className="text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-100">
+          <div className={`text-center py-16 rounded-2xl shadow-sm border ${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'}`}>
             <p className="text-5xl mb-4">💰</p>
             <h3 className="text-xl font-bold text-gray-700 mb-2">No Transactions Yet</h3>
             <p className="text-gray-400 text-sm mb-5">Start by recording your first income or expense.</p>
@@ -518,13 +518,22 @@ export default function FinanceDashboard() {
         {/* ── Summary Cards ─────────────────────────────────── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {[
-            { label:'Balance',      value:summary.balance,  icon:'💼', color: summary.balance>=0?'#22c55e':'#ef4444', bg:'#f0fdf4', border:'#bbf7d0' },
-            { label:'Total Income', value:summary.income,   icon:'📈', color:'#22c55e', bg:'#f0fdf4', border:'#86efac' },
-            { label:'Total Expense',value:summary.expense,  icon:'📉', color:'#ef4444', bg:'#fef2f2', border:'#fca5a5' },
-            { label:'Transactions', value:summary.count,    icon:'📋', color:'#8b5cf6', bg:'#f5f3ff', border:'#c4b5fd', isCount:true },
+            { label:'Balance',      value:summary.balance,  icon:'💼', color: summary.balance>=0?'#22c55e':'#ef4444', 
+              bg: theme === 'dark' ? '#1A1110' : '#f0fdf4', 
+              border: theme === 'dark' ? 'rgba(255,255,255,0.05)' : '#bbf7d0' },
+            { label:'Total Income', value:summary.income,   icon:'📈', color:'#22c55e', 
+              bg: theme === 'dark' ? '#1A1110' : '#f0fdf4', 
+              border: theme === 'dark' ? 'rgba(255,255,255,0.05)' : '#86efac' },
+            { label:'Total Expense',value:summary.expense,  icon:'📉', color:'#ef4444', 
+              bg: theme === 'dark' ? '#1A1110' : '#fef2f2', 
+              border: theme === 'dark' ? 'rgba(255,255,255,0.05)' : '#fca5a5' },
+            { label:'Transactions', value:summary.count,    icon:'📋', color:'#8b5cf6', 
+              bg: theme === 'dark' ? '#1A1110' : '#f5f3ff', 
+              border: theme === 'dark' ? 'rgba(255,255,255,0.05)' : '#c4b5fd', isCount:true },
           ].map((card) => (
             <motion.div key={card.label} initial={{opacity:0,y:20}} animate={{opacity:1,y:0}}
-              className="rounded-2xl p-5 shadow-sm" style={{backgroundColor:card.bg, border:`1px solid ${card.border}`}}>
+              className={`rounded-2xl p-5 shadow-sm border ${theme === 'dark' ? 'transition-all' : ''}`} 
+              style={{backgroundColor:card.bg, borderColor:card.border}}>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-2xl">{card.icon}</span>
                 <span className="text-xs font-semibold px-2 py-1 rounded-full"
@@ -533,29 +542,37 @@ export default function FinanceDashboard() {
               <p className="text-2xl font-bold" style={{color:card.color}}>
                 {card.isCount ? card.value : fmt(card.value)}
               </p>
-              <p className="text-xs text-gray-400 mt-1">{card.isCount ? 'total records' : 'all time'}</p>
+              <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`}>{card.isCount ? 'total records' : 'all time'}</p>
             </motion.div>
           ))}
         </div>
 
         {/* ── Budget Usage ─────────────────────────────────── */}
         {budgetUsage.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="font-bold text-gray-700 mb-4">🎯 Budget Tracker — {thisMonth()}</h3>
+          <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-2xl shadow-sm border p-6`}>
+            <h3 className={`font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>🎯 Budget Tracker — {thisMonth()}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {budgetUsage.map((b) => (
-                <div key={b.category} className={`rounded-xl p-4 border ${b.exceeded ? 'border-red-200 bg-red-50' : 'border-gray-100 bg-gray-50'}`}>
+                <div key={b.category} className={`rounded-xl p-4 border transition-colors ${
+                  theme === 'dark' 
+                    ? (b.exceeded ? 'border-red-500/30 bg-red-900/10' : 'border-white/5 bg-white/5') 
+                    : (b.exceeded ? 'border-red-200 bg-red-50' : 'border-gray-100 bg-gray-50')
+                }`}>
                   <div className="flex justify-between items-start mb-2">
-                    <p className="font-semibold text-sm text-gray-700">{b.category}</p>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${b.exceeded ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
+                    <p className={`font-semibold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>{b.category}</p>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      theme === 'dark'
+                        ? (b.exceeded ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400')
+                        : (b.exceeded ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600')
+                    }`}>
                       {b.exceeded ? '🚨 Over' : '✅ OK'}
                     </span>
                   </div>
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-2">
+                  <div className={`h-2 rounded-full overflow-hidden mb-2 ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'}`}>
                     <div className="h-full rounded-full transition-all duration-500"
                       style={{width:`${b.pct}%`, background: b.exceeded ? '#ef4444' : '#22c55e'}} />
                   </div>
-                  <p className="text-xs text-gray-500">
+                  <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>
                     {fmt(b.spent)} / {fmt(b.limit_amt)}
                     <span className="ml-1 font-semibold" style={{color: b.exceeded ? '#ef4444' : '#22c55e'}}>({b.pct}%)</span>
                   </p>
@@ -569,43 +586,42 @@ export default function FinanceDashboard() {
         <AnimatePresence>
           {showForm && (
             <motion.div initial={{opacity:0,height:0}} animate={{opacity:1,height:'auto'}} exit={{opacity:0,height:0}}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              className={`rounded-2xl shadow-sm border overflow-hidden ${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'}`}>
               <div className="p-6">
                 <div className="flex items-center justify-between mb-5">
-                  <h2 className="text-lg font-bold text-gray-800">
+                  <h2 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
                     {editId ? '✏️ Edit Transaction' : '➕ New Transaction'}
                   </h2>
                   <button onClick={() => { setShowForm(false); setForm(emptyForm()); setEditId(null); }}
-                    className="text-gray-400 hover:text-gray-600 text-xl font-bold transition-colors">✕</button>
+                    className={`text-xl font-bold transition-colors ${theme === 'dark' ? 'text-white/40 hover:text-white' : 'text-gray-400 hover:text-gray-600'}`}>✕</button>
                 </div>
 
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
-
                     {/* Title */}
                     <div className="lg:col-span-2">
-                      <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Title *</label>
+                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Title *</label>
                       <input type="text" value={form.title} placeholder="e.g. Wedding Cake Sale"
                         onChange={(e) => setForm({...form, title:e.target.value})}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-50 transition-all" />
+                        className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:border-purple-400 focus:ring-4 transition-all ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:ring-purple-500/20 placeholder-white/20' : 'bg-white border-gray-200 text-gray-800 focus:ring-purple-50'}`} />
                     </div>
 
                     {/* Amount */}
                     <div>
-                      <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Amount (₹) *</label>
+                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Amount (₹) *</label>
                       <input type="number" min="1" value={form.amount} placeholder="0"
                         onChange={(e) => setForm({...form, amount:e.target.value})}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-50 transition-all" />
+                        className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:border-purple-400 focus:ring-4 transition-all ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:ring-purple-500/20 placeholder-white/20' : 'bg-white border-gray-200 text-gray-800 focus:ring-purple-50'}`} />
                     </div>
 
                     {/* Type */}
                     <div>
-                      <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Type *</label>
+                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Type *</label>
                       <div className="flex gap-2">
                         {['income','expense'].map(t => (
                           <button key={t} type="button" onClick={() => setForm({...form, type:t})}
-                            className="flex-1 py-3 rounded-xl text-sm font-semibold capitalize transition-all border-2"
-                            style={{borderColor:form.type===t?COLORS[t]:'#e5e7eb', background:form.type===t?COLORS[t]+'15':'white', color:form.type===t?COLORS[t]:'#6b7280'}}>
+                            className={`flex-1 py-3 rounded-xl text-sm font-semibold capitalize transition-all border-2 ${theme === 'dark' ? 'focus:ring-2' : ''}`}
+                            style={{borderColor:form.type===t?COLORS[t]:(theme==='dark'?'rgba(255,255,255,0.05)':'#e5e7eb'), background:form.type===t?COLORS[t]+'15':(theme==='dark'?'transparent':'white'), color:form.type===t?COLORS[t]:'#6b7280'}}>
                             {t==='income'?'📈':'📉'} {t}
                           </button>
                         ))}
@@ -614,45 +630,45 @@ export default function FinanceDashboard() {
 
                     {/* Category */}
                     <div>
-                      <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Category</label>
+                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Category</label>
                       <select value={form.category} onChange={(e) => setForm({...form, category:e.target.value})}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-50 transition-all bg-white">
-                        {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                        className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:border-purple-400 focus:ring-4 transition-all ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:ring-purple-500/20' : 'bg-white border-gray-200 text-gray-600 focus:ring-purple-50'}`}>
+                        {CATEGORIES.map(c => <option key={c} className={theme === 'dark' ? 'bg-gray-900' : ''}>{c}</option>)}
                       </select>
                     </div>
 
                     {/* Date */}
                     <div>
-                      <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Date</label>
+                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Date</label>
                       <input type="date" value={form.date} onChange={(e) => setForm({...form, date:e.target.value})}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-50 transition-all" />
+                        className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:border-purple-400 focus:ring-4 transition-all ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:ring-purple-500/20' : 'bg-white border-gray-200 text-gray-800 focus:ring-purple-50'}`} />
                     </div>
 
                     {/* Note */}
                     <div className="lg:col-span-2">
-                      <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Note (optional)</label>
+                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Note (optional)</label>
                       <input type="text" value={form.note} placeholder="Any extra details..."
                         onChange={(e) => setForm({...form, note:e.target.value})}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-50 transition-all" />
+                        className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:border-purple-400 focus:ring-4 transition-all ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:ring-purple-500/20 placeholder-white/20' : 'bg-white border-gray-200 text-gray-800 focus:ring-purple-50'}`} />
                     </div>
 
                     {/* Recurring */}
                     <div>
-                      <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Recurring 🔄</label>
-                      <div className="flex items-center gap-3 py-3 px-4 rounded-xl border border-gray-200 bg-gray-50">
+                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Recurring 🔄</label>
+                      <div className={`flex items-center gap-3 py-3 px-4 rounded-xl border transition-colors ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
                         <label className="relative inline-flex items-center cursor-pointer">
                           <input type="checkbox" checked={form.is_recurring}
                             onChange={(e) => setForm({...form, is_recurring:e.target.checked})}
                             className="sr-only peer" />
-                          <div className="w-9 h-5 bg-gray-300 peer-checked:bg-purple-500 rounded-full transition-all after:content-[''] after:absolute after:left-0.5 after:top-0.5 after:w-4 after:h-4 after:bg-white after:rounded-full after:shadow after:transition-all peer-checked:after:translate-x-4" />
+                          <div className={`w-9 h-5 rounded-full transition-all after:content-[''] after:absolute after:left-0.5 after:top-0.5 after:w-4 after:h-4 after:bg-white after:rounded-full after:shadow after:transition-all peer-checked:after:translate-x-4 ${theme === 'dark' ? 'bg-white/10 peer-checked:bg-purple-600' : 'bg-gray-300 peer-checked:bg-purple-500'}`} />
                         </label>
                         {form.is_recurring && (
                           <select value={form.recur_every} onChange={(e) => setForm({...form, recur_every:e.target.value})}
-                            className="text-xs border-none bg-transparent focus:outline-none text-purple-700 font-semibold">
-                            {RECUR_OPTIONS.slice(1).map(r => <option key={r}>{r}</option>)}
+                            className="text-xs border-none bg-transparent focus:outline-none text-purple-400 font-semibold">
+                            {RECUR_OPTIONS.slice(1).map(r => <option key={r} className={theme === 'dark' ? 'bg-gray-900' : ''}>{r}</option>)}
                           </select>
                         )}
-                        {!form.is_recurring && <span className="text-xs text-gray-400">Off</span>}
+                        {!form.is_recurring && <span className={`text-xs ${theme === 'dark' ? 'text-white/20' : 'text-gray-400'}`}>Off</span>}
                       </div>
                     </div>
                   </div>
@@ -681,13 +697,11 @@ export default function FinanceDashboard() {
 
         {/* ── Charts ───────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="font-bold text-gray-700 mb-4">📊 Monthly Overview</h3>
+          <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-2xl shadow-sm border p-6`}>
+            <h3 className={`font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>📊 Monthly Overview</h3>
             {monthlyData.length > 0 ? (
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={monthlyData} barCategoryGap="30%">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-                  <XAxis dataKey="month" tick={{fontSize:11}} />
                   <YAxis tick={{fontSize:11}} tickFormatter={v => `₹${(v/1000).toFixed(0)}k`} />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
@@ -698,8 +712,8 @@ export default function FinanceDashboard() {
             ) : <div className="h-52 flex items-center justify-center text-gray-400 text-sm">No data yet</div>}
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="font-bold text-gray-700 mb-4">🥧 By Category</h3>
+          <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-2xl shadow-sm border p-6`}>
+            <h3 className={`font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>🥧 By Category</h3>
             {categoryPieData.length > 0 ? (
               <>
                 <ResponsiveContainer width="100%" height={170}>
@@ -712,12 +726,12 @@ export default function FinanceDashboard() {
                 </ResponsiveContainer>
                 <div className="space-y-1 mt-2">
                   {categoryPieData.slice(0,4).map((d,i) => (
-                    <div key={d.name} className="flex items-center justify-between text-xs text-gray-600">
+                    <div key={d.name} className={`flex items-center justify-between text-xs ${theme === 'dark' ? 'text-white/40' : 'text-gray-600'}`}>
                       <div className="flex items-center gap-1.5">
                         <span className="w-2.5 h-2.5 rounded-full" style={{background:PIE_COLORS[i%PIE_COLORS.length]}} />
                         {d.name}
                       </div>
-                      <span className="font-semibold">{fmt(d.value)}</span>
+                      <span className={`font-semibold ${theme === 'dark' ? 'text-white' : ''}`}>{fmt(d.value)}</span>
                     </div>
                   ))}
                 </div>
@@ -727,43 +741,43 @@ export default function FinanceDashboard() {
         </div>
 
         {/* ── Filters ──────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+        <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-2xl shadow-sm border p-5`}>
           <div className="flex flex-wrap gap-3 items-center">
             <div className="relative flex-1 min-w-[180px]">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
               <input type="text" value={search} placeholder="Search transactions..."
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-50 transition-all" />
+                className={`w-full pl-9 pr-4 py-2.5 rounded-xl border text-sm focus:outline-none focus:border-purple-400 focus:ring-4 transition-all ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:ring-purple-500/20 placeholder-white/20' : 'bg-white border-gray-200 text-gray-800'}`} />
             </div>
-            <div className="flex gap-1 bg-gray-100 p-1 rounded-xl">
+            <div className={`flex gap-1 p-1 rounded-xl ${theme === 'dark' ? 'bg-white/5' : 'bg-gray-100'}`}>
               {['all','income','expense'].map(t => (
                 <button key={t} onClick={() => setFilterType(t)}
                   className="px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all"
-                  style={{background:filterType===t?'#7c3aed':'transparent', color:filterType===t?'white':'#6b7280'}}>
+                  style={{background:filterType===t?'#7c3aed':'transparent', color:filterType===t?'white':(theme === 'dark' ? 'rgba(255,255,255,0.4)' : '#6b7280')}}>
                   {t}
                 </button>
               ))}
             </div>
             <select value={filterCat} onChange={(e) => setFilterCat(e.target.value)}
-              className="px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none bg-white text-gray-600">
-              <option value="all">All Categories</option>
-              {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+              className={`px-3 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white' : 'bg-white border-gray-200 text-gray-600'}`}>
+              <option value="all" className={theme === 'dark' ? 'bg-gray-900' : ''}>All Categories</option>
+              {CATEGORIES.map(c => <option key={c} className={theme === 'dark' ? 'bg-gray-900' : ''}>{c}</option>)}
             </select>
             <select value={`${sortBy}:${sortOrder}`}
               onChange={(e) => { const [c,o] = e.target.value.split(':'); setSortBy(c); setSortOrder(o); }}
-              className="px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none bg-white text-gray-600">
-              <option value="date:desc">Latest First</option>
-              <option value="date:asc">Oldest First</option>
-              <option value="amount:desc">Highest Amount</option>
-              <option value="amount:asc">Lowest Amount</option>
+              className={`px-3 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white' : 'bg-white border-gray-200 text-gray-600'}`}>
+              <option value="date:desc" className={theme === 'dark' ? 'bg-gray-900' : ''}>Latest First</option>
+              <option value="date:asc" className={theme === 'dark' ? 'bg-gray-900' : ''}>Oldest First</option>
+              <option value="amount:desc" className={theme === 'dark' ? 'bg-gray-900' : ''}>Highest Amount</option>
+              <option value="amount:asc" className={theme === 'dark' ? 'bg-gray-900' : ''}>Lowest Amount</option>
             </select>
           </div>
         </div>
 
         {/* ── Transaction List ──────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h3 className="font-bold text-gray-700">📋 Transactions ({transactions.length})</h3>
+        <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-2xl shadow-sm border overflow-hidden`}>
+          <div className={`px-6 py-4 border-b ${theme === 'dark' ? 'border-white/5' : 'border-gray-100'}`}>
+            <h3 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>📋 Transactions ({transactions.length})</h3>
           </div>
 
           {loading ? (
@@ -777,31 +791,31 @@ export default function FinanceDashboard() {
               <p className="text-sm mt-1">Add your first transaction above</p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-50">
+            <div className={`divide-y ${theme === 'dark' ? 'divide-white/5' : 'divide-gray-50'}`}>
               <AnimatePresence>
                 {transactions.map(t => (
                   <motion.div key={t.id} initial={{opacity:0,x:-10}} animate={{opacity:1,x:0}} exit={{opacity:0,x:10}}
-                    className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50/60 transition-colors group">
+                    className={`flex items-center gap-4 px-6 py-4 transition-colors group ${theme === 'dark' ? 'hover:bg-white/5' : 'hover:bg-gray-50/60'}`}>
                     <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-lg flex-shrink-0"
                       style={{background:COLORS[t.type]+'15'}}>
                       {t.type==='income' ? '📈' : '📉'}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="font-semibold text-gray-800 text-sm truncate">{t.title}</p>
+                        <p className={`font-semibold text-sm truncate ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>{t.title}</p>
                         {t.is_recurring && (
-                          <span className="text-[9px] px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full font-bold flex-shrink-0">
+                          <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold flex-shrink-0 ${theme === 'dark' ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-600'}`}>
                             🔄 {t.recur_every}
                           </span>
                         )}
                       </div>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-xs text-gray-400">{t.date}</span>
-                        <span className="w-1 h-1 bg-gray-300 rounded-full" />
+                        <span className={`text-xs ${theme === 'dark' ? 'text-white/30' : 'text-gray-400'}`}>{t.date}</span>
+                        <span className={`w-1 h-1 rounded-full ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-300'}`} />
                         <span className="text-xs px-2 py-0.5 rounded-full" style={{background:'#8b5cf620', color:'#8b5cf6'}}>
                           {t.category}
                         </span>
-                        {t.note && <span className="text-xs text-gray-400 truncate hidden sm:block">— {t.note}</span>}
+                        {t.note && <span className={`text-xs truncate hidden sm:block ${theme === 'dark' ? 'text-white/20' : 'text-gray-400'}`}>— {t.note}</span>}
                       </div>
                     </div>
                     <div className="text-right">
@@ -811,8 +825,8 @@ export default function FinanceDashboard() {
                       <p className="text-[10px] capitalize" style={{color:COLORS[t.type]+'aa'}}>{t.type}</p>
                     </div>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                      <button onClick={() => startEdit(t)} className="p-2 hover:bg-blue-50 rounded-xl text-blue-500 transition-all" title="Edit">✏️</button>
-                      <button onClick={() => setDeletingId(t.id)} className="p-2 hover:bg-red-50 rounded-xl text-red-500 transition-all" title="Delete">🗑️</button>
+                      <button onClick={() => startEdit(t)} className={`p-2 rounded-xl transition-all ${theme === 'dark' ? 'hover:bg-blue-500/20 text-blue-400' : 'hover:bg-blue-50 text-blue-500'}`} title="Edit">✏️</button>
+                      <button onClick={() => setDeletingId(t.id)} className={`p-2 rounded-xl transition-all ${theme === 'dark' ? 'hover:bg-red-500/20 text-red-400' : 'hover:bg-red-50 text-red-500'}`} title="Delete">🗑️</button>
                     </div>
                   </motion.div>
                 ))}
@@ -826,31 +840,31 @@ export default function FinanceDashboard() {
       <AnimatePresence>
         {showBudget && (
           <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 px-4"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4"
             onClick={() => setShowBudget(false)}>
             <motion.div initial={{scale:0.9,opacity:0}} animate={{scale:1,opacity:1}} exit={{scale:0.9,opacity:0}}
               onClick={e => e.stopPropagation()}
-              className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-              <h3 className="text-lg font-bold text-gray-800 mb-1">🎯 Set Monthly Budget</h3>
-              <p className="text-xs text-gray-400 mb-5">Month: {thisMonth()}</p>
+              className={`rounded-2xl p-6 max-w-sm w-full shadow-2xl border ${theme === 'dark' ? 'bg-[#1A1110] border-white/10' : 'bg-white border-gray-100'}`}>
+              <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>🎯 Set Monthly Budget</h3>
+              <p className={`text-xs mb-5 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`}>Month: {thisMonth()}</p>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Category</label>
+                  <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Category</label>
                   <select value={budgetForm.category} onChange={e => setBudgetForm({...budgetForm, category:e.target.value})}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-purple-400">
-                    {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                    className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:border-purple-400 transition-colors ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white' : 'bg-white border-gray-200 text-gray-700'}`}>
+                    {CATEGORIES.map(c => <option key={c} className={theme === 'dark' ? 'bg-gray-900' : ''}>{c}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Spending Limit (₹)</label>
+                  <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Spending Limit (₹)</label>
                   <input type="number" min="1" value={budgetForm.limit_amt} placeholder="e.g. 5000"
                     onChange={e => setBudgetForm({...budgetForm, limit_amt:e.target.value})}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-50" />
+                    className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:border-purple-400 focus:ring-4 transition-all ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:ring-purple-500/20 placeholder-white/20' : 'bg-white border-gray-200 text-gray-800 focus:ring-purple-50'}`} />
                 </div>
               </div>
               <div className="flex gap-3 mt-5">
                 <button onClick={() => setShowBudget(false)}
-                  className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-all">
+                  className={`flex-1 py-3 rounded-xl border font-semibold text-sm transition-all ${theme === 'dark' ? 'border-white/10 text-white/60 hover:bg-white/5' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
                   Cancel
                 </button>
                 <button onClick={saveBudget} disabled={savingBudget}
@@ -868,16 +882,17 @@ export default function FinanceDashboard() {
       <AnimatePresence>
         {deletingId && (
           <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 px-4"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4"
             onClick={() => setDeletingId(null)}>
             <motion.div initial={{scale:0.9,opacity:0}} animate={{scale:1,opacity:1}} exit={{scale:0.9,opacity:0}}
-              onClick={e => e.stopPropagation()} className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+              onClick={e => e.stopPropagation()} 
+              className={`rounded-2xl p-6 max-w-sm w-full shadow-2xl border ${theme === 'dark' ? 'bg-[#1A1110] border-white/10' : 'bg-white border-gray-100'}`}>
               <p className="text-4xl text-center mb-3">🗑️</p>
-              <h3 className="text-lg font-bold text-gray-800 text-center mb-2">Delete Transaction?</h3>
-              <p className="text-gray-500 text-sm text-center mb-6">This action cannot be undone.</p>
+              <h3 className={`text-lg font-bold text-center mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>Delete Transaction?</h3>
+              <p className={`text-sm text-center mb-6 ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>This action cannot be undone.</p>
               <div className="flex gap-3">
                 <button onClick={() => setDeletingId(null)}
-                  className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-all">
+                  className={`flex-1 py-3 rounded-xl border font-semibold text-sm transition-all ${theme === 'dark' ? 'border-white/10 text-white/60 hover:bg-white/5' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
                   Cancel
                 </button>
                 <button onClick={() => handleDelete(deletingId)}

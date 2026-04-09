@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker, HiOutlineClock } from 'react-icons/hi';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
+import useStore from '../../store/useStore';
 
 const contactInfo = [
   { 
@@ -35,6 +36,7 @@ const contactInfo = [
 ];
 
 export default function ContactSection() {
+  const { theme } = useStore();
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -74,7 +76,7 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-24 bg-brown-50">
+    <section id="contact" className={`py-24 transition-colors duration-500 ${theme === 'dark' ? 'bg-[#120C0B]' : 'bg-brown-50'}`}>
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <motion.div
@@ -143,7 +145,9 @@ export default function ContactSection() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-brown-50 border border-transparent focus:border-accent focus:bg-secondary transition-all outline-none text-sm"
+                  className={`w-full px-4 py-3 rounded-xl border border-transparent focus:border-accent transition-all outline-none text-sm ${
+                    theme === 'dark' ? 'bg-white/5 text-white focus:bg-white/10' : 'bg-brown-50 focus:bg-secondary'
+                  }`}
                 />
                 <input
                   type="email"
@@ -151,7 +155,9 @@ export default function ContactSection() {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-brown-50 border border-transparent focus:border-accent focus:bg-secondary transition-all outline-none text-sm"
+                  className={`w-full px-4 py-3 rounded-xl border border-transparent focus:border-accent transition-all outline-none text-sm ${
+                    theme === 'dark' ? 'bg-white/5 text-white focus:bg-white/10' : 'bg-brown-50 focus:bg-secondary'
+                  }`}
                 />
               </div>
               <textarea
@@ -160,7 +166,9 @@ export default function ContactSection() {
                 rows={4}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-brown-50 border border-transparent focus:border-accent focus:bg-secondary transition-all outline-none text-sm resize-none"
+                className={`w-full px-4 py-3 rounded-xl border border-transparent focus:border-accent transition-all outline-none text-sm resize-none ${
+                    theme === 'dark' ? 'bg-white/5 text-white focus:bg-white/10' : 'bg-brown-50 focus:bg-secondary'
+                  }`}
               />
               <button 
                 type="submit" 

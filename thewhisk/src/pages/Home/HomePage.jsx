@@ -16,7 +16,7 @@ export default function HomePage() {
   const popular = products.filter((p) => (p.rating || 0) >= 4.7);
 
   return (
-    <div className="min-h-screen">
+    <div className={`min-h-screen transition-colors duration-500 ${theme === 'dark' ? 'bg-[#0D0807]' : 'bg-secondary'}`}>
       {loading && products.length === 0 ? (
         <div className="min-h-screen flex items-center justify-center bg-brown-50">
           <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin" />
@@ -144,12 +144,12 @@ export default function HomePage() {
                       whileHover={{ scale: 1.12, boxShadow: '0 12px 32px rgba(0,0,0,0.18)' }}
                       whileTap={{ scale: 0.95 }}
                       transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
-                      className="absolute -left-8 top-20 bg-white rounded-xl p-3 shadow-lg cursor-pointer text-left"
+                      className={`absolute -left-8 top-20 rounded-xl p-3 shadow-lg cursor-pointer text-left ${theme === 'dark' ? 'bg-[#1A1110] border border-white/10' : 'bg-white'}`}
                       style={{ zIndex: 20, border: 'none', outline: 'none' }}
                       title="Build your custom 3D cake"
                     >
                       <p className="text-2xl">🎂</p>
-                      <p className="text-xs font-semibold text-primary mt-1">Custom 3D</p>
+                      <p className={`text-xs font-semibold mt-1 ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Custom 3D</p>
                       <p className="text-[10px] text-brown-400">Build & Preview</p>
                     </motion.button>
 
@@ -159,12 +159,12 @@ export default function HomePage() {
                       whileHover={{ scale: 1.12, boxShadow: '0 12px 32px rgba(0,0,0,0.18)' }}
                       whileTap={{ scale: 0.95 }}
                       transition={{ duration: 3, repeat: Infinity, delay: 1 }}
-                      className="absolute -right-4 bottom-28 bg-white rounded-xl p-3 shadow-lg cursor-pointer text-left"
+                      className={`absolute -right-4 bottom-28 rounded-xl p-3 shadow-lg cursor-pointer text-left ${theme === 'dark' ? 'bg-[#1A1110] border border-white/10' : 'bg-white'}`}
                       style={{ zIndex: 20, border: 'none', outline: 'none' }}
                       title="Get AI-powered cake suggestions"
                     >
                       <p className="text-2xl">🤖</p>
-                      <p className="text-xs font-semibold text-primary mt-1">AI Suggest</p>
+                      <p className={`text-xs font-semibold mt-1 ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>AI Suggest</p>
                       <p className="text-[10px] text-brown-400">Smart Picks</p>
                     </motion.button>
 
@@ -174,12 +174,12 @@ export default function HomePage() {
                       whileHover={{ scale: 1.12, boxShadow: '0 12px 32px rgba(0,0,0,0.18)' }}
                       whileTap={{ scale: 0.95 }}
                       transition={{ duration: 3.5, repeat: Infinity, delay: 0.3 }}
-                      className="absolute right-10 top-0 bg-white rounded-xl p-3 shadow-lg cursor-pointer text-left"
+                      className={`absolute right-10 top-0 rounded-xl p-3 shadow-lg cursor-pointer text-left ${theme === 'dark' ? 'bg-[#1A1110] border border-white/10' : 'bg-white'}`}
                       style={{ zIndex: 20, border: 'none', outline: 'none' }}
                       title="Track your order live"
                     >
                       <p className="text-2xl">🛵</p>
-                      <p className="text-xs font-semibold text-primary mt-1">Live Track</p>
+                      <p className={`text-xs font-semibold mt-1 ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Live Track</p>
                       <p className="text-[10px] text-brown-400">Real-time</p>
                     </motion.button>
                   </div>
@@ -189,9 +189,9 @@ export default function HomePage() {
           </section>
 
           {/* Occasions Bubbles */}
-          <section className="py-12 bg-secondary transition-colors duration-500">
+          <section className={`py-12 transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1A1110]' : 'bg-secondary'}`}>
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="font-heading text-2xl font-bold text-primary text-center mb-8">
+              <h2 className={`font-heading text-2xl font-bold text-center mb-8 ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                 Shop by Occasion
               </h2>
               <div className="flex gap-4 overflow-x-auto pb-6 no-scrollbar snap-x snap-mandatory px-4">
@@ -211,7 +211,7 @@ export default function HomePage() {
                       >
                         {occ.emoji}
                       </div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-primary truncate">{occ.name}</p>
+                      <p className={`text-[10px] font-black uppercase tracking-widest truncate ${theme === 'dark' ? 'text-white/60' : 'text-primary'}`}>{occ.name}</p>
                     </Link>
                   </motion.div>
                 ))}
@@ -224,10 +224,10 @@ export default function HomePage() {
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h2 className="font-heading text-2xl font-bold text-primary">
+                  <h2 className={`font-heading text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                     🔥 Recommended For You
                   </h2>
-                  <p className="text-sm text-brown-400 mt-1">Handpicked by our AI based on what's trending</p>
+                  <p className="text-sm text-brown-400 mt-1 font-bold">Handpicked by our AI based on what's trending</p>
                 </div>
                 <Link
                   to="/menu"
@@ -246,13 +246,13 @@ export default function HomePage() {
           </section>
 
           {/* Smart Bundles */}
-          <section className="py-16 bg-secondary transition-colors duration-500">
+          <section className={`py-16 transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1A1110]' : 'bg-secondary'}`}>
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-10">
-                <h2 className="font-heading text-2xl font-bold text-primary">
+                <h2 className={`font-heading text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                   🎁 Smart Bundles
                 </h2>
-                <p className="text-sm text-brown-400 mt-1">
+                <p className="text-sm text-brown-400 mt-1 font-bold">
                   Curated combos for every occasion — save up to 20%
                 </p>
               </div>
@@ -265,8 +265,9 @@ export default function HomePage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.1 }}
                     viewport={{ once: true }}
-                    whileHover={{ y: -6 }}
-                    className="bg-secondary rounded-2xl overflow-hidden shadow-md group cursor-pointer"
+                    className={`rounded-2xl overflow-hidden shadow-md group cursor-pointer border transition-all ${
+                      theme === 'dark' ? 'bg-[#0D0807] border-white/5' : 'bg-white border-brown-50'
+                    }`}
                   >
                     <div className="relative overflow-hidden">
                       <img
@@ -282,7 +283,7 @@ export default function HomePage() {
                     <div className="p-4">
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-xl">{bundle.emoji}</span>
-                        <h3 className="font-heading font-semibold text-primary">{bundle.name}</h3>
+                        <h3 className={`font-heading font-semibold ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>{bundle.name}</h3>
                       </div>
                       <ul className="text-xs text-brown-400 space-y-1 mb-3">
                         {bundle.items.map((item) => (
@@ -291,7 +292,7 @@ export default function HomePage() {
                           </li>
                         ))}
                       </ul>
-                      <div className="flex items-center justify-between pt-3 border-t border-brown-100">
+                      <div className={`flex items-center justify-between pt-3 border-t ${theme === 'dark' ? 'border-white/5' : 'border-brown-100'}`}>
                         <div>
                           <span className="text-xs text-brown-300 line-through">₹{bundle.original_price}</span>
                           <span className="font-heading font-bold text-accent ml-2">₹{bundle.final_price}</span>
@@ -315,10 +316,10 @@ export default function HomePage() {
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h2 className="font-heading text-2xl font-bold text-primary">
+                  <h2 className={`font-heading text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                     ⭐ Best Rated
                   </h2>
-                  <p className="text-sm text-brown-400 mt-1">Because you deserve the best</p>
+                  <p className="text-sm text-brown-400 mt-1 font-bold">Because you deserve the best</p>
                 </div>
                 <Link
                   to="/menu"
@@ -337,9 +338,9 @@ export default function HomePage() {
           </section>
 
           {/* Testimonials */}
-          <section className="py-16 bg-secondary transition-colors duration-500">
+          <section className={`py-16 transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1A1110]' : 'bg-secondary'}`}>
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="font-heading text-2xl font-bold text-primary text-center mb-10">
+              <h2 className={`font-heading text-2xl font-bold text-center mb-10 ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                 💬 What Our Customers Say
               </h2>
 
@@ -350,14 +351,13 @@ export default function HomePage() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.1 }}
-                    viewport={{ once: true }}
-                    className="bg-secondary rounded-xl p-5"
+                    className={`rounded-xl p-5 border transition-all ${theme === 'dark' ? 'bg-[#0D0807] border-white/5 shadow-xl' : 'bg-white border-brown-50 shadow-sm'}`}
                   >
                     <div className="flex items-center gap-3 mb-3">
                       <span className="text-2xl">{review.avatar}</span>
                       <div>
-                        <p className="font-semibold text-sm text-primary">{review.user}</p>
-                        <p className="text-xs text-brown-400">{review.date}</p>
+                        <p className={`font-semibold text-sm ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>{review.user}</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-brown-400">{review.date}</p>
                       </div>
                     </div>
                     <div className="flex gap-0.5 mb-2">
@@ -365,7 +365,7 @@ export default function HomePage() {
                         <HiStar key={j} className="w-4 h-4 text-warning" />
                       ))}
                     </div>
-                    <p className="text-sm text-brown-500 leading-relaxed">"{review.comment}"</p>
+                    <p className={`text-sm leading-relaxed ${theme === 'dark' ? 'text-white/60' : 'text-brown-500'}`}>"{review.comment}"</p>
                   </motion.div>
                 ))}
               </div>

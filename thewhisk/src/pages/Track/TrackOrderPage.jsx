@@ -27,7 +27,7 @@ export default function TrackOrderPage() {
   const [order, setOrder] = useState(null);
   const [statusKey, setStatusKey] = useState('placed');
   const [loading, setLoading] = useState(false);
-  const { fetchOrders } = useStore();
+  const { fetchOrders, theme } = useStore();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -80,7 +80,7 @@ export default function TrackOrderPage() {
   const currentStepIdx = getStepIdx(statusKey);
 
   return (
-    <div className={`min-h-screen transition-colors duration-500 ${useStore().theme === "dark" ? "bg-[#0D0807]" : "bg-white"}`}>
+    <div className={`min-h-screen transition-colors duration-500 ${theme === "dark" ? "bg-[#0D0807]" : "bg-white"}`}>
       {/* ─── FIXED HEADER ─── */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-[#2874F0] text-white px-4 py-4 flex items-center justify-between shadow-md">
         <div className="flex items-center gap-4">
@@ -106,10 +106,10 @@ export default function TrackOrderPage() {
                <div className="mb-6">
                  <img src="https://cdni.iconscout.com/illustration/premium/thumb/empty-cart-2130356-1800917.png" alt="Empty" className="w-48 mx-auto opacity-50" />
                </div>
-               <h3 className={`text-xl font-bold mb-2 ${useStore().theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>Track Your Artisan Piece</h3>
+               <h3 className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>Track Your Artisan Piece</h3>
                <p className="text-gray-500 dark:text-brown-400 text-sm mb-6">Enter your unique order signature to monitor your fulfillment phase.</p>
                
-               <div className={`flex gap-2 overflow-hidden border rounded-xl p-1 mb-4 transition-all ${useStore().theme === 'dark' ? 'bg-white/5 border-white/10 focus-within:border-accent' : 'bg-gray-50 border-[#2874F0]/20 focus-within:border-[#2874F0]'}`}>
+               <div className={`flex gap-2 overflow-hidden border rounded-xl p-1 mb-4 transition-all ${theme === 'dark' ? 'bg-white/5 border-white/10 focus-within:border-accent' : 'bg-gray-50 border-[#2874F0]/20 focus-within:border-[#2874F0]'}`}>
                  <input 
                    type="text" 
                    value={inputId}
@@ -137,10 +137,10 @@ export default function TrackOrderPage() {
                  <p className="text-[11px] font-bold text-gray-400 dark:text-brown-300 mb-1">Order ID - {order.id}</p>
                  <div className="flex justify-between items-start mt-4">
                     <div className="flex-1 pr-4">
-                       <h2 className={`text-base font-bold line-clamp-1 ${useStore().theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>{order.items[0]?.name}</h2>
+                       <h2 className={`text-base font-bold line-clamp-1 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>{order.items[0]?.name}</h2>
                        <p className="text-sm text-gray-400 dark:text-brown-400 mt-1">Quantity: {order.items[0]?.quantity}</p>
                        <p className="text-sm text-gray-400 dark:text-brown-400 mt-0.5">Seller: The Whisk Artisan</p>
-                       <p className={`text-lg font-bold mt-2 ${useStore().theme === 'dark' ? 'text-accent' : 'text-gray-900'}`}>₹{order.total?.toLocaleString()}</p>
+                       <p className={`text-lg font-bold mt-2 ${theme === 'dark' ? 'text-accent' : 'text-gray-900'}`}>₹{order.total?.toLocaleString()}</p>
                     </div>
                     <div className="w-20 h-20 bg-gray-50 dark:bg-white/5 rounded-lg overflow-hidden border border-gray-100 dark:border-white/5 shrink-0">
                        <img src={order.items[0]?.image_url} alt="Item" className="w-full h-full object-cover" />
@@ -168,7 +168,7 @@ export default function TrackOrderPage() {
                         {/* CONTENT */}
                         <div className="pb-8">
                            <div className="flex items-center gap-1">
-                              <p className={`text-sm font-bold ${isCompleted ? (useStore().theme === 'dark' ? 'text-white' : 'text-gray-800') : 'text-gray-400'}`}>{step.label}</p>
+                              <p className={`text-sm font-bold ${isCompleted ? (theme === 'dark' ? 'text-white' : 'text-gray-800') : 'text-gray-400'}`}>{step.label}</p>
                               {idx === 3 && <HiChevronRight className="text-gray-400" />}
                            </div>
                            <p className="text-xs text-gray-400 mt-1">
@@ -193,10 +193,10 @@ export default function TrackOrderPage() {
 
               {/* ACTION BUTTONS */}
               <div className="flex border-t border-b border-gray-100 dark:border-white/5">
-                 <button className={`flex-1 py-4 text-sm font-bold transition-colors border-r border-gray-100 dark:border-white/5 ${useStore().theme === 'dark' ? 'text-white/70 hover:bg-white/5' : 'text-gray-700 hover:bg-gray-50'}`}>
+                 <button className={`flex-1 py-4 text-sm font-bold transition-colors border-r border-gray-100 dark:border-white/5 ${theme === 'dark' ? 'text-white/70 hover:bg-white/5' : 'text-gray-700 hover:bg-gray-50'}`}>
                     Cancel
                  </button>
-                 <button className={`flex-1 py-4 text-sm font-bold transition-colors flex items-center justify-center gap-2 ${useStore().theme === 'dark' ? 'text-white/70 hover:bg-white/5' : 'text-gray-700 hover:bg-gray-50'}`}>
+                 <button className={`flex-1 py-4 text-sm font-bold transition-colors flex items-center justify-center gap-2 ${theme === 'dark' ? 'text-white/70 hover:bg-white/5' : 'text-gray-700 hover:bg-gray-50'}`}>
                     Need help?
                  </button>
               </div>
@@ -207,8 +207,8 @@ export default function TrackOrderPage() {
                     <HiOutlineShieldCheck />
                  </div>
                  <div className="flex-1">
-                    <p className={`text-sm font-bold ${useStore().theme === 'dark' ? 'text-white' : 'text-[#1A4B8B]'}`}>Your Safety Comes First</p>
-                    <p className={`text-[10px] ${useStore().theme === 'dark' ? 'text-white/70' : 'text-[#1A4B8B]/70'}`}>We are taking important measures to keep you safe</p>
+                    <p className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-[#1A4B8B]'}`}>Your Safety Comes First</p>
+                    <p className={`text-[10px] ${theme === 'dark' ? 'text-white/70' : 'text-[#1A4B8B]/70'}`}>We are taking important measures to keep you safe</p>
                  </div>
                  <HiChevronRight className="text-gray-400" />
               </div>
@@ -217,13 +217,15 @@ export default function TrackOrderPage() {
               <div className="bg-gray-50 dark:bg-white/5 p-4">
                  <p className="text-[10px] font-bold text-gray-500 dark:text-brown-300 uppercase tracking-widest mb-4">Your issues with this item</p>
                  
-                 <div className="bg-white dark:bg-[#1A1110] p-4 rounded-xl shadow-sm border border-gray-100 dark:border-white/5 mb-8">
+                 <div className={`p-4 rounded-xl shadow-sm border mb-8 transition-all ${
+                    theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'
+                  }`}>
                     <div className="flex items-start justify-between">
                        <div>
-                          <p className={`text-sm font-bold ${useStore().theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>I have a delivery related issues</p>
-                          <div className="flex items-center gap-2 mt-4 text-[#2874F0] dark:text-accent">
-                             <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${useStore().theme === 'dark' ? 'border-accent' : 'border-[#2874F0]'}`}>
-                                <div className={`w-1.5 h-1.5 rounded-full ${useStore().theme === 'dark' ? 'bg-accent' : 'bg-[#2874F0]'}`} />
+                          <p className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>I have a delivery related issues</p>
+                          <div className={`flex items-center gap-2 mt-4 ${theme === 'dark' ? 'text-accent' : 'text-[#2874F0]'}`}>
+                             <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${theme === 'dark' ? 'border-accent' : 'border-[#2874F0]'}`}>
+                                <div className={`w-1.5 h-1.5 rounded-full ${theme === 'dark' ? 'bg-accent' : 'bg-[#2874F0]'}`} />
                              </div>
                              <p className="text-xs font-bold font-sans">Issue will be resolved by Today, Aug 22.</p>
                           </div>
@@ -231,7 +233,7 @@ export default function TrackOrderPage() {
                     </div>
                  </div>
 
-                 <button className={`w-full p-4 flex items-center justify-between text-sm font-bold transition-all ${useStore().theme === 'dark' ? 'bg-[#1A1110] text-white border-white/5' : 'bg-white text-gray-700 border-gray-100'} rounded-xl shadow-sm border`}>
+                 <button className={`w-full p-4 flex items-center justify-between text-sm font-bold transition-all ${theme === 'dark' ? 'bg-[#1A1110] text-white border-white/5' : 'bg-white text-gray-700 border-gray-100'} rounded-xl shadow-sm border`}>
                     <span>View All Issues</span>
                     <HiChevronRight className="text-gray-400" />
                  </button>

@@ -78,14 +78,14 @@ export default function ProductCard({ product, index = 0 }) {
 
       <div className="p-3 lg:p-6">
          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-1 lg:mb-3 gap-1 lg:gap-0">
-            <h3 className="font-black tracking-tight text-[11px] lg:text-sm uppercase truncate w-full text-primary">{product.name}</h3>
+            <h3 className={`font-black tracking-tight text-[11px] lg:text-sm uppercase truncate w-full ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>{product.name}</h3>
             <div className="flex items-center gap-1">
                <HiStar className="text-warning text-[10px] lg:text-sm" />
                <span className="text-[10px] lg:text-[11px] font-black text-accent">{product.rating || '5.0'}</span>
             </div>
          </div>
 
-         <p className="text-[10px] lg:text-[11px] font-bold leading-tight lg:leading-relaxed mb-3 lg:mb-6 line-clamp-2 text-brown-400">
+         <p className={`text-[10px] lg:text-[11px] font-bold leading-tight lg:leading-relaxed mb-3 lg:mb-6 line-clamp-2 ${theme === 'dark' ? 'text-white/50' : 'text-brown-400'}`}>
             {product.description || "A masterfully crafted creation."}
          </p>
 

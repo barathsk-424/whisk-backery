@@ -3,10 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import useStore from '../../store/useStore';
 
 export default function EditBundlePage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { theme } = useStore();
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
 
@@ -124,14 +126,16 @@ export default function EditBundlePage() {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-6 bg-secondary">
+    <div className={`min-h-screen pt-24 pb-12 px-6 transition-colors duration-700 ${theme === 'dark' ? 'bg-[#0D0807]' : 'bg-secondary'}`}>
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl border border-brown-100 overflow-hidden"
+        className={`max-w-2xl mx-auto rounded-3xl shadow-xl border overflow-hidden transition-all ${
+          theme === 'dark' ? 'bg-[#1A1110] border-white/5 shadow-white/5' : 'bg-white border-brown-100'
+        }`}
       >
-        <div className="p-8 border-b border-brown-50 bg-brown-50/30">
-          <h1 className="font-heading text-2xl font-black text-primary">Edit Bundle Profile</h1>
+        <div className={`p-8 border-b transition-colors ${theme === 'dark' ? 'border-white/5 bg-white/5' : 'border-brown-50 bg-brown-50/30'}`}>
+          <h1 className={`font-heading text-2xl font-black ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Edit Bundle Profile</h1>
           <p className="text-brown-400 text-sm">Fine-tune pricing strategies and bundle contents for #{id.slice(0,8)}</p>
         </div>
 
@@ -144,7 +148,9 @@ export default function EditBundlePage() {
                 name="name"
                 value={form.name}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-brown-100 focus:border-accent outline-none transition-all text-sm font-bold"
+                className={`w-full px-4 py-3 rounded-xl border outline-none transition-all text-sm font-bold ${
+                  theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:border-accent' : 'border-brown-100 focus:border-accent text-primary'
+                }`}
                 placeholder="Birthday Blast"
               />
             </div>
@@ -155,7 +161,9 @@ export default function EditBundlePage() {
                 name="occasion"
                 value={form.occasion}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-brown-100 focus:border-accent outline-none transition-all text-sm font-bold"
+                className={`w-full px-4 py-3 rounded-xl border outline-none transition-all text-sm font-bold ${
+                  theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:border-accent' : 'border-brown-100 focus:border-accent text-primary'
+                }`}
                 placeholder="birthday/anniversary"
               />
             </div>
@@ -169,7 +177,9 @@ export default function EditBundlePage() {
                 name="original_price"
                 value={form.original_price}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-brown-100 focus:border-accent outline-none transition-all text-sm font-bold"
+                className={`w-full px-4 py-3 rounded-xl border outline-none transition-all text-sm font-bold ${
+                  theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:border-accent' : 'border-brown-100 focus:border-accent text-primary'
+                }`}
               />
             </div>
             <div className="space-y-2">
@@ -179,7 +189,9 @@ export default function EditBundlePage() {
                 name="discount"
                 value={form.discount}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-brown-100 focus:border-accent outline-none transition-all text-sm font-bold"
+                className={`w-full px-4 py-3 rounded-xl border outline-none transition-all text-sm font-bold ${
+                  theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:border-accent' : 'border-brown-100 focus:border-accent text-primary'
+                }`}
               />
             </div>
             <div className="space-y-2">
@@ -189,7 +201,9 @@ export default function EditBundlePage() {
                 name="final_price"
                 value={form.final_price}
                 readOnly
-                className="w-full px-4 py-3 rounded-xl border border-brown-100 bg-gray-50 outline-none text-sm font-black text-accent"
+                className={`w-full px-4 py-3 rounded-xl border outline-none text-sm font-black transition-all ${
+                  theme === 'dark' ? 'bg-white/10 border-white/20 text-accent' : 'bg-gray-50 border-brown-100 text-accent'
+                }`}
               />
             </div>
           </div>
@@ -202,7 +216,9 @@ export default function EditBundlePage() {
                 name="emoji"
                 value={form.emoji}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-brown-100 focus:border-accent outline-none transition-all text-sm font-bold text-center"
+                className={`w-full px-4 py-3 rounded-xl border outline-none transition-all text-sm font-bold text-center ${
+                  theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:border-accent' : 'border-brown-100 focus:border-accent'
+                }`}
                 placeholder="🎉"
               />
             </div>
@@ -213,7 +229,9 @@ export default function EditBundlePage() {
                 name="image_url"
                 value={form.image_url}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-brown-100 focus:border-accent outline-none transition-all text-sm font-bold"
+                className={`w-full px-4 py-3 rounded-xl border outline-none transition-all text-sm font-bold ${
+                  theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:border-accent' : 'border-brown-100 focus:border-accent text-primary'
+                }`}
               />
             </div>
           </div>
@@ -225,7 +243,9 @@ export default function EditBundlePage() {
               value={form.items}
               onChange={handleChange}
               rows="3"
-              className="w-full px-4 py-3 rounded-xl border border-brown-100 focus:border-accent outline-none transition-all text-sm font-bold"
+              className={`w-full px-4 py-3 rounded-xl border outline-none transition-all text-sm font-bold ${
+                theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:border-accent' : 'border-brown-100 focus:border-accent text-primary'
+              }`}
               placeholder="1 kg Rainbow Cake, Candle Set, Party Hat..."
             />
           </div>
@@ -234,7 +254,9 @@ export default function EditBundlePage() {
             <button
                 type="button"
                 onClick={() => navigate('/admin-dashboard')}
-                className="flex-1 px-6 py-4 bg-brown-50 text-brown-400 font-black rounded-2xl hover:bg-brown-100 transition-all uppercase tracking-widest text-xs"
+                className={`flex-1 px-6 py-4 font-black rounded-2xl transition-all uppercase tracking-widest text-xs ${
+                  theme === 'dark' ? 'bg-white/5 text-brown-300 hover:bg-white/10' : 'bg-brown-50 text-brown-400 hover:bg-brown-100'
+                }`}
             >
                 Cancel
             </button>

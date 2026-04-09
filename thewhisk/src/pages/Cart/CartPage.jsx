@@ -20,19 +20,19 @@ export default function Cart() {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-6 transition-colors duration-500 bg-secondary">
+    <div className={`min-h-screen pt-24 pb-12 px-6 transition-colors duration-500 ${theme === 'dark' ? 'bg-[#0D0807]' : 'bg-secondary'}`}>
       <div className="max-w-4xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3 mb-8">
             <HiOutlineShoppingBag className="w-8 h-8 text-accent" />
-            <h1 className="font-heading text-4xl font-black text-primary tracking-tight">Your Cart</h1>
+            <h1 className={`font-heading text-4xl font-black tracking-tight ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Your Cart</h1>
           </div>
 
           {cart.length === 0 ? (
             <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'} rounded-3xl p-12 text-center border shadow-sm`}>
               <span className="text-6xl block mb-4">🛒</span>
-              <h2 className="text-xl font-bold text-primary mb-2">Your cart is empty</h2>
-              <p className="text-brown-400 mb-8">Looks like you haven't added any treats yet!</p>
+              <h2 className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Your cart is empty</h2>
+              <p className="text-brown-400 mb-8 font-bold">Looks like you haven't added any treats yet!</p>
               <button 
                 onClick={() => navigate('/menu')}
                 className="px-8 py-3 gradient-accent text-white font-bold rounded-2xl shadow-lg hover:scale-105 transition-transform"
@@ -52,7 +52,7 @@ export default function Cart() {
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h3 className="font-bold text-primary text-base line-clamp-1">
+                          <h3 className={`font-bold text-base line-clamp-1 ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                             {item.name || "Custom Cake"} 
                             <span className="text-accent text-[10px] ml-2 opacity-60">({item.selectedSize || 'Std'})</span>
                           </h3>
@@ -70,11 +70,11 @@ export default function Cart() {
                       <div className="flex items-center gap-4 mt-4">
                         <div className={`flex items-center ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-secondary border-brown-50'} rounded-xl p-1 border`}>
                           <button onClick={() => handleQuantity(item, -1)} className="w-8 h-8 flex items-center justify-center text-brown-400 font-bold hover:text-accent transition-colors">-</button>
-                          <span className="text-sm font-black w-10 text-center text-primary">{item.quantity}</span>
+                          <span className={`text-sm font-black w-10 text-center ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>{item.quantity}</span>
                           <button onClick={() => handleQuantity(item, 1)} className="w-8 h-8 flex items-center justify-center text-brown-400 font-bold hover:text-accent transition-colors">+</button>
                         </div>
                         
-                        <p className="text-[10px] font-black text-brown-300 uppercase tracking-widest hidden sm:block">
+                        <p className={`text-[10px] font-black uppercase tracking-widest hidden sm:block ${theme === 'dark' ? 'text-white/30' : 'text-brown-300'}`}>
                           Subtotal: ₹{((item.price || 0) * (item.quantity || 1)).toLocaleString()}
                         </p>
                       </div>
@@ -83,20 +83,20 @@ export default function Cart() {
                 ))}
               </div>
 
-              <div className="lg:col-span-1">
+                  <div className="lg:col-span-1">
                 <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'} p-6 rounded-3xl shadow-sm border sticky top-28`}>
-                  <h3 className="font-heading font-bold text-primary mb-6">Order Summary</h3>
+                  <h3 className={`font-heading font-bold mb-6 ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Order Summary</h3>
                   <div className="space-y-3 mb-6">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-brown-400">Subtotal</span>
-                      <span className="font-bold text-primary">₹{(getCartTotal() || 0).toLocaleString()}</span>
+                    <div className="flex justify-between text-sm font-bold uppercase tracking-tighter">
+                      <span className={`${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>Subtotal</span>
+                      <span className={`${theme === 'dark' ? 'text-white' : 'text-primary'}`}>₹{(getCartTotal() || 0).toLocaleString()}</span>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-brown-400">Delivery</span>
+                    <div className="flex justify-between text-sm font-bold uppercase tracking-tighter">
+                      <span className={`${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>Delivery</span>
                       <span className="text-success font-bold">FREE</span>
                     </div>
-                    <div className="pt-3 border-t border-brown-50 flex justify-between">
-                      <span className="font-bold text-primary">Total</span>
+                    <div className={`pt-3 border-t flex justify-between ${theme === 'dark' ? 'border-white/10' : 'border-brown-50'}`}>
+                      <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Total</span>
                       <span className="font-black text-2xl text-accent">₹{(getCartTotal() || 0).toLocaleString()}</span>
                     </div>
                   </div>
@@ -109,7 +109,7 @@ export default function Cart() {
                     <HiOutlineArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
 
-                  <p className="text-[10px] text-center text-brown-300 mt-4 uppercase tracking-widest font-black">
+                  <p className={`text-[10px] text-center mt-4 uppercase tracking-widest font-black ${theme === 'dark' ? 'text-white/20' : 'text-brown-300'}`}>
                     Secure 256-bit SSL encrypted checkout
                   </p>
                 </div>

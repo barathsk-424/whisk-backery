@@ -25,6 +25,7 @@ import {
 import toast from 'react-hot-toast';
 import { jsPDF } from 'jspdf';
 import { supabase } from '../../lib/supabase';
+import useStore from '../../store/useStore';
 
 // ── Config ───────────────────────────────────────────────────────
 const CATEGORIES = ['Cakes','Cupcakes','Pastries','Cookies','Bread','Custom','Bundles','Other'];
@@ -35,10 +36,11 @@ const fmt = (n) => new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR
 const todayStr = () => new Date().toISOString().split('T')[0];
 
 function ChartTip({active,payload,label}){
+  const { theme } = useStore();
   if(!active||!payload?.length) return null;
   return(
-    <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-3 text-sm">
-      <p className="font-semibold text-gray-700 mb-1">{label}</p>
+    <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-xl shadow-lg border p-3 text-sm`}>
+      <p className={`font-semibold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>{label}</p>
       {payload.map(p=>(
         <p key={p.dataKey} style={{color:p.color}} className="font-medium">
           {p.name}: {typeof p.value==='number'&&p.value>100?fmt(p.value):p.value}
@@ -50,6 +52,7 @@ function ChartTip({active,payload,label}){
 
 // ════════════════════════════════════════════════════════════════
 export default function StockAnalysisDashboard(){
+  const { theme } = useStore();
   const navigate = useNavigate();
   const [products,  setProducts]  = useState([]);
   const [analytics, setAnalytics] = useState([]);
@@ -248,7 +251,7 @@ export default function StockAnalysisDashboard(){
 
   // ── Sort header ───────────────────────────────────────────────
   const SortTh=({label,col})=>(
-    <th onClick={()=>toggleSort(col)} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide cursor-pointer select-none hover:text-indigo-600 transition-colors">
+    <th onClick={()=>toggleSort(col)} className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide cursor-pointer select-none transition-colors ${theme === 'dark' ? 'text-gray-400 hover:text-indigo-400' : 'text-gray-500 hover:text-indigo-600'}`}>
       <div className="flex items-center gap-1">{label}{sortKey===col&&<span className="text-indigo-500">{sortAsc?'↑':'↓'}</span>}</div>
     </th>
   );
@@ -262,7 +265,7 @@ export default function StockAnalysisDashboard(){
   const detailRestocks = detail ? restocks.filter(r=>r.product_id===detail.id) : [];
 
   return(
-    <div className="min-h-screen bg-gray-50 pt-16" style={{fontFamily:"'Inter',sans-serif"}}>
+    <div className={`min-h-screen transition-colors duration-500 ${theme === 'dark' ? 'bg-[#0D0807]' : 'bg-gray-50'} pt-16`} style={{fontFamily:"'Inter',sans-serif"}}>
 
       {/* Header */}
       <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 text-white shadow-lg">
@@ -326,7 +329,7 @@ export default function StockAnalysisDashboard(){
             {label:'Avg Stock/Product',value:totalProducts?Math.round(totalStock/totalProducts):0,icon:'📈',color:'#8b5cf6'},
             {label:'Stock Turnover',value:totalStock>0?(totalSold/totalStock*100).toFixed(1)+'%':'0%',icon:'🔄',color:'#f59e0b'},
           ].map(s=>(
-            <div key={s.label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+            <div key={s.label} className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-2xl p-4 shadow-sm`}>
               <div className="flex items-center gap-2">
                 <span className="text-lg">{s.icon}</span>
                 <p className="text-xs text-gray-400 font-medium">{s.label}</p>
@@ -345,33 +348,41 @@ export default function StockAnalysisDashboard(){
                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-gray-50 animate-pulse"/>
               </div>
               <div>
-                <h2 className="text-lg font-bold text-gray-800">Shortage Predictions</h2>
+                <h2 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>Shortage Predictions</h2>
                 <p className="text-xs text-gray-400">AI-estimated based on sell velocity</p>
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {predictions.slice(0,6).map(p=>(
                 <div key={p.id} className={`rounded-2xl p-4 border shadow-sm ${
-                  p.urgency==='critical'?'bg-red-50 border-red-200':'bg-amber-50 border-amber-200'
+                  theme === 'dark'
+                    ? (p.urgency==='critical'?'bg-red-900/20 border-red-500/20':'bg-amber-900/20 border-amber-500/20')
+                    : (p.urgency==='critical'?'bg-red-50 border-red-200':'bg-amber-50 border-amber-200')
                 }`}>
                   <div className="flex items-center justify-between mb-2">
-                    <p className="font-bold text-sm text-gray-800 truncate">{p.name}</p>
+                    <p className={`font-bold text-sm truncate ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>{p.name}</p>
                     <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
-                      p.urgency==='critical'?'bg-red-100 text-red-600':'bg-amber-100 text-amber-700'
+                      theme === 'dark'
+                        ? (p.urgency==='critical'?'bg-red-500/20 text-red-400':'bg-amber-500/20 text-amber-400')
+                        : (p.urgency==='critical'?'bg-red-100 text-red-600':'bg-amber-100 text-amber-700')
                     }`}>{p.urgency==='critical'?'🚨 Critical':'⚠️ Warning'}</span>
                   </div>
                   <div className="grid grid-cols-3 gap-2 text-center">
                     <div>
                       <p className="text-[10px] text-gray-400">Remaining</p>
-                      <p className="text-sm font-bold text-gray-700">{p.remaining}</p>
+                      <p className={`text-sm font-bold ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>{p.remaining}</p>
                     </div>
                     <div>
                       <p className="text-[10px] text-gray-400">Sell Rate</p>
-                      <p className="text-sm font-bold text-blue-600">{p.dailyRate}/day</p>
+                      <p className={`text-sm font-bold ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>{p.dailyRate}/day</p>
                     </div>
                     <div>
                       <p className="text-[10px] text-gray-400">Runs Out</p>
-                      <p className={`text-sm font-bold ${p.urgency==='critical'?'text-red-600':'text-amber-600'}`}>
+                      <p className={`text-sm font-bold ${
+                        theme === 'dark'
+                          ? (p.urgency==='critical'?'text-red-400':'text-amber-400')
+                          : (p.urgency==='critical'?'text-red-600':'text-amber-600')
+                      }`}>
                         {p.daysLeft<999?`~${p.daysLeft}d`:'—'}
                       </p>
                     </div>
@@ -393,11 +404,11 @@ export default function StockAnalysisDashboard(){
 
         {/* Low Stock Alert Banner */}
         {(lowCount+outCount)>0&&(
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-center gap-3">
+          <div className={`${theme === 'dark' ? 'bg-red-900/20 border-red-500/30' : 'bg-red-50 border-red-200'} border rounded-2xl p-4 flex items-center gap-3`}>
             <span className="text-2xl">🚨</span>
             <div className="flex-1">
-              <p className="font-bold text-red-800 text-sm">Stock Alert — {lowCount+outCount} items need attention</p>
-              <p className="text-xs text-red-500">
+              <p className={`font-bold text-sm ${theme === 'dark' ? 'text-red-400' : 'text-red-800'}`}>Stock Alert — {lowCount+outCount} items need attention</p>
+              <p className={`text-xs ${theme === 'dark' ? 'text-red-300' : 'text-red-500'}`}>
                 {stockRows.filter(r=>r.status!=='ok').map(r=>r.name).join(', ')}
               </p>
             </div>
@@ -405,15 +416,15 @@ export default function StockAnalysisDashboard(){
         )}
 
         {/* Search & Filter */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+        <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-2xl shadow-sm border p-5`}>
           <div className="flex flex-wrap gap-3 items-center">
             <div className="relative flex-1 min-w-[180px]">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
               <input type="text" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search products..."
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 transition-all"/>
+                className={`w-full pl-9 pr-4 py-2.5 rounded-xl border text-sm focus:outline-none focus:border-indigo-400 focus:ring-4 transition-all ${theme === 'dark' ? 'bg-[#1A1110] border-white/10 text-white focus:ring-indigo-500/20 placeholder-gray-500' : 'bg-white border-gray-200 text-gray-800 focus:ring-indigo-50'}`}/>
             </div>
             <select value={catFilter} onChange={e=>setCatFilter(e.target.value)}
-              className="px-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-white text-gray-600">
+              className={`px-3 py-2.5 rounded-xl border text-sm ${theme === 'dark' ? 'bg-[#1A1110] border-white/10 text-gray-300' : 'bg-white border-gray-200 text-gray-600'}`}>
               <option value="all">All Categories</option>
               {CATEGORIES.map(c=><option key={c}>{c}</option>)}
             </select>
@@ -422,9 +433,9 @@ export default function StockAnalysisDashboard(){
         </div>
 
         {/* Stock Table */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h3 className="font-bold text-gray-700">📋 Stock Inventory ({filtered.length})</h3>
+        <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-2xl shadow-sm border overflow-hidden`}>
+          <div className={`px-6 py-4 border-b ${theme === 'dark' ? 'border-white/5' : 'border-gray-100'}`}>
+            <h3 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>📋 Stock Inventory ({filtered.length})</h3>
           </div>
 
           {loading?(
@@ -439,58 +450,70 @@ export default function StockAnalysisDashboard(){
           ):(
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-100">
+                <thead className={`border-b ${theme === 'dark' ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100'}`}>
                   <tr>
                     <SortTh label="Product" col="name"/>
                     <SortTh label="Category" col="category"/>
                     <SortTh label="Total Stock" col="totalStock"/>
                     <SortTh label="Sold" col="sold"/>
                     <SortTh label="Remaining" col="remaining"/>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Daily Rate</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Days Left</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</th>
+                    <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Daily Rate</th>
+                    <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Days Left</th>
+                    <th className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Status</th>
                     <SortTh label="Revenue" col="revenue"/>
                     <th className="px-4 py-3"/>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className={`divide-y ${theme === 'dark' ? 'divide-white/5' : 'divide-gray-50'}`}>
                   {filtered.map(r=>(
-                    <tr key={r.id} className={`hover:bg-indigo-50/30 transition-colors cursor-pointer group ${r.status==='out'?'bg-red-50/40':r.status==='low'?'bg-amber-50/40':''}`}
+                    <tr key={r.id} className={`transition-colors cursor-pointer group ${
+                      theme === 'dark' 
+                        ? (r.status==='out'?'bg-red-900/10 hover:bg-red-900/20':r.status==='low'?'bg-amber-900/10 hover:bg-amber-900/20':'hover:bg-white/5')
+                        : (r.status==='out'?'bg-red-50/40 hover:bg-red-50/70':r.status==='low'?'bg-amber-50/40 hover:bg-amber-50/70':'hover:bg-indigo-50/30')
+                    }`}
                       onClick={()=>setDetail(r)}>
                       <td className="px-4 py-3">
-                        <p className="font-semibold text-sm text-indigo-600 hover:text-indigo-800 transition-colors"
+                        <p className={`font-semibold text-sm transition-colors ${theme === 'dark' ? 'text-indigo-400 hover:text-indigo-300' : 'text-indigo-600 hover:text-indigo-800'}`}
                           onClick={e=>{e.stopPropagation();navigate(`/stock/${r.id}`);}}
                           title="View full details">{r.name}</p>
                         {r.description&&<p className="text-xs text-gray-400 truncate max-w-[160px]">{r.description}</p>}
                       </td>
-                      <td className="px-4 py-3"><span className="text-xs px-2 py-1 rounded-full bg-indigo-50 text-indigo-600 font-medium">{r.category||'—'}</span></td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{r.totalStock}</td>
-                      <td className="px-4 py-3 text-sm font-medium text-pink-600">{r.sold}</td>
+                      <td className="px-4 py-3"><span className={`text-xs px-2 py-1 rounded-full font-medium ${theme === 'dark' ? 'bg-indigo-500/20 text-indigo-300' : 'bg-indigo-50 text-indigo-600'}`}>{r.category||'—'}</span></td>
+                      <td className={`px-4 py-3 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{r.totalStock}</td>
+                      <td className={`px-4 py-3 text-sm font-medium ${theme === 'dark' ? 'text-pink-400' : 'text-pink-600'}`}>{r.sold}</td>
                       <td className="px-4 py-3">
-                        <span className={`text-sm font-bold ${r.status==='out'?'text-red-600':r.status==='low'?'text-amber-600':'text-green-600'}`}>
+                        <span className={`text-sm font-bold ${
+                          theme === 'dark'
+                            ? (r.status==='out'?'text-red-400':r.status==='low'?'text-amber-400':'text-green-400')
+                            : (r.status==='out'?'text-red-600':r.status==='low'?'text-amber-600':'text-green-600')
+                        }`}>
                           {r.remaining}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-sm text-blue-600">{r.dailyRate.toFixed(1)}/d</td>
+                      <td className={`px-4 py-3 text-sm ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>{r.dailyRate.toFixed(1)}/d</td>
                       <td className="px-4 py-3">
-                        <span className={`text-sm font-semibold ${r.daysLeft<=3?'text-red-600':r.daysLeft<=7?'text-amber-600':'text-gray-500'}`}>
+                        <span className={`text-sm font-semibold ${
+                          theme === 'dark'
+                            ? (r.daysLeft<=3?'text-red-400':r.daysLeft<=7?'text-amber-400':'text-gray-400')
+                            : (r.daysLeft<=3?'text-red-600':r.daysLeft<=7?'text-amber-600':'text-gray-500')
+                        }`}>
                           {r.daysLeft<999?`${r.daysLeft}d`:'∞'}
                         </span>
                       </td>
                       <td className="px-4 py-3">
                         {r.status==='out'?(
-                          <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-red-100 text-red-600 animate-pulse">Out of Stock</span>
+                          <span className={`text-[10px] font-bold px-2 py-1 rounded-full animate-pulse ${theme === 'dark' ? 'bg-red-500/20 text-red-400' : 'bg-red-100 text-red-600'}`}>Out of Stock</span>
                         ):r.status==='low'?(
-                          <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-amber-100 text-amber-700">Low Stock</span>
+                          <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${theme === 'dark' ? 'bg-amber-500/20 text-amber-500' : 'bg-amber-100 text-amber-700'}`}>Low Stock</span>
                         ):(
-                          <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-green-100 text-green-600">In Stock</span>
+                          <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${theme === 'dark' ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-600'}`}>In Stock</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-sm font-semibold text-green-600">{fmt(r.revenue)}</td>
+                      <td className={`px-4 py-3 text-sm font-semibold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>{fmt(r.revenue)}</td>
                       <td className="px-4 py-3">
                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e=>e.stopPropagation()}>
                           <button onClick={()=>{setRestockId(r.id);setRestockQty('50');}} title="Restock"
-                            className="p-1.5 hover:bg-indigo-50 rounded-lg text-indigo-500 transition-all text-sm">📦+</button>
+                            className={`p-1.5 rounded-lg transition-all text-sm ${theme === 'dark' ? 'hover:bg-indigo-500/20 text-indigo-400' : 'hover:bg-indigo-50 text-indigo-500'}`}>📦+</button>
                         </div>
                       </td>
                     </tr>
@@ -502,12 +525,12 @@ export default function StockAnalysisDashboard(){
         </div>
 
         {/* Charts */}
-        <h2 className="text-xl font-bold text-gray-700">📈 Stock Analytics</h2>
+        <h2 className={`text-xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>📈 Stock Analytics</h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Usage Over Time */}
-          <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="font-bold text-gray-700 mb-4">📉 Stock Usage — Last 14 Days</h3>
+          <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-2xl shadow-sm border p-6`}>
+            <h3 className={`font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>📉 Stock Usage — Last 14 Days</h3>
             <ResponsiveContainer width="100%" height={220}>
               <LineChart data={stockUsage}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6"/>
@@ -522,8 +545,8 @@ export default function StockAnalysisDashboard(){
           </div>
 
           {/* Category Pie */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="font-bold text-gray-700 mb-4">🥧 Stock by Category</h3>
+          <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-2xl shadow-sm border p-6`}>
+            <h3 className={`font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>🥧 Stock by Category</h3>
             {catPieData.length>0?(
               <>
                 <ResponsiveContainer width="100%" height={170}>
@@ -535,8 +558,9 @@ export default function StockAnalysisDashboard(){
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="space-y-1 mt-2">
+              <div className="space-y-1 mt-2">
                   {catPieData.slice(0,5).map((d,i)=>(
-                    <div key={d.name} className="flex items-center justify-between text-xs text-gray-600">
+                    <div key={d.name} className={`flex items-center justify-between text-xs ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
                       <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full" style={{background:PIE_COLORS[i%PIE_COLORS.length]}}/>{d.name}</div>
                       <span className="font-semibold">{d.value} units</span>
                     </div>
@@ -548,14 +572,14 @@ export default function StockAnalysisDashboard(){
         </div>
 
         {/* Top Sold Bar */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h3 className="font-bold text-gray-700 mb-4">🏆 Top Sold Products</h3>
+        <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-2xl shadow-sm border p-6`}>
+          <h3 className={`font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>🏆 Top Sold Products</h3>
           {topSold.length>0?(
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={topSold} layout="vertical" barCategoryGap="20%">
-                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" horizontal={false}/>
-                <XAxis type="number" tick={{fontSize:11}}/>
-                <YAxis dataKey="name" type="category" tick={{fontSize:10}} width={120}/>
+                <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#333' : '#f3f4f6'} horizontal={false}/>
+                <XAxis type="number" tick={{fontSize:11, fill: theme === 'dark' ? '#9ca3af' : '#6b7280'}}/>
+                <YAxis dataKey="name" type="category" tick={{fontSize:10, fill: theme === 'dark' ? '#9ca3af' : '#6b7280'}} width={120}/>
                 <Tooltip content={<ChartTip/>}/>
                 <Bar dataKey="sold" name="Units Sold" fill="#ec4899" radius={[0,6,6,0]}/>
               </BarChart>
@@ -573,14 +597,14 @@ export default function StockAnalysisDashboard(){
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={()=>setDetail(null)}/>
             <motion.div initial={{x:'100%'}} animate={{x:0}} exit={{x:'100%'}}
               transition={{type:'spring',damping:25}}
-              className="fixed right-0 top-0 h-full w-full max-w-md bg-white z-50 shadow-2xl overflow-y-auto">
+              className={`fixed right-0 top-0 h-full w-full max-w-md ${theme === 'dark' ? 'bg-[#1A1110]' : 'bg-white'} z-50 shadow-2xl overflow-y-auto`}>
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-800">Stock Details</h2>
-                  <button onClick={()=>setDetail(null)} className="text-gray-400 hover:text-gray-600 text-2xl font-bold">✕</button>
+                  <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>Stock Details</h2>
+                  <button onClick={()=>setDetail(null)} className="text-gray-400 hover:text-white text-2xl font-bold">✕</button>
                 </div>
 
-                <h3 className="text-2xl font-bold text-gray-800 mb-1">{detail.name}</h3>
+                <h3 className={`text-2xl font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>{detail.name}</h3>
                 <span className="text-xs px-2 py-1 rounded-full bg-indigo-50 text-indigo-600 font-medium">{detail.category||'—'}</span>
                 <p className="text-gray-500 text-sm mt-3 mb-5">{detail.description||'No description.'}</p>
 
@@ -597,7 +621,7 @@ export default function StockAnalysisDashboard(){
                     <div key={s.label} className="rounded-2xl p-4" style={{background:s.color+'12',border:`1px solid ${s.color}30`}}>
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-base">{s.icon}</span>
-                        <p className="text-xs text-gray-500 font-medium">{s.label}</p>
+                        <p className="text-xs text-gray-400 font-medium">{s.label}</p>
                       </div>
                       <p className="text-lg font-bold" style={{color:s.color}}>{s.value}</p>
                     </div>
@@ -610,20 +634,24 @@ export default function StockAnalysisDashboard(){
                     <span>Stock Level</span>
                     <span>{detail.remaining} / {Math.max(detail.totalStock,100)}</span>
                   </div>
-                  <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className={`h-2.5 rounded-full overflow-hidden ${theme === 'dark' ? 'bg-white/10' : 'bg-gray-100'}`}>
                     <div className="h-full rounded-full transition-all duration-700"
                       style={{width:`${Math.min(100,(detail.remaining/Math.max(detail.totalStock,100))*100)}%`,
-                        background:detail.status==='out'?'#ef4444':detail.status==='low'?'#f59e0b':'#22c55e'}}/>
+                        background:detail.status==='out'?(theme==='dark'?'#f87171':'#ef4444'):detail.status==='low'?(theme==='dark'?'#fbbf24':'#f59e0b'):(theme==='dark'?'#4ade80':'#22c55e')}}/>
                   </div>
                 </div>
 
                 {/* Predicted stockout */}
                 {detail.dailyRate>0&&detail.daysLeft<999&&(
-                  <div className={`rounded-2xl p-4 mb-5 ${detail.daysLeft<=3?'bg-red-50 border border-red-200':'bg-amber-50 border border-amber-200'}`}>
-                    <p className="text-xs font-bold text-gray-700">🤖 AI Prediction</p>
-                    <p className="text-sm text-gray-600 mt-1">
-                      At current sell rate ({detail.dailyRate.toFixed(1)}/day), stock runs out in <span className="font-bold">{detail.daysLeft} days</span>.
-                      Suggested restock: <span className="font-bold text-indigo-600">{Math.max(50,Math.ceil(detail.dailyRate*14))} units</span>
+                  <div className={`rounded-2xl p-4 mb-5 ${
+                    theme === 'dark'
+                      ? (detail.daysLeft<=3?'bg-red-900/20 border border-red-500/20':'bg-amber-900/20 border border-amber-500/20')
+                      : (detail.daysLeft<=3?'bg-red-50 border border-red-200':'bg-amber-50 border border-amber-200')
+                  }`}>
+                    <p className={`text-xs font-bold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>🤖 AI Prediction</p>
+                    <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                      At current rate ({detail.dailyRate.toFixed(1)}/day), stock runs out in <span className="font-bold">{detail.daysLeft} days</span>.
+                      Suggested: <span className="font-bold text-indigo-500">{Math.max(50,Math.ceil(detail.dailyRate*14))} units</span>
                     </p>
                   </div>
                 )}
@@ -642,15 +670,15 @@ export default function StockAnalysisDashboard(){
 
                 {/* Restock History */}
                 <div>
-                  <h4 className="font-bold text-gray-700 text-sm mb-3">📜 Restock History</h4>
+                  <h4 className={`font-bold text-sm mb-3 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>📜 Restock History</h4>
                   {detailRestocks.length===0?(
                     <p className="text-xs text-gray-400">No restocks recorded yet.</p>
                   ):(
                     <div className="space-y-2 max-h-40 overflow-y-auto">
                       {detailRestocks.map(r=>(
-                        <div key={r.id} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-xl">
+                        <div key={r.id} className={`flex items-center justify-between px-3 py-2 rounded-xl ${theme === 'dark' ? 'bg-white/5' : 'bg-gray-50'}`}>
                           <div>
-                            <p className="text-xs font-semibold text-gray-700">+{r.quantity} units</p>
+                            <p className={`text-xs font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>+{r.quantity} units</p>
                             {r.note&&<p className="text-[10px] text-gray-400">{r.note}</p>}
                           </div>
                           <p className="text-[10px] text-gray-400">{new Date(r.created_at).toLocaleDateString('en-IN')}</p>
@@ -672,24 +700,24 @@ export default function StockAnalysisDashboard(){
             className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 px-4"
             onClick={()=>setRestockId(null)}>
             <motion.div initial={{scale:0.9}} animate={{scale:1}} exit={{scale:0.9}}
-              onClick={e=>e.stopPropagation()} className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-              <h3 className="text-lg font-bold text-gray-800 mb-1">📦 Restock Product</h3>
+              onClick={e=>e.stopPropagation()} className={`rounded-2xl p-6 max-w-sm w-full shadow-2xl ${theme === 'dark' ? 'bg-[#1A1110] border border-white/10' : 'bg-white'}`}>
+              <h3 className={`text-lg font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>📦 Restock Product</h3>
               <p className="text-xs text-gray-400 mb-5">{products.find(p=>p.id===restockId)?.name||'Product'}</p>
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Quantity to Add</label>
                   <input type="number" min="1" value={restockQty} onChange={e=>setRestockQty(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50"/>
+                    className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:border-indigo-400 focus:ring-4 transition-all ${theme === 'dark' ? 'bg-black/20 border-white/10 text-white focus:ring-indigo-500/20' : 'bg-white border-gray-200 text-gray-800 focus:ring-indigo-50'}`}/>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Note (optional)</label>
                   <input type="text" value={restockNote} onChange={e=>setRestockNote(e.target.value)} placeholder="e.g. Supplier delivery"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50"/>
+                    className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:border-indigo-400 focus:ring-4 transition-all ${theme === 'dark' ? 'bg-black/20 border-white/10 text-white focus:ring-indigo-500/20 placeholder-gray-600' : 'bg-white border-gray-200 text-gray-800 focus:ring-indigo-50'}`}/>
                 </div>
               </div>
               <div className="flex gap-3 mt-5">
                 <button onClick={()=>setRestockId(null)}
-                  className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-all">Cancel</button>
+                  className={`flex-1 py-3 rounded-xl border font-semibold text-sm transition-all ${theme === 'dark' ? 'border-white/10 text-gray-300 hover:bg-white/5' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>Cancel</button>
                 <button onClick={handleRestock} disabled={saving}
                   className="flex-1 py-3 rounded-xl text-white font-bold text-sm flex items-center justify-center gap-2 transition-all"
                   style={{background:'linear-gradient(135deg,#4f46e5,#06b6d4)',opacity:saving?0.7:1}}>

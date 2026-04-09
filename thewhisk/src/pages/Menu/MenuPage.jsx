@@ -35,7 +35,7 @@ export default function MenuPage() {
   if (sortBy === 'rating') filtered = [...filtered].sort((a, b) => (b.rating || 0) - (a.rating || 0));
 
   return (
-    <div className="min-h-screen pt-20 pb-12">
+    <div className={`min-h-screen pt-20 pb-12 transition-colors duration-500 ${theme === 'dark' ? 'bg-[#0D0807]' : 'bg-secondary'}`}>
       {loading ? (
         <div className="flex items-center justify-center p-20">
           <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin" />
@@ -49,8 +49,8 @@ export default function MenuPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="font-heading text-3xl font-bold text-primary">Our Menu</h1>
-          <p className="text-primary/60 mt-1">Freshly baked happiness, delivered to your doorstep</p>
+          <h1 className={`font-heading text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Our Menu</h1>
+          <p className={`${theme === 'dark' ? 'text-white/60' : 'text-primary/60'} mt-1 font-bold`}>Freshly baked happiness, delivered to your doorstep</p>
         </motion.div>
 
         {/* ── FEATURED SELECTION (USER REQUESTED PATTERN) ─────── */}
@@ -58,21 +58,23 @@ export default function MenuPage() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className={`mb-8 p-5 lg:p-8 ${theme === 'dark' ? 'bg-white/5' : 'bg-accent/5'} border ${theme === 'dark' ? 'border-white/10' : 'border-accent/20'} rounded-[2rem] flex flex-col md:flex-row items-center gap-6 relative overflow-hidden`}
+            className={`mb-8 p-5 lg:p-8 ${theme === 'dark' ? 'bg-[#1A1110]' : 'bg-accent/5'} border ${theme === 'dark' ? 'border-white/5' : 'border-accent/20'} rounded-[2rem] flex flex-col md:flex-row items-center gap-6 relative overflow-hidden`}
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
             <div className="flex-1 text-center md:text-left z-10">
               <span className="px-3 py-1 bg-accent text-white text-[9px] font-black rounded-full uppercase tracking-widest mb-3 inline-block shadow-lg shadow-accent/20">Featured</span>
-              <h2 className="font-heading text-xl lg:text-3xl font-black text-primary mb-2 line-clamp-1 truncate uppercase tracking-tighter">{filtered[0].name}</h2>
-              <p className="text-[11px] lg:text-sm text-primary/60 mb-5 line-clamp-2 font-bold leading-relaxed">{filtered[0].description}</p>
+              <h2 className={`font-heading text-xl lg:text-3xl font-black mb-2 line-clamp-1 truncate uppercase tracking-tighter ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>{filtered[0].name}</h2>
+              <p className={`text-[11px] lg:text-sm mb-5 line-clamp-2 font-bold leading-relaxed ${theme === 'dark' ? 'text-white/60' : 'text-primary/60'}`}>{filtered[0].description}</p>
               <button 
                 onClick={() => navigate(`/product/${filtered[0].id}`)}
-                className="w-full sm:w-auto px-8 py-3 bg-primary text-secondary text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-accent transition-all shadow-xl active:scale-95"
+                className={`w-full sm:w-auto px-8 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-xl active:scale-95 ${
+                  theme === 'dark' ? 'bg-accent text-white hover:bg-accent-dark' : 'bg-primary text-secondary hover:bg-accent'
+                }`}
               >
                 Inspect Artifact →
               </button>
             </div>
-            <div className="w-full md:w-64 h-40 lg:h-48 rounded-2xl overflow-hidden shadow-2xl border-4 border-white shrink-0 group">
+            <div className={`w-full md:w-64 h-40 lg:h-48 rounded-2xl overflow-hidden shadow-2xl border-4 shrink-0 group ${theme === 'dark' ? 'border-[#0D0807]' : 'border-white'}`}>
               <img src={filtered[0].image_url} alt="Featured" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
             </div>
           </motion.div>
@@ -124,7 +126,7 @@ export default function MenuPage() {
             exit={{ opacity: 0, height: 0 }}
             className={`rounded-xl p-6 shadow-sm border ${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-white border-brown-100'} mb-8`}
           >
-            <h3 className={`font-heading font-semibold ${theme === 'dark' ? 'text-secondary' : 'text-primary'} mb-4`}>Budget Slider</h3>
+            <h3 className={`font-heading font-semibold ${theme === 'dark' ? 'text-white' : 'text-primary'} mb-4`}>Budget Slider</h3>
             <div className="flex items-center gap-4">
               <span className="text-sm font-medium text-brown-400">₹{budgetRange?.[0] || 0}</span>
               <input
@@ -156,7 +158,7 @@ export default function MenuPage() {
               className={`shrink-0 snap-start flex items-center gap-3 px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
                 activeCategory === cat.id
                   ? 'gradient-accent text-white shadow-lg shadow-accent/20'
-                  : `${theme === 'dark' ? 'bg-white/5 border-white/10 text-primary' : 'bg-white border-brown-100 text-primary'} border hover:border-accent/30`
+                  : `${theme === 'dark' ? 'bg-white/5 border-white/10 text-white/40' : 'bg-white border-brown-100 text-primary'} border hover:border-accent/30`
               }`}
             >
               <span className="text-sm">{cat.emoji}</span>
@@ -166,16 +168,16 @@ export default function MenuPage() {
         </div>
 
         {/* Results count */}
-        <p className="text-sm text-brown-400 mb-6 font-bold">
-          Showing <span className="font-black text-primary">{filtered.length}</span> items
+        <p className="text-sm text-brown-400 mb-6 font-bold uppercase tracking-widest">
+          Showing <span className={`font-black ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>{filtered.length}</span> items
         </p>
 
         {/* Grid */}
         {filtered.length === 0 ? (
           <div className="text-center py-20">
             <span className="text-6xl mb-4 block">🔍</span>
-            <h3 className="font-heading text-xl font-bold text-primary mb-2">No items found</h3>
-            <p className="text-brown-400 text-sm">Try adjusting your search or filters</p>
+            <h3 className={`font-heading text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>No items found</h3>
+            <p className="text-brown-400 text-sm font-bold uppercase tracking-widest">Try adjusting your search or filters</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-6">

@@ -5,7 +5,7 @@ import useStore from '../../store/useStore';
 
 export default function CartSidebar() {
   const navigate = useNavigate();
-  const { cart, cartOpen, toggleCart, updateCartQuantity, removeFromCart, getCartTotal } = useStore();
+  const { cart, cartOpen, toggleCart, updateCartQuantity, removeFromCart, getCartTotal, theme } = useStore();
   const total = getCartTotal();
 
   return (
@@ -63,7 +63,11 @@ export default function CartSidebar() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: 100 }}
-                      className="flex gap-3 p-3 bg-white dark:bg-white/5 rounded-xl shadow-sm border border-transparent dark:border-white/5"
+                      className={`flex gap-3 p-3 rounded-xl shadow-sm border transition-all ${
+                        theme === 'dark' 
+                          ? 'bg-white/10 border-white/10' 
+                          : 'bg-white border-transparent'
+                      }`}
                     >
                       <img
                         src={item.image_url || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop'}
@@ -114,7 +118,11 @@ export default function CartSidebar() {
 
             {/* Footer */}
             {cart.length > 0 && (
-              <div className="p-5 border-t border-brown-100 dark:border-white/10 bg-white dark:bg-[#120C0B]">
+              <div className={`p-5 border-t transition-all ${
+                theme === 'dark'
+                  ? 'border-white/10 bg-[#120C0B]'
+                  : 'border-brown-100 bg-white'
+              }`}>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-brown-400">Subtotal</span>
                   <span className="font-bold text-primary">₹{total.toLocaleString()}</span>

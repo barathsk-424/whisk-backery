@@ -278,7 +278,7 @@ export default function ProfilePage() {
           {/* Order History */}
           <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'} rounded-2xl shadow-sm border overflow-hidden`}>
             <div className={`p-6 border-b ${theme === 'dark' ? 'border-white/5' : 'border-brown-100'} flex items-center justify-between`}>
-              <h3 className={`font-heading font-bold ${theme === 'dark' ? 'text-secondary' : 'text-primary'}`}>📦 Order History</h3>
+              <h3 className={`font-heading font-bold ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>📦 Order History</h3>
               {allOrders.length > 0 && (
                 <button 
                   onClick={() => {
@@ -356,7 +356,7 @@ export default function ProfilePage() {
 
           {/* 📬 Service Feedback Section */}
           <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'} rounded-2xl p-6 shadow-sm border mt-8`}>
-            <h3 className={`font-heading font-bold ${theme === 'dark' ? 'text-secondary' : 'text-primary'} mb-2 flex items-center gap-2`}>
+            <h3 className={`font-heading font-bold ${theme === 'dark' ? 'text-white' : 'text-primary'} mb-2 flex items-center gap-2`}>
                📬 Operations Feedback
             </h3>
             <p className="text-xs text-brown-400 mb-6 uppercase tracking-widest font-black">Help us refine our artisan protocols</p>
@@ -409,7 +409,7 @@ export default function ProfilePage() {
 
           {/* Saved Addresses */}
           <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'} rounded-2xl p-6 shadow-sm border mt-8`}>
-            <h3 className={`font-heading font-bold ${theme === 'dark' ? 'text-secondary' : 'text-primary'} mb-4`}>📍 Saved Addresses</h3>
+            <h3 className={`font-heading font-bold ${theme === 'dark' ? 'text-white' : 'text-primary'} mb-4`}>📍 Saved Addresses</h3>
             {user?.address ? (
               <div className="flex items-center gap-3 p-3 bg-secondary rounded-xl">
                 <span className="text-xl">🏠</span>

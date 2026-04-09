@@ -101,7 +101,9 @@ const AdminInvoices = ({ theme }) => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-brown-900 p-4 lg:p-6 rounded-2xl lg:rounded-[2rem] border border-brown-100 dark:border-brown-800 shadow-xl"
+          className={`p-4 lg:p-6 rounded-2xl lg:rounded-[2rem] border shadow-xl transition-all ${
+            theme === 'dark' ? 'bg-[#1A1110] border-white/5 shadow-white/5' : 'bg-white border-brown-100 shadow-xl'
+          }`}
         >
           <div className="flex items-center gap-3 lg:gap-4 mb-3 lg:mb-4">
             <div className="p-2 lg:p-3 bg-accent/10 text-accent rounded-xl lg:rounded-2xl">
@@ -111,7 +113,9 @@ const AdminInvoices = ({ theme }) => {
               Total Invoiced
             </p>
           </div>
-          <h3 className="text-2xl lg:text-3xl font-black text-primary dark:text-cream tracking-tighter">
+          <h3 className={`text-2xl lg:text-3xl font-black tracking-tighter ${
+            theme === 'dark' ? 'text-white' : 'text-primary'
+          }`}>
             ₹{totalRevenue.toLocaleString()}
           </h3>
         </motion.div>
@@ -120,7 +124,9 @@ const AdminInvoices = ({ theme }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-brown-900 p-4 lg:p-6 rounded-2xl lg:rounded-[2rem] border border-brown-100 dark:border-brown-800 shadow-xl"
+          className={`p-4 lg:p-6 rounded-2xl lg:rounded-[2rem] border shadow-xl transition-all ${
+            theme === 'dark' ? 'bg-[#1A1110] border-white/5 shadow-white/5' : 'bg-white border-brown-100 shadow-xl'
+          }`}
         >
           <div className="flex items-center gap-3 lg:gap-4 mb-3 lg:mb-4">
             <div className="p-2 lg:p-3 bg-success/10 text-success rounded-xl lg:rounded-2xl">
@@ -130,7 +136,9 @@ const AdminInvoices = ({ theme }) => {
               GST Accumulation
             </p>
           </div>
-          <h3 className="text-2xl lg:text-3xl font-black text-primary dark:text-cream tracking-tighter">
+          <h3 className={`text-2xl lg:text-3xl font-black tracking-tighter ${
+            theme === 'dark' ? 'text-white' : 'text-primary'
+          }`}>
             ₹{totalGst.toLocaleString()}
           </h3>
         </motion.div>
@@ -139,18 +147,20 @@ const AdminInvoices = ({ theme }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-primary text-white p-4 lg:p-6 rounded-2xl lg:rounded-[2rem] shadow-xl relative overflow-hidden sm:col-span-2 lg:col-span-1"
+          className={`p-4 lg:p-6 rounded-2xl lg:rounded-[2rem] shadow-xl relative overflow-hidden sm:col-span-2 lg:col-span-1 border transition-all ${
+            theme === 'dark' ? 'bg-[#1A1110] border-white/5 text-white' : 'bg-primary border-transparent text-white dark:bg-[#1A1110] dark:border-white/5'
+          }`}
         >
           <div className="relative z-10">
             <div className="flex items-center gap-3 lg:gap-4 mb-3 lg:mb-4">
               <div className="p-2 lg:p-3 bg-white/10 rounded-xl lg:rounded-2xl">
                 <HiOutlineFilter className="w-5 h-5 lg:w-6 lg:h-6" />
               </div>
-              <p className="text-[10px] lg:text-xs font-black uppercase text-white/60 tracking-widest">
+              <p className={`text-[10px] lg:text-xs font-black uppercase tracking-widest ${theme === 'dark' ? 'text-white/40' : 'text-white/60'}`}>
                 Archive Count
               </p>
             </div>
-            <h3 className="text-2xl lg:text-3xl font-black tracking-tighter">
+            <h3 className={`text-2xl lg:text-3xl font-black tracking-tighter ${theme === 'dark' ? 'text-white' : ''}`}>
               {filteredInvoices.length} Verified Entries
             </h3>
           </div>
@@ -161,7 +171,9 @@ const AdminInvoices = ({ theme }) => {
       </div>
 
       {/* Controls */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-brown-900 p-3 lg:p-4 rounded-xl lg:rounded-[2rem] border border-brown-100 dark:border-brown-800 shadow-lg no-print">
+      <div className={`flex flex-col md:flex-row gap-4 items-center justify-between p-3 lg:p-4 rounded-xl lg:rounded-[2rem] border shadow-lg no-print transition-all ${
+        theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'
+      }`}>
         <div className="relative flex-1 w-full">
           <HiOutlineSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-brown-400" />
           <input
@@ -169,7 +181,11 @@ const AdminInvoices = ({ theme }) => {
             placeholder="Search Invoice ID, Order ID or Consignee..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-11 lg:pl-12 pr-4 py-2.5 lg:py-3 bg-brown-50 dark:bg-brown-800 rounded-xl text-xs lg:text-sm font-bold text-primary dark:text-cream outline-none border border-transparent focus:border-accent transition-all"
+            className={`w-full pl-11 lg:pl-12 pr-4 py-2.5 lg:py-3 rounded-xl text-xs lg:text-sm font-bold outline-none border transition-all ${
+              theme === 'dark' 
+                ? 'bg-white/5 border-white/10 text-white focus:border-accent' 
+                : 'bg-brown-50 border-transparent focus:border-accent text-primary'
+            }`}
           />
         </div>
         <div className="flex gap-2 lg:gap-4 w-full md:w-auto">
@@ -177,7 +193,11 @@ const AdminInvoices = ({ theme }) => {
             type="date"
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="flex-1 md:flex-none px-3 lg:px-4 py-2.5 lg:py-3 bg-brown-50 dark:bg-brown-800 rounded-xl text-xs lg:text-sm font-bold text-primary dark:text-cream outline-none border border-transparent focus:border-accent"
+            className={`flex-1 md:flex-none px-3 lg:px-4 py-2.5 lg:py-3 rounded-xl text-xs lg:text-sm font-bold outline-none border transition-all ${
+              theme === 'dark' 
+                ? 'bg-white/5 border-white/10 text-white focus:border-accent' 
+                : 'bg-brown-50 border-transparent focus:border-accent text-primary'
+            }`}
           />
           <button
             onClick={fetchInvoices}
@@ -191,11 +211,15 @@ const AdminInvoices = ({ theme }) => {
       </div>
 
       {/* Table */}
-      <div className="bg-white dark:bg-brown-900 rounded-xl lg:rounded-[2rem] border border-brown-100 dark:border-brown-800 shadow-xl overflow-hidden">
+      <div className={`rounded-xl lg:rounded-[2rem] border shadow-xl overflow-hidden transition-all ${
+        theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-brown-100'
+      }`}>
         <div className="overflow-x-auto artisan-scrollbar">
           <table className="w-full text-left min-w-[800px] lg:min-w-0">
             <thead>
-              <tr className="bg-brown-50 dark:bg-brown-800/50 text-[9px] lg:text-[10px] font-black uppercase text-brown-400 tracking-[0.1em] lg:tracking-[0.2em]">
+              <tr className={`text-[9px] lg:text-[10px] font-black uppercase tracking-[0.1em] lg:tracking-[0.2em] transition-colors ${
+                theme === 'dark' ? 'bg-white/5 text-white/40' : 'bg-brown-50 text-brown-400'
+              }`}>
                 <th className="px-4 lg:px-6 py-4 lg:py-5">Signal ID</th>
                 <th className="px-4 lg:px-6 py-4 lg:py-5">Consignee</th>
                 <th className="px-4 lg:px-6 py-4 lg:py-5">Fiscal Total</th>
@@ -222,18 +246,18 @@ const AdminInvoices = ({ theme }) => {
                     className="hover:bg-brown-50/50 dark:hover:bg-brown-800/30 transition-colors group"
                   >
                     <td className="px-6 py-4">
-                      <p className="text-sm font-black text-primary dark:text-cream">
+                      <p className={`text-sm font-black ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                         {inv.invoice_id}
                       </p>
-                      <p className="text-[10px] text-brown-400 font-mono">
+                      <p className={`text-[10px] font-mono ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>
                         #{inv.order_id.slice(0, 8)}
                       </p>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-sm font-bold text-primary dark:text-cream">
+                      <p className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                         {inv.customer_name}
                       </p>
-                      <p className="text-[10px] text-brown-400 lowercase">
+                      <p className={`text-[10px] lowercase ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>
                         {inv.customer_email}
                       </p>
                       <p className="text-[10px] text-accent font-bold">
@@ -244,15 +268,15 @@ const AdminInvoices = ({ theme }) => {
                       <p className="text-md font-black text-accent tracking-tighter">
                         ₹{inv.total_amount}
                       </p>
-                      <p className="text-[9px] text-brown-400 uppercase font-bold tracking-tighter">
+                      <p className={`text-[9px] uppercase font-bold tracking-tighter ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>
                         Inc. ₹{inv.gst_amount} GST
                       </p>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-xs font-bold text-primary dark:text-cream uppercase">
+                      <p className={`text-xs font-bold uppercase ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                         {new Date(inv.created_at).toLocaleDateString()}
                       </p>
-                      <p className="text-[10px] text-brown-400">
+                      <p className={`text-[10px] ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>
                         {new Date(inv.created_at).toLocaleTimeString()}
                       </p>
                     </td>
