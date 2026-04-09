@@ -337,18 +337,18 @@ const InvoicePage = () => {
                 </div>
                      <div className="w-full md:w-[400px] flex flex-col gap-6">
                     <div className={`flex justify-between items-center text-[10px] font-black uppercase tracking-widest pb-4 border-b transition-colors ${
-                      theme === 'dark' ? 'text-white/40 border-white/10' : 'text-brown-300 border-brown-50'
+                      theme === 'dark' ? 'text-white/70 border-white/10' : 'text-brown-300 border-brown-50'
                     }`}>
                         <span>Subtotal</span>
                         <span className={`text-sm tracking-tighter transition-colors ${
                           theme === 'dark' ? 'text-white' : 'text-primary'
                         }`}>Rs.{invoice?.subtotal || (order.total_price / 1.18).toFixed(2)}</span>
                     </div>
-                    <div className={`flex justify-between items-center text-[9px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-white/30' : 'text-brown-200'}`}>
+                    <div className={`flex justify-between items-center text-[9px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-white/60' : 'text-brown-200'}`}>
                         <span>CGST (9%)</span>
                         <span className={`text-xs transition-colors ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Rs.{(invoice?.gst_amount / 2 || (order.total_price * 0.09)).toFixed(2)}</span>
                     </div>
-                    <div className={`flex justify-between items-center text-[9px] font-bold uppercase tracking-widest pb-6 border-b-2 border-[#FF6B35] ${theme === 'dark' ? 'text-white/30' : 'text-brown-200'}`}>
+                    <div className={`flex justify-between items-center text-[9px] font-bold uppercase tracking-widest pb-6 border-b-2 border-[#FF6B35] ${theme === 'dark' ? 'text-white/60' : 'text-brown-200'}`}>
                         <span>SGST (9%)</span>
                         <span className={`text-xs transition-colors ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Rs.{(invoice?.gst_amount / 2 || (order.total_price * 0.09)).toFixed(2)}</span>
                     </div>

@@ -543,7 +543,7 @@ export default function FinanceDashboard() {
               <p className="text-2xl font-bold" style={{color:card.color}}>
                 {card.isCount ? card.value : fmt(card.value)}
               </p>
-              <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-white/40' : 'text-gray-400'}`}>{card.isCount ? 'total records' : 'all time'}</p>
+              <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-white/60' : 'text-gray-400'}`}>{card.isCount ? 'total records' : 'all time'}</p>
             </motion.div>
           ))}
         </div>
@@ -573,7 +573,7 @@ export default function FinanceDashboard() {
                     <div className="h-full rounded-full transition-all duration-500"
                       style={{width:`${b.pct}%`, background: b.exceeded ? '#ef4444' : '#22c55e'}} />
                   </div>
-                  <p className={`text-xs ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>
+                  <p className={`text-xs ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>
                     {fmt(b.spent)} / {fmt(b.limit_amt)}
                     <span className="ml-1 font-semibold" style={{color: b.exceeded ? '#ef4444' : '#22c55e'}}>({b.pct}%)</span>
                   </p>
@@ -601,7 +601,7 @@ export default function FinanceDashboard() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
                     {/* Title */}
                     <div className="lg:col-span-2">
-                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Title *</label>
+                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>Title *</label>
                       <input type="text" value={form.title} placeholder="e.g. Wedding Cake Sale"
                         onChange={(e) => setForm({...form, title:e.target.value})}
                         className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:border-purple-400 focus:ring-4 transition-all ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:ring-purple-500/20 placeholder-white/20' : 'bg-white border-gray-200 text-gray-800 focus:ring-purple-50'}`} />
@@ -609,7 +609,7 @@ export default function FinanceDashboard() {
 
                     {/* Amount */}
                     <div>
-                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Amount (₹) *</label>
+                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>Amount (₹) *</label>
                       <input type="number" min="1" value={form.amount} placeholder="0"
                         onChange={(e) => setForm({...form, amount:e.target.value})}
                         className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:border-purple-400 focus:ring-4 transition-all ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:ring-purple-500/20 placeholder-white/20' : 'bg-white border-gray-200 text-gray-800 focus:ring-purple-50'}`} />
@@ -617,7 +617,7 @@ export default function FinanceDashboard() {
 
                     {/* Type */}
                     <div>
-                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Type *</label>
+                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>Type *</label>
                       <div className="flex gap-2">
                         {['income','expense'].map(t => (
                           <button key={t} type="button" onClick={() => setForm({...form, type:t})}
@@ -631,7 +631,7 @@ export default function FinanceDashboard() {
 
                     {/* Category */}
                     <div>
-                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Category</label>
+                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>Category</label>
                       <select value={form.category} onChange={(e) => setForm({...form, category:e.target.value})}
                         className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:border-purple-400 focus:ring-4 transition-all ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:ring-purple-500/20' : 'bg-white border-gray-200 text-gray-600 focus:ring-purple-50'}`}>
                         {CATEGORIES.map(c => <option key={c} className={theme === 'dark' ? 'bg-gray-900' : ''}>{c}</option>)}
@@ -640,14 +640,14 @@ export default function FinanceDashboard() {
 
                     {/* Date */}
                     <div>
-                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Date</label>
+                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>Date</label>
                       <input type="date" value={form.date} onChange={(e) => setForm({...form, date:e.target.value})}
                         className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:border-purple-400 focus:ring-4 transition-all ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:ring-purple-500/20' : 'bg-white border-gray-200 text-gray-800 focus:ring-purple-50'}`} />
                     </div>
 
                     {/* Note */}
                     <div className="lg:col-span-2">
-                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/40' : 'text-gray-500'}`}>Note (optional)</label>
+                      <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${theme === 'dark' ? 'text-white/60' : 'text-gray-500'}`}>Note (optional)</label>
                       <input type="text" value={form.note} placeholder="Any extra details..."
                         onChange={(e) => setForm({...form, note:e.target.value})}
                         className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:border-purple-400 focus:ring-4 transition-all ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white focus:ring-purple-500/20 placeholder-white/20' : 'bg-white border-gray-200 text-gray-800 focus:ring-purple-50'}`} />

@@ -562,7 +562,6 @@ export default function StockAnalysisDashboard(){
                 </ResponsiveContainer>
               </div>
                 <div className="space-y-1 mt-2">
-              <div className="space-y-1 mt-2">
                   {catPieData.slice(0,5).map((d,i)=>(
                     <div key={d.name} className={`flex items-center justify-between text-xs ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
                       <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full" style={{background:PIE_COLORS[i%PIE_COLORS.length]}}/>{d.name}</div>

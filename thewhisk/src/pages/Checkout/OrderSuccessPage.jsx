@@ -7,6 +7,7 @@ import {
   HiOutlineCheckCircle,
   HiOutlineClipboardList,
 } from "react-icons/hi";
+import useStore from "../../store/useStore";
 
 export default function OrderSuccessPage() {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function OrderSuccessPage() {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-12 bg-brown-50 relative overflow-hidden">
+    <div className={`min-h-screen pt-24 pb-12 transition-colors duration-500 ${theme === 'dark' ? 'bg-[#0D0807]' : 'bg-brown-50'} relative overflow-hidden`}>
       {/* Fallback CSS animated background elements */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
         <div className="absolute top-10 left-[10%] w-32 h-32 bg-accent rounded-full blur-3xl" />
@@ -53,16 +54,16 @@ export default function OrderSuccessPage() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-              className="w-24 h-24 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6 text-success"
+              className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 text-success shadow-inner ${theme === 'dark' ? 'bg-success/20 ring-1 ring-success/30' : 'bg-success/10'}`}
             >
               <HiOutlineCheckCircle className="w-16 h-16" />
             </motion.div>
             <h1 className="font-heading text-3xl font-bold text-primary mb-2">
               Order Confirmed!
             </h1>
-            <p className="text-brown-400">
+            <p className={`${theme === 'dark' ? 'text-white/60' : 'text-brown-400'}`}>
               Your delicious creation is being prepared. Order{" "}
-              <b>#{order.id}</b>
+              <b className={theme === 'dark' ? 'text-white' : ''}>#{order.id}</b>
             </p>
           </div>
 
@@ -99,7 +100,7 @@ export default function OrderSuccessPage() {
                         Message: "{item.message}"
                       </p>
                     )}
-                    <p className="text-sm text-brown-400 mt-1">
+                    <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-white/60' : 'text-brown-400'}`}>
                       Qty: {item.quantity}
                     </p>
                   </div>
@@ -114,7 +115,7 @@ export default function OrderSuccessPage() {
               ))}
             </div>
             <div className="mt-6 flex justify-between items-center pt-4 border-t border-brown-200 dark:border-white/10">
-              <span className="text-brown-400 font-medium">Grand Total</span>
+              <span className={`font-medium ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>Grand Total</span>
               <span className="text-2xl font-bold text-accent">
                 ₹{order.total.toLocaleString()}
               </span>

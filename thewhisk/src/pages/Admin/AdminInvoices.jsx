@@ -156,7 +156,7 @@ const AdminInvoices = ({ theme }) => {
               <div className="p-2 lg:p-3 bg-white/10 rounded-xl lg:rounded-2xl">
                 <HiOutlineFilter className="w-5 h-5 lg:w-6 lg:h-6" />
               </div>
-              <p className={`text-[10px] lg:text-xs font-black uppercase tracking-widest ${theme === 'dark' ? 'text-white/40' : 'text-white/60'}`}>
+              <p className={`text-[10px] lg:text-xs font-black uppercase tracking-widest ${theme === 'dark' ? 'text-white/60' : 'text-white/60'}`}>
                 Archive Count
               </p>
             </div>
@@ -218,7 +218,7 @@ const AdminInvoices = ({ theme }) => {
           <table className="w-full text-left min-w-[800px] lg:min-w-0">
             <thead>
               <tr className={`text-[9px] lg:text-[10px] font-black uppercase tracking-[0.1em] lg:tracking-[0.2em] transition-colors ${
-                theme === 'dark' ? 'bg-white/5 text-white/40' : 'bg-brown-50 text-brown-400'
+                theme === 'dark' ? 'bg-white/5 text-white/60' : 'bg-brown-50 text-brown-400'
               }`}>
                 <th className="px-4 lg:px-6 py-4 lg:py-5">Signal ID</th>
                 <th className="px-4 lg:px-6 py-4 lg:py-5">Consignee</th>
@@ -249,7 +249,7 @@ const AdminInvoices = ({ theme }) => {
                       <p className={`text-sm font-black ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                         {inv.invoice_id}
                       </p>
-                      <p className={`text-[10px] font-mono ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>
+                      <p className={`text-[10px] font-mono ${theme === 'dark' ? 'text-white/60' : 'text-brown-400'}`}>
                         #{inv.order_id.slice(0, 8)}
                       </p>
                     </td>
@@ -257,7 +257,7 @@ const AdminInvoices = ({ theme }) => {
                       <p className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                         {inv.customer_name}
                       </p>
-                      <p className={`text-[10px] lowercase ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>
+                      <p className={`text-[10px] lowercase ${theme === 'dark' ? 'text-white/60' : 'text-brown-400'}`}>
                         {inv.customer_email}
                       </p>
                       <p className="text-[10px] text-accent font-bold">
@@ -276,7 +276,7 @@ const AdminInvoices = ({ theme }) => {
                       <p className={`text-xs font-bold uppercase ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                         {new Date(inv.created_at).toLocaleDateString()}
                       </p>
-                      <p className={`text-[10px] ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>
+                      <p className={`text-[10px] ${theme === 'dark' ? 'text-white/60' : 'text-brown-400'}`}>
                         {new Date(inv.created_at).toLocaleTimeString()}
                       </p>
                     </td>

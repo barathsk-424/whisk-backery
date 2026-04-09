@@ -310,7 +310,7 @@ const ControlsPanel = ({ currentStep }) => {
                 <div className="flex gap-2 items-center">
                   <button
                     onClick={() => setTextStyle({ textSize: Math.max(0.06, (cake.textSize || 0.22) - 0.04) })}
-                    className="flex-1 h-11 rounded-xl border-2 border-brown-100 bg-white hover:bg-brown-50 text-xl font-bold text-primary transition-all hover:border-primary flex items-center justify-center"
+                    className={`flex-1 h-11 rounded-xl border-2 border-brown-100 ${theme === 'dark' ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-white hover:bg-brown-50'} text-xl font-bold text-primary transition-all hover:border-primary flex items-center justify-center`}
                     title="Decrease text size"
                   >−</button>
                   <input
@@ -335,7 +335,7 @@ const ControlsPanel = ({ currentStep }) => {
                   <span className="text-[10px] font-black text-brown-400 uppercase tracking-widest">Text Position</span>
                   <button
                     onClick={() => setTextStyle({ textX: 0, textZ: 0 })}
-                    className="text-[9px] font-bold text-primary/60 hover:text-primary transition-all uppercase tracking-wider"
+                    className={`text-[9px] font-bold ${theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-primary/60 hover:text-primary'} transition-all uppercase tracking-wider`}
                     title="Reset position to center"
                   >↺ Reset</button>
                 </div>
@@ -345,7 +345,7 @@ const ControlsPanel = ({ currentStep }) => {
                   <div />
                   <button
                     onClick={() => setTextStyle({ textZ: (cake.textZ || 0) - 0.3 })}
-                    className="h-10 rounded-xl border-2 border-brown-100 bg-white hover:bg-brown-50 text-base font-bold text-primary transition-all hover:border-primary flex items-center justify-center"
+                    className={`h-10 rounded-xl border-2 border-brown-100 ${theme === 'dark' ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-white hover:bg-brown-50'} text-base font-bold text-primary transition-all hover:border-primary flex items-center justify-center`}
                     title="Move text up (away from camera)"
                   >▲</button>
                   <div />

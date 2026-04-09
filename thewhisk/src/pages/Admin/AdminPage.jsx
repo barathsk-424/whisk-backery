@@ -456,7 +456,7 @@ export default function AdminDashboard() {
                 className={`flex items-center gap-2 px-4 lg:px-6 py-2.5 lg:py-3 rounded-xl text-[10px] lg:text-xs font-black transition-all shrink-0 ${
                   activeTab === tab.id
                     ? (theme === "dark" ? "bg-accent text-white shadow-xl scale-105" : "bg-primary text-white shadow-xl scale-105")
-                    : (theme === 'dark' ? "text-white/40 hover:text-white" : "text-brown-400 hover:text-primary")
+                    : (theme === 'dark' ? "text-white/60 hover:text-white" : "text-brown-400 hover:text-primary")
                 }`}
               >
                 {tab.icon} {tab.label}
@@ -512,7 +512,7 @@ export default function AdminDashboard() {
                     {stat.i}
                   </div>
                   <div>
-                    <p className={`text-[9px] lg:text-[10px] font-black uppercase tracking-widest mb-0.5 lg:mb-1 ${theme === 'dark' ? 'text-white/30' : 'text-brown-300'}`}>
+                    <p className={`text-[9px] lg:text-[10px] font-black uppercase tracking-widest mb-0.5 lg:mb-1 ${theme === 'dark' ? 'text-white/50' : 'text-brown-300'}`}>
                       {stat.l}
                     </p>
                     <p
@@ -539,7 +539,7 @@ export default function AdminDashboard() {
                       key={o.id}
                       className={`flex items-center justify-between py-2 border-b border-brown-50/10 ${theme === 'dark' ? 'border-white/5' : ''}`}
                     >
-                      <span className={`text-[10px] font-black font-mono ${theme === 'dark' ? 'text-white/30' : 'text-brown-400'}`}>
+                      <span className={`text-[10px] font-black font-mono ${theme === 'dark' ? 'text-white/50' : 'text-brown-400'}`}>
                         #{o.id.slice(0, 8)}
                       </span>
                       <span
@@ -671,7 +671,7 @@ export default function AdminDashboard() {
                           key={o.id}
                           className={`align-top transition-all ${theme === "dark" ? "hover:bg-white/5" : "hover:bg-secondary/10"}`}
                         >
-                          <td className={`py-8 px-8 font-mono text-[11px] ${theme === 'dark' ? 'text-white/30' : 'text-brown-300'}`}>
+                          <td className={`py-8 px-8 font-mono text-[11px] ${theme === 'dark' ? 'text-white/50' : 'text-brown-300'}`}>
                             #{o.id.slice(0, 10)}
                           </td>
                           <td className="py-8 min-w-[300px]">
@@ -697,7 +697,7 @@ export default function AdminDashboard() {
                                     >
                                       {item.name}
                                     </p>
-                                    <p className={`text-[9px] font-bold italic ${theme === "dark" ? "text-white/30" : "text-brown-400"}`}>
+                                    <p className={`text-[9px] font-bold italic ${theme === "dark" ? "text-white/50" : "text-brown-400"}`}>
                                       Qty: {item.qty || item.quantity} | ₹
                                       {item.price}
                                     </p>
@@ -724,7 +724,7 @@ export default function AdminDashboard() {
                                 o.user_email ||
                                 "Artisan Guest"}
                             </p>
-                            <p className={`text-[10px] font-bold leading-relaxed max-w-[200px] ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>
+                            <p className={`text-[10px] font-bold leading-relaxed max-w-[200px] ${theme === 'dark' ? 'text-white/60' : 'text-brown-400'}`}>
                               {o.delivery_details?.address ||
                                 o.address?.address ||
                                 (typeof o.address === "string"
