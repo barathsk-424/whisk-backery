@@ -531,7 +531,8 @@ export default function StockAnalysisDashboard(){
           {/* Usage Over Time */}
           <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-2xl shadow-sm border p-6`}>
             <h3 className={`font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>📉 Stock Usage — Last 14 Days</h3>
-            <ResponsiveContainer width="100%" height={220}>
+            <div className="h-[220px] w-full relative">
+              <ResponsiveContainer width="99%" height={220} debounce={100}>
               <LineChart data={stockUsage}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6"/>
                 <XAxis dataKey="date" tick={{fontSize:10}} tickFormatter={d=>d.slice(5)}/>
@@ -543,13 +544,15 @@ export default function StockAnalysisDashboard(){
               </LineChart>
             </ResponsiveContainer>
           </div>
+          </div>
 
           {/* Category Pie */}
           <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-2xl shadow-sm border p-6`}>
             <h3 className={`font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>🥧 Stock by Category</h3>
             {catPieData.length>0?(
               <>
-                <ResponsiveContainer width="100%" height={170}>
+                <div className="h-[170px] w-full relative">
+                  <ResponsiveContainer width="99%" height={170} debounce={100}>
                   <PieChart>
                     <Pie data={catPieData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} dataKey="value" paddingAngle={3}>
                       {catPieData.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
@@ -557,6 +560,7 @@ export default function StockAnalysisDashboard(){
                     <Tooltip/>
                   </PieChart>
                 </ResponsiveContainer>
+              </div>
                 <div className="space-y-1 mt-2">
               <div className="space-y-1 mt-2">
                   {catPieData.slice(0,5).map((d,i)=>(
@@ -575,7 +579,8 @@ export default function StockAnalysisDashboard(){
         <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-2xl shadow-sm border p-6`}>
           <h3 className={`font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>🏆 Top Sold Products</h3>
           {topSold.length>0?(
-            <ResponsiveContainer width="100%" height={200}>
+          <div className="h-[200px] w-full relative">
+            <ResponsiveContainer width="99%" height={200} debounce={100}>
               <BarChart data={topSold} layout="vertical" barCategoryGap="20%">
                 <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#333' : '#f3f4f6'} horizontal={false}/>
                 <XAxis type="number" tick={{fontSize:11, fill: theme === 'dark' ? '#9ca3af' : '#6b7280'}}/>
@@ -584,6 +589,7 @@ export default function StockAnalysisDashboard(){
                 <Bar dataKey="sold" name="Units Sold" fill="#ec4899" radius={[0,6,6,0]}/>
               </BarChart>
             </ResponsiveContainer>
+          </div>
           ):<div className="h-52 flex items-center justify-center text-gray-400 text-sm">No sales data</div>}
         </div>
 

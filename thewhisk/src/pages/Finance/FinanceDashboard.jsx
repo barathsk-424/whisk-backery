@@ -51,6 +51,7 @@ const emptyForm = () => ({
 
 // ── Custom Tooltip ────────────────────────────────────────────────
 function CustomTooltip({ active, payload, label }) {
+  const { theme } = useStore();
   if (!active || !payload?.length) return null;
   return (
     <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-xl shadow-lg border p-3 text-sm`}>
@@ -700,7 +701,8 @@ export default function FinanceDashboard() {
           <div className={`${theme === 'dark' ? 'bg-[#1A1110] border-white/5' : 'bg-white border-gray-100'} rounded-2xl shadow-sm border p-6`}>
             <h3 className={`font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>📊 Monthly Overview</h3>
             {monthlyData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={220}>
+              <div className="h-[220px] w-full relative">
+                <ResponsiveContainer width="99%" height={220} debounce={100}>
                 <BarChart data={monthlyData} barCategoryGap="30%">
                   <YAxis tick={{fontSize:11}} tickFormatter={v => `₹${(v/1000).toFixed(0)}k`} />
                   <Tooltip content={<CustomTooltip />} />
@@ -709,6 +711,7 @@ export default function FinanceDashboard() {
                   <Bar dataKey="expense" name="Expense" fill="#ef4444" radius={[6,6,0,0]} />
                 </BarChart>
               </ResponsiveContainer>
+            </div>
             ) : <div className="h-52 flex items-center justify-center text-gray-400 text-sm">No data yet</div>}
           </div>
 
@@ -716,7 +719,8 @@ export default function FinanceDashboard() {
             <h3 className={`font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`}>🥧 By Category</h3>
             {categoryPieData.length > 0 ? (
               <>
-                <ResponsiveContainer width="100%" height={170}>
+                <div className="h-[170px] w-full relative">
+                  <ResponsiveContainer width="99%" height={170} debounce={100}>
                   <PieChart>
                     <Pie data={categoryPieData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} dataKey="value" paddingAngle={3}>
                       {categoryPieData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
@@ -724,6 +728,7 @@ export default function FinanceDashboard() {
                     <Tooltip formatter={v => fmt(v)} />
                   </PieChart>
                 </ResponsiveContainer>
+              </div>
                 <div className="space-y-1 mt-2">
                   {categoryPieData.slice(0,4).map((d,i) => (
                     <div key={d.name} className={`flex items-center justify-between text-xs ${theme === 'dark' ? 'text-white/40' : 'text-gray-600'}`}>

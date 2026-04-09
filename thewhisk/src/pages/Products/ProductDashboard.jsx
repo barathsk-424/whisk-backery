@@ -944,7 +944,8 @@ export default function ProductDashboard() {
             <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <h3 className="font-bold text-gray-700 mb-4">🏆 Top Selling Products</h3>
               {topSellers.length > 0 ? (
-                <ResponsiveContainer width="100%" height={220}>
+                <div className="h-[220px] w-full relative">
+                  <ResponsiveContainer width="99%" height={220} debounce={100}>
                   <BarChart data={topSellers} layout="vertical" barCategoryGap="20%">
                     <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" horizontal={false} />
                     <XAxis type="number" tick={{ fontSize:11 }} />
@@ -953,6 +954,7 @@ export default function ProductDashboard() {
                     <Bar dataKey="order_count" name="Orders" fill="#8b5cf6" radius={[0,6,6,0]} />
                   </BarChart>
                 </ResponsiveContainer>
+              </div>
               ) : <div className="h-52 flex items-center justify-center text-gray-400 text-sm">No order data yet</div>}
             </div>
 
@@ -961,7 +963,8 @@ export default function ProductDashboard() {
               <h3 className="font-bold text-gray-700 mb-4">🥧 Revenue by Category</h3>
               {catPieData.length > 0 ? (
                 <>
-                  <ResponsiveContainer width="100%" height={170}>
+                  <div className="h-[170px] w-full relative">
+                    <ResponsiveContainer width="99%" height={170} debounce={100}>
                     <PieChart>
                       <Pie data={catPieData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} dataKey="value" paddingAngle={3}>
                         {catPieData.map((_,i) => <Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]} />)}
@@ -969,6 +972,7 @@ export default function ProductDashboard() {
                       <Tooltip formatter={v => fmt(v)} />
                     </PieChart>
                   </ResponsiveContainer>
+                </div>
                   <div className="space-y-1 mt-2">
                     {catPieData.slice(0,4).map((d,i) => (
                       <div key={d.name} className="flex items-center justify-between text-xs text-gray-600">
@@ -988,7 +992,8 @@ export default function ProductDashboard() {
           {/* Order Growth Line */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <h3 className="font-bold text-gray-700 mb-4">📈 Order Growth — Last 14 Days</h3>
-            <ResponsiveContainer width="100%" height={200}>
+            <div className="h-[200px] w-full relative">
+              <ResponsiveContainer width="99%" height={200} debounce={100}>
               <LineChart data={orderGrowth}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
                 <XAxis dataKey="date" tick={{ fontSize:10 }} tickFormatter={d => d.slice(5)} />
@@ -999,6 +1004,7 @@ export default function ProductDashboard() {
               </LineChart>
             </ResponsiveContainer>
           </div>
+        </div>
         </div>
 
         </>

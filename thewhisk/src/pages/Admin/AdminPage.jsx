@@ -859,8 +859,8 @@ export default function AdminDashboard() {
                     ))}
                   </div>
                 </div>
-                <div className="flex-1 z-10 font-black min-h-[250px] lg:min-h-[350px]">
-                  <ResponsiveContainer width="100%" height="100%" minHeight={1} minWidth={1}>
+                <div className="flex-1 z-10 font-black min-h-[250px] lg:min-h-[350px] relative">
+                  <ResponsiveContainer width="99%" height="99%" debounce={100}>
                     <AreaChart
                       data={
                         timeFilter === "daily"
@@ -998,8 +998,8 @@ export default function AdminDashboard() {
                   </span>{" "}
                   Peak Acquisition Hours
                 </h3>
-                <div className="flex-1 w-full min-h-0">
-                  <ResponsiveContainer width="100%" height="100%" minHeight={1} minWidth={1}>
+                <div className="flex-1 w-full min-h-0 relative">
+                  <ResponsiveContainer width="99%" height="99%" debounce={100}>
                     <BarChart data={analytics.hourlyTrend}>
                       <XAxis dataKey="hour" hide />
                       <Tooltip
@@ -1087,8 +1087,8 @@ export default function AdminDashboard() {
                   </span>{" "}
                   Flavor DNA Map
                 </h3>
-                <div className="flex-1 flex flex-col items-center justify-center min-h-[200px]">
-                  <ResponsiveContainer width="100%" height={180} minHeight={1} minWidth={1}>
+                <div className="flex-1 flex flex-col items-center justify-center min-h-[200px] w-full relative">
+                  <ResponsiveContainer width="99%" height={180} debounce={100}>
                     <PieChart>
                       <Pie
                         data={analytics.flavorData}

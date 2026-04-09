@@ -259,7 +259,8 @@ const InvoicePage = () => {
                     </div>
                 </div>
 
-                {/* Shipment                 <div className="flex flex-col justify-center">
+                {/* Shipment */}
+                <div className="flex flex-col justify-center">
                     <p className={`text-[10px] font-black uppercase tracking-[0.5em] mb-6 ${theme === 'dark' ? 'text-white/20' : 'text-brown-200'}`}>Shipment Coordinates</p>
                     <p className={`text-lg font-black uppercase leading-tight mb-4 max-w-[300px] transition-colors ${
                       theme === 'dark' ? 'text-white' : 'text-primary'
@@ -272,7 +273,7 @@ const InvoicePage = () => {
                              {invoice?.customer_phone || order.phone || order.delivery_details?.phone || order.address?.phone || "Not Provided"}
                         </span>
                     </div>
-                </div>       </div>
+                </div>
              </div>
 
              {/* Acquisition Logic Table */}
@@ -366,7 +367,6 @@ const InvoicePage = () => {
                         </div>
                     </div>
                 </div>
-             </div>
 
              {/* Premium Footer area */}
              <div className={`relative z-10 mt-16 md:mt-32 pt-8 md:pt-16 border-t flex flex-col items-center transition-colors ${

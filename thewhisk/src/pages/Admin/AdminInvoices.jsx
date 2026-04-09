@@ -148,7 +148,7 @@ const AdminInvoices = ({ theme }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           className={`p-4 lg:p-6 rounded-2xl lg:rounded-[2rem] shadow-xl relative overflow-hidden sm:col-span-2 lg:col-span-1 border transition-all ${
-            theme === 'dark' ? 'bg-[#1A1110] border-white/5 text-white' : 'bg-primary border-transparent text-white dark:bg-[#1A1110] dark:border-white/5'
+            theme === 'dark' ? 'bg-[#1A1110] border-white/5 text-white' : 'bg-primary border-transparent text-white'
           }`}
         >
           <div className="relative z-10">

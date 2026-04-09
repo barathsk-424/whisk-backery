@@ -399,7 +399,8 @@ export default function StockDetailPage(){
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h3 className="font-bold text-gray-700 mb-4">📈 Sales Over Time (14 Days)</h3>
             {salesChart.some(d=>d.unitsSold>0)?(
-              <ResponsiveContainer width="100%" height={220}>
+            <div className="h-[220px] w-full relative">
+              <ResponsiveContainer width="99%" height={220} debounce={100}>
                 <BarChart data={salesChart} barCategoryGap="20%">
                   <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6"/>
                   <XAxis dataKey="date" tick={{fontSize:10}} tickFormatter={d=>d.slice(5)}/>
@@ -407,9 +408,10 @@ export default function StockDetailPage(){
                   <Tooltip content={<ChartTip/>}/>
                   <Legend/>
                   <Bar dataKey="unitsSold" name="Units Sold" fill="#ec4899" radius={[4,4,0,0]}/>
-                  <Bar dataKey="orders" name="Orders" fill="#8b5cf6" radius={[4,4,0,0]}/>
+                  <Bar dataKey="orders" name="Orders" fill="#8b5cf6" radius={[4,4,0,0]} />
                 </BarChart>
               </ResponsiveContainer>
+            </div>
             ):(
               <div className="h-56 flex items-center justify-center text-gray-400 text-sm">
                 <div className="text-center"><p className="text-3xl mb-2">📊</p>No sales data yet</div>
@@ -421,7 +423,8 @@ export default function StockDetailPage(){
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h3 className="font-bold text-gray-700 mb-4">📉 Stock Level Over Time</h3>
             {stockGraph.length>0?(
-              <ResponsiveContainer width="100%" height={220}>
+            <div className="h-[220px] w-full relative">
+              <ResponsiveContainer width="99%" height={220} debounce={100}>
                 <AreaChart data={stockGraph}>
                   <defs>
                     <linearGradient id="stockGrad" x1="0" y1="0" x2="0" y2="1">
@@ -433,9 +436,10 @@ export default function StockDetailPage(){
                   <XAxis dataKey="date" tick={{fontSize:10}} tickFormatter={d=>d.slice(5)}/>
                   <YAxis tick={{fontSize:11}}/>
                   <Tooltip content={<ChartTip/>}/>
-                  <Area type="monotone" dataKey="stock" name="Stock Level" stroke="#06b6d4" strokeWidth={2} fill="url(#stockGrad)"/>
+                  <Area type="monotone" dataKey="stock" name="Stock Level" stroke="#06b6d4" strokeWidth={2} fill="url(#stockGrad)" />
                 </AreaChart>
               </ResponsiveContainer>
+            </div>
             ):(
               <div className="h-56 flex items-center justify-center text-gray-400 text-sm">
                 <div className="text-center"><p className="text-3xl mb-2">📉</p>No stock history</div>
@@ -447,16 +451,18 @@ export default function StockDetailPage(){
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 lg:col-span-2">
             <h3 className="font-bold text-gray-700 mb-4">💰 Revenue Over Time (14 Days)</h3>
             {salesChart.some(d=>d.revenue>0)?(
-              <ResponsiveContainer width="100%" height={200}>
+          <div className="h-[200px] w-full relative">
+            <ResponsiveContainer width="99%" height={200} debounce={100}>
                 <LineChart data={salesChart}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6"/>
                   <XAxis dataKey="date" tick={{fontSize:10}} tickFormatter={d=>d.slice(5)}/>
                   <YAxis tick={{fontSize:11}} tickFormatter={v=>fmt(v)}/>
                   <Tooltip content={<ChartTip/>}/>
                   <Legend/>
-                  <Line type="monotone" dataKey="revenue" name="Revenue" stroke="#22c55e" strokeWidth={2.5} dot={{r:3}} activeDot={{r:6}}/>
+                  <Line type="monotone" dataKey="revenue" name="Revenue" stroke="#22c55e" strokeWidth={2.5} dot={{ r: 3 }} activeDot={{ r: 6 }} />
                 </LineChart>
               </ResponsiveContainer>
+            </div>
             ):(
               <div className="h-48 flex items-center justify-center text-gray-400 text-sm">
                 <div className="text-center"><p className="text-3xl mb-2">💰</p>No revenue data yet</div>

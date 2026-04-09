@@ -75,9 +75,12 @@ export default function OrderSuccessPage() {
             </h3>
             <div className="space-y-4">
               {order.items.map((item, idx) => (
+                <div 
+                  key={idx}
                   className={`flex items-center gap-4 p-3 rounded-xl shadow-sm transition-all ${
                     theme === 'dark' ? 'bg-white/5' : 'bg-white'
                   }`}
+                >
                   <img
                     src={
                       item.image_url ||
