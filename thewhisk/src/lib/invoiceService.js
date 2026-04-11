@@ -120,13 +120,13 @@ export const downloadInvoiceAsPDF = (invoiceData, items = []) => {
     doc.text('ACQUISITION SIGNAL ID', 190, cursorY + 28, { align: 'right' });
     doc.setFontSize(18);
     doc.setTextColor(...textPrimary);
-    doc.text(`${invoiceData.invoice_id || 'INV-2026-0003'}`, 190, cursorY + 36, { align: 'right' });
+    doc.text(String(invoiceData.invoice_id || 'INV-MASTER-VAULT'), 190, cursorY + 36, { align: 'right' });
     
     doc.setFontSize(7);
     doc.setTextColor(...textMuted);
     doc.setFont('helvetica', 'normal');
     doc.text(`TIMESTAMP: ${new Date(invoiceData.created_at || Date.now()).toLocaleString()}`, 190, cursorY + 41, { align: 'right' });
-    doc.text(`ORDER INDEX: #${invoiceData.order_id?.slice(0, 10).toUpperCase() || 'REF-N3920'}`, 190, cursorY + 44, { align: 'right' });
+    doc.text(`ORDER INDEX: #${String(invoiceData.order_id || 'REF-N3920').slice(0, 10).toUpperCase()}`, 190, cursorY + 44, { align: 'right' });
 
     cursorY += 60;
     doc.setDrawColor(...bgWatermark);
@@ -171,13 +171,14 @@ export const downloadInvoiceAsPDF = (invoiceData, items = []) => {
     doc.setFontSize(10);
     doc.setTextColor(...textPrimary);
     doc.setFont('helvetica', 'bold');
-    const splitAddress = doc.splitTextToSize(invoiceData.customer_address || 'Registered Vault Location', 70);
+    const displayAddr = String(invoiceData.customer_address || 'Registered Vault Location');
+    const splitAddress = doc.splitTextToSize(displayAddr, 70);
     doc.text(splitAddress, col2X, cursorY + 18);
     
     doc.setFontSize(9);
     doc.setTextColor(...accentColor);
     doc.text('Comm-Link:', col2X, cursorY + 38);
-    doc.text(invoiceData.customer_phone || '', col2X + 22, cursorY + 38);
+    doc.text(String(invoiceData.customer_phone || 'Link Unavailable'), col2X + 22, cursorY + 38);
 
     cursorY += 65;
 

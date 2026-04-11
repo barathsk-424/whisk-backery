@@ -60,17 +60,18 @@ const InvoicePage = () => {
         order_id: order.id,
         customer_name: order.customer_name || invoice?.customer_name || 'Artisan Guest',
         customer_email: order.user_email || invoice?.customer_email || 'guest@thewhisk.com',
-        customer_phone: invoice?.customer_phone || order.phone || "",
-        customer_address: invoice?.customer_address || order.delivery_details?.address || order.address?.address || "Address Not Captured",
+        customer_phone: invoice?.customer_phone || order.phone || order.delivery_details?.phone || order.address?.phone || "",
+        customer_address: invoice?.customer_address || formatAddress(order.delivery_details || order.address),
         payment_method: order.payment_method || "Online UPI",
         delivery_slot: order.delivery_time || "Priority Processing",
-        total_amount: order.total_price || order.amount || invoice?.total_amount || 0,
-        subtotal: invoice?.subtotal || (order.total_price / 1.18),
-        gst_amount: invoice?.gst_amount || (order.total_price - (order.total_price / 1.18)),
+        total_amount: Number(order.total_price || order.amount || invoice?.total_amount || 0),
+        subtotal: Number(invoice?.subtotal || (order.total_price / 1.18)),
+        gst_amount: Number(invoice?.gst_amount || (order.total_price - (order.total_price / 1.18))),
         status: order.status || 'Verified'
     };
 
-    const result = downloadInvoiceAsPDF(payload, order.items || []);
+    const itemsList = Array.isArray(order.items) ? order.items : (Array.isArray(invoice?.items) ? invoice.items : []);
+    const result = downloadInvoiceAsPDF(payload, itemsList);
     if (result.success) {
         toast.success("Artisan Acquisition Exported Successfully.");
     }
