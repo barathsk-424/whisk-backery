@@ -164,7 +164,7 @@ const InvoicePage = () => {
         }`}>
              
              {/* Large Watermark Background */}
-             <div className={`absolute top-12 right-12 text-[120px] font-black tracking-[-0.05em] uppercase pointer-events-none select-none z-0 transition-colors ${
+             <div className={`absolute top-6 md:top-12 right-6 md:right-12 text-[60px] md:text-[120px] font-black tracking-[-0.05em] uppercase pointer-events-none select-none z-0 transition-colors ${
                theme === 'dark' ? 'text-white/5' : 'text-[#F4F1ED]/40'
              }`}>
                 INVOICE
@@ -228,12 +228,12 @@ const InvoicePage = () => {
                 </div>
              </div>
 
-             <div className={`w-full h-[1px] mb-20 transition-colors ${
+             <div className={`w-full h-[1px] mb-8 md:mb-20 transition-colors ${
                theme === 'dark' ? 'bg-white/10' : 'bg-[#F4F1ED]'
              }`}></div>
 
              {/* Consignee & Coordinates Grid */}
-             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20 mb-12 md:mb-28">
+             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20 mb-10 md:mb-28">
                 {/* Billing Card */}
                 <div className={`rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-10 border transition-all ${
                   theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-[#FAF9F6] border-[#F0E6D9]/50'
@@ -260,8 +260,8 @@ const InvoicePage = () => {
                 </div>
 
                 {/* Shipment */}
-                <div className="flex flex-col justify-center">
-                    <p className={`text-[10px] font-black uppercase tracking-[0.5em] mb-4 md:mb-6 ${theme === 'dark' ? 'text-white/20' : 'text-brown-200'}`}>Shipment Coordinates</p>
+                <div className="flex flex-col justify-start md:justify-center">
+                    <p className={`text-[10px] font-black uppercase tracking-[0.5em] mb-4 md:mb-6 ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>Shipment Coordinates</p>
                     <p className={`text-base md:text-lg font-black uppercase leading-tight mb-4 max-w-[300px] transition-colors ${
                       theme === 'dark' ? 'text-white' : 'text-primary'
                     }`}>
@@ -277,16 +277,16 @@ const InvoicePage = () => {
              </div>
 
              {/* Acquisition Logic Table */}
-             <div className="relative z-10 mb-20 overflow-x-auto">
-                <table className="w-full">
+             <div className="relative z-10 mb-12 md:mb-20 overflow-x-auto pb-4 custom-scrollbar">
+                <table className="w-full min-w-[600px] md:min-w-full">
                     <thead>
-                        <tr className={`text-[8px] md:text-[10px] font-black text-brown-300 uppercase tracking-[0.2em] md:tracking-[0.4em] border-b transition-colors ${
+                        <tr className={`text-[10px] md:text-[10px] font-black text-brown-400 uppercase tracking-[0.2em] md:tracking-[0.4em] border-b transition-colors ${
                           theme === 'dark' ? 'border-white/10' : 'border-[#F4F1ED]'
                         }`}>
-                            <th className="text-left pb-6 md:pb-10 w-[45%] md:w-[50%]">Blueprint Description</th>
-                            <th className="text-center pb-6 md:pb-10">Unit</th>
-                            <th className="text-right pb-6 md:pb-10">Price</th>
-                            <th className="text-right pb-6 md:pb-10 pr-4">Acquisition</th>
+                            <th className="text-left pb-4 md:pb-10 w-[45%] md:w-[50%]">Blueprint Description</th>
+                            <th className="text-center pb-4 md:pb-10">Unit</th>
+                            <th className="text-right pb-4 md:pb-10">Price</th>
+                            <th className="text-right pb-4 md:pb-10 pr-4">Acquisition</th>
                         </tr>
                     </thead>
                     <tbody className={`divide-y transition-colors ${
@@ -335,7 +335,8 @@ const InvoicePage = () => {
                         This digital signal serves as a formal treaty between The Whisk Bakery and the consignee. All artisanal calibrations are final upon acquisition.
                     </p>
                 </div>
-                     <div className="w-full md:w-[400px] flex flex-col gap-6">
+                
+                <div className="w-full md:w-[400px] flex flex-col gap-4 md:gap-6">
                     <div className={`flex justify-between items-center text-[10px] font-black uppercase tracking-widest pb-4 border-b transition-colors ${
                       theme === 'dark' ? 'text-white/70 border-white/10' : 'text-brown-300 border-brown-50'
                     }`}>
@@ -352,21 +353,22 @@ const InvoicePage = () => {
                         <span>SGST (9%)</span>
                         <span className={`text-xs transition-colors ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Rs.{(invoice?.gst_amount / 2 || (order.total_price * 0.09)).toFixed(2)}</span>
                     </div>
-                </div>
-                    <div className="flex justify-between items-center pt-4">
+
+                    <div className="flex justify-between items-center pt-4 w-full">
                         <div>
                             <p className="text-[9px] md:text-[10px] font-black text-[#FF6B35] uppercase tracking-[0.3em] md:tracking-[0.5em] mb-1">Total Due</p>
                             <p className={`text-[7px] md:text-[8px] font-bold italic opacity-60 ${theme === 'dark' ? 'text-white' : 'text-brown-300'}`}>Financial Integrity Verified</p>
                         </div>
                         <div className="text-right">
-                             <p className={`text-3xl md:text-5xl font-black tracking-tighter leading-none flex items-center justify-end gap-2 md:gap-3 transition-colors ${
+                             <p className={`text-2xl md:text-5xl font-black tracking-tighter leading-none flex items-center justify-end gap-2 md:gap-3 transition-colors ${
                                theme === 'dark' ? 'text-white' : 'text-[#4A2A1A]'
                              }`}>
-                                 <span className="text-base md:text-xl">Rs.</span> {order.total_price || order.amount || 0}
+                                 <span className="text-sm md:text-xl">Rs.</span> {order.total_price || order.amount || 0}
                              </p>
                         </div>
                     </div>
                 </div>
+             </div>
 
              {/* Premium Footer area */}
              <div className={`relative z-10 mt-16 md:mt-32 pt-8 md:pt-16 border-t flex flex-col items-center transition-colors ${
