@@ -57,17 +57,17 @@
     --secondary: #000000;
     --secondary-dark: #120C0B;
     
-    /* Strict redefinitions for all brown variants in dark mode for maximum contrast */
-    --color-brown-50: #111111;
-    --color-brown-100: #1A1110;
-    --color-brown-200: #2D1F1F;
-    --color-brown-300: #EEEEEE;
-    --color-brown-400: #FFFFFF;
+    /* Strict redefinitions for artisan dark mode contrast */
+    --color-brown-50: #0A0504;
+    --color-brown-100: #120C0B;
+    --color-brown-200: #1A1110;
+    --color-brown-300: #A67C52;
+    --color-brown-400: #EEEEEE;
     --color-brown-500: #FFD7BA;
     --color-brown-600: #FFE4D1;
-    --color-brown-700: #FFF1E6;
-    --color-brown-800: #FFFFFF;
-    --color-brown-900: #FFFFFF;
+    --color-brown-700: #2A1008;
+    --color-brown-800: #120C0B;
+    --color-brown-900: #0A0504;
   }
 
   body {
