@@ -73,252 +73,241 @@ export const getInvoiceByOrderId = async (orderId) => {
 export const downloadInvoiceAsPDF = (invoiceData, items = []) => {
   try {
     const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
     const margin = 20;
-    const accentColor = [255, 107, 53]; // Orange
-    const textPrimary = [74, 42, 26]; // Dark Brown
-    const textMuted = [166, 124, 82]; // Light Brown
-    const bgWatermark = [244, 241, 237]; // Faint Gray/Cream
-    const bgCard = [250, 249, 246]; // Very Light Cream
     
-    // ─── 1. WATERMARK & BACKGROUND ───
-    doc.setTextColor(...bgWatermark);
-    doc.setFontSize(120);
-    doc.setFont('helvetica', 'bold');
-    doc.text('INVOICE', 105, 50, { angle: 330, align: 'center' });
-    
-    // ─── 2. HEADER: BRANDING ───
-    let cursorY = 25;
-    
-    // Draw stylized cupcake logo
-    doc.setFillColor(255, 180, 210); // Pink top
-    doc.circle(28, cursorY + 5, 8, 'F');
-    doc.circle(22, cursorY + 8, 6, 'F');
-    doc.circle(34, cursorY + 8, 6, 'F');
-    doc.setFillColor(100, 180, 255); // Blue base
-    doc.rect(21, cursorY + 12, 14, 8, 'F');
-    
-    doc.setFontSize(30);
-    doc.setTextColor(...textPrimary);
-    doc.setFont('helvetica', 'bold');
-    doc.text('THE WHISK', 50, cursorY + 5);
-    doc.setFontSize(26);
-    doc.text('BAKERY', 50, cursorY + 14);
-    
-    // Shop details on the left
-    doc.setFontSize(8);
-    doc.setTextColor(...textMuted);
-    doc.setFont('helvetica', 'bold');
-    doc.text('MANNIVAKKAM, CHENNAI, TAMIL NADU,', 22, cursorY + 28);
-    doc.text('614001, INDIA', 22, cursorY + 32);
-    doc.text('PH: +91 6374618833 // EMAIL: SKBARATH424@GMAIL.COM', 22, cursorY + 36);
-    doc.setTextColor(...accentColor);
-    doc.text(`GSTIN: ${invoiceData.shop_gstin || '29AAAAA0000A1Z5'}`, 22, cursorY + 42);
-    
-    // Invoice identifier on the right
-    doc.setFontSize(8);
-    doc.setTextColor(...textMuted);
-    doc.text('ACQUISITION SIGNAL ID', 190, cursorY + 28, { align: 'right' });
-    doc.setFontSize(18);
-    doc.setTextColor(...textPrimary);
-    doc.text(String(invoiceData.invoice_id || 'INV-MASTER-VAULT'), 190, cursorY + 36, { align: 'right' });
-    
-    doc.setFontSize(7);
-    doc.setTextColor(...textMuted);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`TIMESTAMP: ${new Date(invoiceData.created_at || Date.now()).toLocaleString()}`, 190, cursorY + 41, { align: 'right' });
-    doc.text(`ORDER INDEX: #${String(invoiceData.order_id || 'REF-N3920').slice(0, 10).toUpperCase()}`, 190, cursorY + 44, { align: 'right' });
+    // Theme Colors
+    const colors = {
+      accent: [255, 107, 53],
+      primary: [74, 42, 26],
+      muted: [166, 124, 82],
+      watermark: [244, 241, 237],
+      card: [250, 249, 246]
+    };
 
-    cursorY += 60;
-    doc.setDrawColor(...bgWatermark);
-    doc.line(margin, cursorY, 190, cursorY);
+    let cursorY = 20;
+
+    // Helper: Add Watermark
+    const addBackground = () => {
+      doc.setTextColor(...colors.watermark);
+      doc.setFontSize(80);
+      doc.setFont('helvetica', 'bold');
+      doc.text('ARTISAN INVOICE', pageWidth / 2, pageHeight / 2, { angle: 45, align: 'center' });
+    };
+
+    // Helper: Safe Number Format
+    const n = (val) => isNaN(val) ? 0 : Number(val);
+    const formatCurrency = (val) => `Rs.${n(val).toLocaleString(undefined, { minimumFractionDigits: 1 })}`;
+
+    // Initial Page Setup
+    addBackground();
+    
+    // ─── HEADER: Logo & Shop Info ───
+    doc.setFillColor(255, 180, 210); // Pink
+    doc.circle(28, cursorY + 5, 7, 'F');
+    doc.setFillColor(100, 180, 255); // Blue
+    doc.rect(23, cursorY + 11, 10, 6, 'F');
+
+    doc.setFontSize(26);
+    doc.setTextColor(...colors.primary);
+    doc.setFont('helvetica', 'bold');
+    doc.text('THE WHISK BAKERY', 55, cursorY + 12); // Moved down slightly (+2)
+    
+    doc.setFontSize(9);
+    doc.setTextColor(...colors.muted);
+    doc.setFont('helvetica', 'normal');
+    const shopAddr = 'MANNIVAKKAM, CHENNAI, TAMIL NADU, 600048';
+    doc.text(shopAddr, 55, cursorY + 20); // Moved down (+3)
+    doc.text('PH: +91 6374618833 | EMAIL: SKBARATH424@GMAIL.COM', 55, cursorY + 25); // Moved down (+3)
+    doc.setTextColor(...colors.accent);
+    doc.text(`GSTIN: ${invoiceData.shop_gstin || '29AAAAA0000A1Z5'}`, 55, cursorY + 30); // Moved down (+3)
+
+    // ─── HEADER: Meta Info (Right Side) ───
+    const rightX = pageWidth - margin;
+    doc.setTextColor(...colors.muted);
+    doc.setFontSize(8);
+    doc.text('SIGNAL / INVOICE ID', rightX, cursorY + 5, { align: 'right' });
+    doc.setFontSize(16);
+    doc.setTextColor(...colors.primary);
+    doc.setFont('helvetica', 'bold');
+    doc.text(String(invoiceData.invoice_id || 'ID-PENDING'), rightX, cursorY + 12, { align: 'right' });
+    
+    doc.setFontSize(8);
+    doc.setTextColor(...colors.muted);
+    doc.setFont('helvetica', 'normal');
+    doc.text('TIMESTAMP GENERATED', rightX, cursorY + 20, { align: 'right' }); // Increased gap
+    doc.setTextColor(...colors.primary);
+    doc.text(new Date().toLocaleString(), rightX, cursorY + 26, { align: 'right' });
+    
+    doc.setTextColor(...colors.muted);
+    doc.text('ORDER REFERENCE', rightX, cursorY + 34, { align: 'right' }); // Increased gap
+    doc.setTextColor(...colors.accent);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`#${String(invoiceData.order_id || 'REF').slice(-8).toUpperCase()}`, rightX, cursorY + 41, { align: 'right' });
+
+    cursorY += 55; // Increased from 50
+    doc.setDrawColor(...colors.watermark);
+    doc.line(margin, cursorY, pageWidth - margin, cursorY);
     cursorY += 15;
 
-    // ─── 3. RECIPIENT GRID ───
-    // Draw rounded card background for "Billed To"
-    doc.setFillColor(...bgCard);
-    doc.setDrawColor(240, 230, 217);
-    doc.roundedRect(margin, cursorY, 80, 45, 10, 10, 'FD');
+    // ─── CUSTOMER & SHIPMENT SECTION ───
+    doc.setFillColor(...colors.card);
+    doc.roundedRect(margin, cursorY, 85, 48, 3, 3, 'F'); // Increased height
     
-    // Label for billed to
-    doc.setFillColor(255, 255, 255);
-    doc.roundedRect(margin + 8, cursorY + 5, 30, 6, 3, 3, 'FD');
-    doc.setFontSize(7);
-    doc.setTextColor(...accentColor);
+    doc.setFontSize(8);
+    doc.setTextColor(...colors.accent);
     doc.setFont('helvetica', 'bold');
-    doc.text('BILLED TO CONSIGNEE', margin + 10, cursorY + 9);
+    doc.text('BILLED TO CUSTOMER', margin + 5, cursorY + 10); // Moved down
     
-    // Consignee details
-    doc.setFontSize(16);
-    doc.setTextColor(...textPrimary);
-    doc.text(invoiceData.customer_name || 'Artisan Guest', margin + 10, cursorY + 22);
-    doc.setFontSize(9);
-    doc.setTextColor(...textMuted);
-    doc.setFont('helvetica', 'normal');
-    doc.text(invoiceData.customer_email || 'guest@thewhisk.com', margin + 10, cursorY + 28);
-    
-    doc.setFontSize(7);
-    doc.setTextColor(...textPrimary);
-    doc.text('TERMINAL:', margin + 10, cursorY + 40);
-    doc.setFont('helvetica', 'bold');
-    doc.text('WEB-CORE-V2', margin + 25, cursorY + 40);
-    
-    // Shipment coordinates on the right
-    const col2X = 110;
-    doc.setFontSize(9);
-    doc.setTextColor(200, 200, 200);
-    doc.text('SHIPMENT COORDINATES', col2X, cursorY + 10, { charSpace: 1.5 });
+    doc.setFontSize(13);
+    doc.setTextColor(...colors.primary);
+    doc.text(String(invoiceData.customer_name || 'Artisan Guest').toUpperCase(), margin + 5, cursorY + 22); // Increased gap
     
     doc.setFontSize(10);
-    doc.setTextColor(...textPrimary);
-    doc.setFont('helvetica', 'bold');
-    const displayAddr = String(invoiceData.customer_address || 'Registered Vault Location');
-    const splitAddress = doc.splitTextToSize(displayAddr, 70);
-    doc.text(splitAddress, col2X, cursorY + 18);
-    
-    doc.setFontSize(9);
-    doc.setTextColor(...accentColor);
-    doc.text('Comm-Link:', col2X, cursorY + 38);
-    doc.text(String(invoiceData.customer_phone || 'Link Unavailable'), col2X + 22, cursorY + 38);
+    doc.setTextColor(...colors.muted);
+    doc.setFont('helvetica', 'normal');
+    doc.text(invoiceData.customer_email || 'guest@thewhisk.com', margin + 5, cursorY + 30);
+    doc.text(`TEL: ${invoiceData.customer_phone || 'N/A'}`, margin + 5, cursorY + 38);
 
-    cursorY += 65;
-
-    // ─── 4. ITEMIZATION TABLE ───
+    // Shipment Coordinates
+    const midX = 115;
     doc.setFontSize(8);
-    doc.setTextColor(...textMuted);
+    doc.setTextColor(...colors.muted);
     doc.setFont('helvetica', 'bold');
-    doc.text('BLUEPRINT DESCRIPTION', margin, cursorY, { charSpace: 1 });
-    doc.text('UNIT', margin + 95, cursorY, { align: 'center', charSpace: 1 });
-    doc.text('PRICE', margin + 125, cursorY, { align: 'right', charSpace: 1 });
-    doc.text('ACQUISITION', 190, cursorY, { align: 'right', charSpace: 1 });
+    doc.text('SHIPMENT COORDINATES / ADDRESS', midX, cursorY + 10);
+    
+    doc.setFontSize(11);
+    doc.setTextColor(...colors.primary);
+    doc.setFont('helvetica', 'normal');
+    const addressLines = doc.splitTextToSize(String(invoiceData.customer_address || 'Collection from Bakery Depot'), 75);
+    doc.text(addressLines, midX, cursorY + 22);
+
+    cursorY += 65; // Increased from 60
+
+    // ─── ITEMIZATION TABLE ───
+    doc.setFontSize(8);
+    doc.setTextColor(...colors.muted);
+    doc.setFont('helvetica', 'bold');
+    doc.text('BLUEPRINT / PRODUCT DESCRIPTION', margin, cursorY);
+    doc.text('QTY', margin + 90, cursorY, { align: 'center' });
+    doc.text('UNIT PRICE', margin + 120, cursorY, { align: 'right' });
+    doc.text('ACQUISITION TOTAL', pageWidth - margin, cursorY, { align: 'right' });
     
     cursorY += 4;
     doc.setLineWidth(0.2);
-    doc.line(margin, cursorY, 190, cursorY);
-    cursorY += 15;
+    doc.line(margin, cursorY, pageWidth - margin, cursorY);
+    cursorY += 16; // Increased from 14
 
-    const itemsToRender = items.length > 0 ? items : (invoiceData.items || []);
-    itemsToRender.forEach((item, index) => {
-      // Check for page break (allow space for item + potentially summary if last)
-      if (cursorY > 230) {
-          doc.addPage();
-          cursorY = 25;
-          // Re-add watermark on new page
-          doc.setTextColor(...bgWatermark);
-          doc.setFontSize(120);
-          doc.text('INVOICE', 105, 100, { angle: 330, align: 'center' });
-          
-          doc.setFontSize(8);
-          doc.setTextColor(...textMuted);
-          doc.text(`Signal ID: ${invoiceData.invoice_id} | Page ${doc.internal.getNumberOfPages()}`, margin, 15);
-          
-          // Re-add table header on new page
-          doc.setFontSize(8);
-          doc.setTextColor(...textMuted);
-          doc.setFont('helvetica', 'bold');
-          doc.text('BLUEPRINT DESCRIPTION', margin, cursorY, { charSpace: 1 });
-          doc.text('UNIT', margin + 95, cursorY, { align: 'center', charSpace: 1 });
-          doc.text('PRICE', margin + 125, cursorY, { align: 'right', charSpace: 1 });
-          doc.text('ACQUISITION', 190, cursorY, { align: 'right', charSpace: 1 });
-          cursorY += 15;
-      }
+    // Items Loop
+    const itemsToRender = Array.isArray(items) && items.length > 0 ? items : (invoiceData.items || []);
+    itemsToRender.forEach((item) => {
+        const itemName = (item.name || item.product_name || 'Artisan Piece').toUpperCase();
+        const itemNameLines = doc.splitTextToSize(itemName, 80);
+        
+        const extraLines = itemNameLines.length - 1;
+        const rowHeight = 25 + (extraLines * 6); // Increased base height
 
-      doc.setFontSize(12);
-      doc.setTextColor(...textPrimary);
-      doc.setFont('helvetica', 'bold');
-      doc.text((item.name || item.product_name || 'ARTISAN CAKE').toUpperCase(), margin, cursorY);
-      
-      doc.setFontSize(7);
-      doc.setTextColor(...accentColor);
-      doc.setFont('helvetica', 'italic');
-      doc.text(`FLAVOR: ${item.flavor || 'Truffle'}`, margin, cursorY + 5);
-      doc.setTextColor(...textMuted);
-      doc.text(`SHAPE: ${item.shape || 'Round'}`, margin + 30, cursorY + 5);
-      
-      doc.setFontSize(10);
-      doc.setTextColor(...textMuted);
-      doc.setFont('helvetica', 'normal');
-      doc.text(String(item.quantity || item.qty || 1), margin + 95, cursorY, { align: 'center' });
-      doc.text(`Rs. ${item.price || 0}`, margin + 125, cursorY, { align: 'right' });
-      
-      doc.setFontSize(12);
-      doc.setTextColor(...textPrimary);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`Rs. ${((item.price || 0) * (item.quantity || item.qty || 1)).toLocaleString()}`, 190, cursorY, { align: 'right' });
-      
-      cursorY += 20;
+        if (cursorY + rowHeight > pageHeight - 80) {
+            doc.addPage();
+            addBackground();
+            cursorY = 20;
+            // Repeat Table Header
+            doc.setFontSize(8);
+            doc.setTextColor(...colors.muted);
+            doc.setFont('helvetica', 'bold');
+            doc.text('BLUEPRINT / PRODUCT DESCRIPTION', margin, cursorY);
+            doc.text('QTY', margin + 90, cursorY, { align: 'center' });
+            doc.text('UNIT PRICE', margin + 120, cursorY, { align: 'right' });
+            doc.text('ACQUISITION TOTAL', pageWidth - margin, cursorY, { align: 'right' });
+            cursorY += 4;
+            doc.line(margin, cursorY, pageWidth - margin, cursorY);
+            cursorY += 16;
+        }
+
+        doc.setFontSize(12);
+        doc.setTextColor(...colors.primary);
+        doc.setFont('helvetica', 'bold');
+        doc.text(itemNameLines, margin, cursorY);
+        
+        // Vertical centering: Offset single-line columns by half the height of the name block
+        const verticalAlignOffset = (extraLines * 6) / 2;
+
+        doc.setFontSize(11);
+        doc.setTextColor(...colors.primary);
+        doc.setFont('helvetica', 'normal');
+        doc.text(String(item.quantity || item.qty || 1), margin + 90, cursorY + verticalAlignOffset, { align: 'center' });
+        doc.text(formatCurrency(item.price || 0), margin + 120, cursorY + verticalAlignOffset, { align: 'right' });
+        
+        const lineTotal = n(item.price) * n(item.quantity || item.qty || 1);
+        doc.setFont('helvetica', 'bold');
+        doc.text(formatCurrency(lineTotal), pageWidth - margin, cursorY + verticalAlignOffset, { align: 'right' });
+
+        doc.setFontSize(8);
+        doc.setTextColor(...colors.muted);
+        doc.setFont('helvetica', 'italic');
+        const meta = `FLAVOR: ${item.flavor || 'Truffle'} | SHAPE: ${item.shape || 'Std'}`;
+        doc.text(meta, margin, cursorY + 10 + (extraLines * 6));
+
+        cursorY += rowHeight;
     });
 
-    // ─── 5. SETTLEMENT SUMMARY ───
-    if (cursorY > 190) { // If not enough room for summary + footer
+    if (cursorY > pageHeight - 90) {
         doc.addPage();
-        cursorY = 30;
+        addBackground();
+        cursorY = 25;
     } else {
-        cursorY = Math.max(cursorY, 180);
+        cursorY += 20;
     }
-    
-    doc.setLineWidth(0.1);
-    doc.setDrawColor(...bgWatermark);
-    doc.line(margin + 100, cursorY, 190, cursorY);
-    cursorY += 10;
-    
+
+    doc.setDrawColor(...colors.muted);
+    doc.setLineWidth(0.2);
+    doc.line(pageWidth - 100, cursorY, pageWidth - margin, cursorY);
+    cursorY += 12;
+
+    const summaryX = pageWidth - 100;
+    const valueX = pageWidth - margin;
+
     doc.setFontSize(10);
-    doc.setTextColor(...textMuted);
-    doc.setFont('helvetica', 'bold');
-    doc.text('SUBTOTAL', margin + 100, cursorY, { charSpace: 1 });
-    doc.setFontSize(10);
+    doc.setTextColor(...colors.muted);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Rs. ${Number(invoiceData.subtotal || 0).toFixed(2)}`, 190, cursorY, { align: 'right' });
+    
+    doc.text('SUBTOTAL (EXCL. TAX)', summaryX, cursorY);
+    doc.text(formatCurrency(invoiceData.subtotal || (n(invoiceData.total_amount) / 1.18)), valueX, cursorY, { align: 'right' });
     
     cursorY += 8;
-    doc.setFontSize(9);
-    doc.text('CGST (9%)', margin + 100, cursorY);
-    doc.text(`Rs. ${Number(invoiceData.gst_amount / 2 || 0).toFixed(2)}`, 190, cursorY, { align: 'right' });
-    cursorY += 6;
-    doc.text('SGST (9%)', margin + 100, cursorY);
-    doc.text(`Rs. ${Number(invoiceData.gst_amount / 2 || 0).toFixed(2)}`, 190, cursorY, { align: 'right' });
+    doc.text('CGST (9%)', summaryX, cursorY);
+    doc.text(formatCurrency(n(invoiceData.gst_amount) / 2 || (n(invoiceData.total_amount) * 0.09)), valueX, cursorY, { align: 'right' });
     
-    cursorY += 12;
-    doc.setLineWidth(1.5);
-    doc.setDrawColor(...accentColor);
-    doc.line(margin + 100, cursorY, 190, cursorY);
+    cursorY += 8;
+    doc.text('SGST (9%)', summaryX, cursorY);
+    doc.text(formatCurrency(n(invoiceData.gst_amount) / 2 || (n(invoiceData.total_amount) * 0.09)), valueX, cursorY, { align: 'right' });
+
+    cursorY += 10;
+    doc.setFillColor(...colors.accent);
+    doc.rect(summaryX, cursorY, 80, 0.5, 'F');
     
-    cursorY += 12;
+    cursorY += 10; // Extra room
     doc.setFontSize(10);
-    doc.setTextColor(...accentColor);
+    doc.setTextColor(...colors.accent);
     doc.setFont('helvetica', 'bold');
-    doc.text('TOTAL DUE', margin + 100, cursorY, { charSpace: 2 });
-    doc.setFontSize(6);
-    doc.setTextColor(200, 200, 200);
-    doc.text('Financial integrity verified', margin + 100, cursorY + 4);
+    doc.text('TOTAL ACQUISITION AMT', valueX, cursorY, { align: 'right' }); // Label on right now
     
-    doc.setFontSize(28); 
-    doc.setTextColor(...textPrimary);
-    doc.text(`Rs. ${Number(invoiceData.total_amount || 0).toLocaleString()}`, 190, cursorY + 7, { align: 'right' });
+    cursorY += 12;
+    doc.setFontSize(22);
+    doc.setTextColor(...colors.primary);
+    doc.text(formatCurrency(invoiceData.total_amount || invoiceData.amount || 0), valueX, cursorY, { align: 'right' });
 
-    // ─── 6. PREMIUM FOOTER ───
-    doc.setTextColor(...bgWatermark);
-    doc.setFontSize(90);
-    doc.setFont('helvetica', 'bold');
-    doc.text('WHISK', 105, 280, { align: 'center' });
-    
+    // ─── FOOTER ───
+    const footerY = pageHeight - 15;
     doc.setFontSize(7);
-    doc.setTextColor(...textMuted);
-    doc.setFont('helvetica', 'bold');
-    doc.text('DIGITAL AUTH SIGNATURE', 65, 270, { align: 'center' });
-    doc.text('MASTER ARTISAN SEAL', 145, 270, { align: 'center' });
-    doc.line(45, 265, 85, 265);
-    doc.line(125, 265, 165, 265);
-    
-    doc.setFontSize(7);
-    doc.setTextColor(200, 200, 200);
-    doc.text('THE WHISK BAKERY // STANDARD ACQUISITION TREATY V2.0', 105, 285, { align: 'center', charSpace: 4 });
-    doc.setFontSize(8);
-    doc.setTextColor(...textPrimary);
-    doc.text('Thank you for commissioning an artisan masterpiece.', 105, 292, { align: 'center' });
+    doc.setTextColor(...colors.muted);
+    doc.text('THE WHISK BAKERY // AUTHENTIC ARTISAN RECORD V2.0 // HANDCRAFTED IN TAMIL NADU', pageWidth / 2, footerY, { align: 'center' });
+    doc.text('Thank you for choosing artisan quality.', pageWidth / 2, footerY + 4, { align: 'center' });
 
-    doc.save(`Invoice_${invoiceData.invoice_id || 'Signal'}.pdf`);
-
+    doc.save(`Whisk_Invoice_${invoiceData.invoice_id || invoiceData.order_id || 'Signal'}.pdf`);
     return { success: true };
+
   } catch (err) {
     console.error('[PDF Generator] Fatal error:', err.message);
     return { success: false, error: err.message };

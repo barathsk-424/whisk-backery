@@ -172,9 +172,9 @@ const InvoicePage = () => {
              </div>
 
              {/* Header Section */}
-             <div className="relative z-10 flex flex-col md:flex-row justify-between items-start gap-6 md:gap-12 mb-10 md:mb-20">
-                <div className="flex items-center md:items-start gap-4 md:gap-8">
-                    <div className={`w-16 h-16 md:w-24 md:h-24 rounded-2xl md:rounded-3xl p-2 md:p-3 shadow-sm shrink-0 flex items-center justify-center overflow-hidden border transition-all ${
+             <div className="relative z-10 grid grid-cols-[1.5fr_1fr] gap-4 md:gap-12 mb-10 md:mb-20">
+                <div className="flex items-start gap-3 md:gap-8">
+                    <div className={`w-12 h-12 md:w-24 md:h-24 rounded-xl md:rounded-3xl p-1.5 md:p-3 shadow-sm shrink-0 flex items-center justify-center overflow-hidden border transition-all ${
                       theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-[#FFFBF0] border-brown-50'
                     }`}>
                         <img 
@@ -186,45 +186,41 @@ const InvoicePage = () => {
                               e.target.src = 'logo.png';
                             } else {
                               e.target.style.display = 'none';
-                              e.target.parentNode.innerHTML = '<span class="text-4xl">🧁</span>';
+                              e.target.parentNode.innerHTML = '<span class="text-2xl md:text-4xl text-inherit">🧁</span>';
                             }
                           }}
                         />
                     </div>
-                    <div>
-                        <h2 className={`text-2xl md:text-4xl font-black tracking-[-0.04em] uppercase leading-[0.9] transition-colors ${
+                    <div className="flex-1">
+                        <h2 className={`text-lg md:text-3xl font-black tracking-[-0.04em] uppercase leading-[0.9] transition-colors ${
                           theme === 'dark' ? 'text-white' : 'text-[#4A2A1A]'
                         }`}>
                             THE WHISK<br/><span className="text-[#A67C52]">BAKERY</span>
                         </h2>
-                        <div className={`mt-6 space-y-1 text-[10px] font-bold uppercase tracking-[0.1em] transition-colors ${
+                        <div className={`mt-2 md:mt-4 space-y-0.5 md:space-y-1 text-[7px] md:text-[10px] font-bold uppercase tracking-[0.1em] transition-colors ${
                           theme === 'dark' ? 'text-white/60' : 'text-[#A67C52]'
                         }`}>
-                            <p>Mannivakkam, Chennai, Tamil Nadu,</p>
-                            <p>600048, India</p>
-                            <div className="mt-2 text-[#FF6B35]">
-                                <p>Ph: +91 6374618833</p>
-                                <p>Email: skbarath424@gmail.com</p>
-                                <p className="font-black mt-1">GSTIN: {invoice?.shop_gstin || "29AAAAA0000A1Z5"}</p>
+                            <p className="hidden md:block">Mannivakkam, Chennai, Tamil Nadu, 600048, India</p>
+                            <p className="md:hidden">Mannivakkam, Chennai</p>
+                            <div className="mt-1 md:mt-2 text-[#FF6B35] flex flex-wrap gap-x-2 md:gap-x-4">
+                                <p>Ph: +91 6374618</p>
+                                <p className="hidden md:block">Email: skbarath424@gmail.com</p>
                             </div>
+                            <p className="font-black mt-0.5">GST: {invoice?.shop_gstin?.slice(0, 10) || "29AAAAA000"}...</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="text-left md:text-right flex flex-col items-start md:items-end">
-                    <div className="mb-6">
-                        <p className={`text-[10px] font-black uppercase tracking-[0.4em] mb-2 pr-1 ${theme === 'dark' ? 'text-white/40' : 'text-brown-300'}`}>Acquisition Signal ID</p>
-                        <p className={`text-3xl font-black tracking-tighter uppercase transition-colors ${
+                <div className="text-right flex flex-col items-end justify-start">
+                    <div className="mb-2 md:mb-4">
+                        <p className={`text-[7px] md:text-[9px] font-black uppercase tracking-[0.2em] md:tracking-[0.4em] mb-0.5 md:mb-1 ${theme === 'dark' ? 'text-white/40' : 'text-brown-300'}`}>Acquisition Signal</p>
+                        <p className={`text-base md:text-3xl font-black tracking-tighter uppercase transition-colors ${
                           theme === 'dark' ? 'text-white' : 'text-primary'
-                        }`}>{invoice?.invoice_id || "INV-2026-0003"}</p>
+                        }`}>{invoice?.invoice_id || "INV-MASTER"}</p>
                     </div>
-                    <div className="flex md:flex-col gap-6 md:gap-2">
-                        <div>
-                            <p className={`text-[8px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-white/40' : 'text-brown-300'}`}>Timestamp: {new Date(order.created_at).toLocaleString()}</p>
-                        </div>
-                        <div>
-                            <p className={`text-[8px] font-black uppercase tracking-widest italic ${theme === 'dark' ? 'text-white/20' : 'text-brown-200'}`}>Order Index: #{order.id.slice(0, 10).toUpperCase()}</p>
-                        </div>
+                    <div className="space-y-0.5 md:space-y-1">
+                        <p className={`text-[6px] md:text-[8px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-white/40' : 'text-brown-300'}`}>TS: {new Date(order.created_at).toLocaleDateString()}</p>
+                        <p className={`text-[6px] md:text-[8px] font-black uppercase tracking-widest italic ${theme === 'dark' ? 'text-white/20' : 'text-brown-200'}`}>Ref: #{order.id.slice(-6).toUpperCase()}</p>
                     </div>
                 </div>
              </div>
@@ -234,26 +230,26 @@ const InvoicePage = () => {
              }`}></div>
 
              {/* Consignee & Coordinates Grid */}
-             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20 mb-10 md:mb-28">
+             <div className="relative z-10 grid grid-cols-[1.3fr_1fr] gap-4 md:gap-20 mb-10 md:mb-28">
                 {/* Billing Card */}
-                <div className={`rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-10 border transition-all ${
+                <div className={`rounded-[1.5rem] md:rounded-[2.5rem] p-4 md:p-10 border transition-all ${
                   theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-[#FAF9F6] border-[#F0E6D9]/50'
-                } relative`}>
-                    <div className="absolute top-6 left-10">
-                        <span className={`text-[9px] font-black text-[#FF6B35] uppercase tracking-[0.4em] px-3 py-1 rounded-full shadow-sm transition-colors ${
+                } relative overflow-hidden`}>
+                    <div className="md:absolute md:top-6 md:left-10 mb-4 md:mb-0">
+                        <span className={`text-[7px] md:text-[9px] font-black text-[#FF6B35] uppercase tracking-[0.2em] md:tracking-[0.4em] px-2 py-0.5 md:px-3 md:py-1 rounded-full shadow-sm transition-colors ${
                           theme === 'dark' ? 'bg-[#1A1110]' : 'bg-white'
                         }`}>Billed to Consignee</span>
                     </div>
-                    <div className="mt-8 md:mt-10">
-                        <p className={`text-xl md:text-3xl font-black tracking-tighter uppercase mb-2 transition-colors ${
+                    <div className="md:mt-10">
+                        <p className={`text-sm md:text-3xl font-black tracking-tighter uppercase mb-1 md:mb-2 transition-colors ${
                           theme === 'dark' ? 'text-white' : 'text-[#4A2A1A]'
                         }`}>{invoice?.customer_name || order.customer_name || 'Artisan Guest'}</p>
-                        <p className={`text-xs md:text-sm font-bold lowercase mb-6 md:mb-8 transition-colors ${
+                        <p className={`text-[8px] md:text-sm font-bold lowercase mb-4 md:mb-8 transition-colors ${
                           theme === 'dark' ? 'text-white/60' : 'text-brown-400'
                         }`}>{invoice?.customer_email || order.user_email || 'Signal Lost'}</p>
-                        <div className="flex items-center gap-3">
-                            <span className={`text-[9px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-white/30' : 'text-brown-300'}`}>Terminal:</span>
-                            <span className={`text-[9px] font-black uppercase border px-3 py-1 rounded-lg transition-all ${
+                        <div className="flex items-center gap-2 md:gap-3">
+                            <span className={`text-[6px] md:text-[9px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-white/30' : 'text-brown-300'}`}>Terminal:</span>
+                            <span className={`text-[6px] md:text-[9px] font-black uppercase border px-2 py-0.5 md:px-3 md:py-1 rounded-[4px] md:rounded-lg transition-all ${
                               theme === 'dark' ? 'text-white bg-white/5 border-white/10' : 'text-primary bg-white border-brown-100'
                             }`}>WEB-CORE-V2</span>
                         </div>
@@ -261,17 +257,17 @@ const InvoicePage = () => {
                 </div>
 
                 {/* Shipment */}
-                <div className="flex flex-col justify-start md:justify-center">
-                    <p className={`text-[10px] font-black uppercase tracking-[0.5em] mb-4 md:mb-6 ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>Shipment Coordinates</p>
-                    <p className={`text-base md:text-lg font-black uppercase leading-tight mb-4 max-w-[300px] transition-colors ${
-                      theme === 'dark' ? 'text-white' : 'text-primary'
+                <div className="flex flex-col justify-start md:justify-center pt-2">
+                    <p className={`text-[7px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.5em] mb-2 md:mb-6 ${theme === 'dark' ? 'text-white/40' : 'text-brown-400'}`}>Shipment Coordinates</p>
+                    <p className={`text-[10px] md:text-lg font-black uppercase leading-tight mb-2 md:mb-4 max-w-[300px] transition-colors ${
+                       theme === 'dark' ? 'text-white' : 'text-primary'
                     }`}>
                         {invoice?.customer_address || formatAddress(order.delivery_details || order.address)}
                     </p>
-                    <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black text-[#FF6B35] uppercase tracking-widest pr-2">Comm-Link:</span>
-                        <span className="text-sm font-black text-[#FF6B35]">
-                             {invoice?.customer_phone || order.phone || order.delivery_details?.phone || order.address?.phone || "Not Provided"}
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-[7px] md:text-[10px] font-black text-[#FF6B35] uppercase tracking-widest pr-1">Comm-Link:</span>
+                        <span className="text-[9px] md:text-sm font-black text-[#FF6B35]">
+                             {invoice?.customer_phone || order.phone || order.delivery_details?.phone || order.address?.phone || "N/A"}
                         </span>
                     </div>
                 </div>
@@ -279,42 +275,38 @@ const InvoicePage = () => {
 
              {/* Acquisition Logic Table */}
              <div className="relative z-10 mb-12 md:mb-20 overflow-x-auto pb-4 custom-scrollbar">
-                <table className="w-full min-w-[600px] md:min-w-full">
+                <table className="w-full min-w-[700px] border-separate border-spacing-y-4">
                     <thead>
-                        <tr className={`text-[10px] md:text-[10px] font-black text-brown-400 uppercase tracking-[0.2em] md:tracking-[0.4em] border-b transition-colors ${
-                          theme === 'dark' ? 'border-white/10' : 'border-[#F4F1ED]'
-                        }`}>
-                            <th className="text-left pb-4 md:pb-10 w-[45%] md:w-[50%]">Blueprint Description</th>
-                            <th className="text-center pb-4 md:pb-10">Unit</th>
-                            <th className="text-right pb-4 md:pb-10">Price</th>
-                            <th className="text-right pb-4 md:pb-10 pr-4">Acquisition</th>
+                        <tr className={`text-[10px] md:text-xs font-black text-brown-400 uppercase tracking-[0.2em] md:tracking-[0.4em] transition-colors`}>
+                            <th className="text-left pb-4 pl-4 w-1/2">Blueprint Description</th>
+                            <th className="text-center pb-4">Qty</th>
+                            <th className="text-right pb-4 px-6 text-nowrap">Unit Price</th>
+                            <th className="text-right pb-4 pr-10 text-nowrap">Acquisition Total</th>
                         </tr>
                     </thead>
-                    <tbody className={`divide-y transition-colors ${
-                      theme === 'dark' ? 'divide-white/5' : 'divide-[#F4F1ED]/60'
-                    }`}>
+                    <tbody className="transition-colors">
                         {(order.items || invoice?.items || []).map((item, idx) => (
-                            <tr key={idx} className="group">
-                                <td className="py-6 md:py-12">
-                                    <p className={`text-lg md:text-xl font-black tracking-tighter uppercase leading-none mb-2 md:mb-3 transition-colors ${
+                            <tr key={idx} className={`group ${theme === 'dark' ? 'bg-white/5' : 'bg-secondary/10'} rounded-3xl overflow-hidden`}>
+                                <td className="py-8 pl-10 rounded-l-[1.5rem]">
+                                    <p className={`text-xl md:text-2xl font-black tracking-tighter uppercase leading-none mb-3 transition-colors ${
                                       theme === 'dark' ? 'text-white' : 'text-[#4A2A1A]'
                                     }`}>
                                         {item.name || item.product_name}
                                     </p>
                                     <div className="flex flex-wrap gap-2">
-                                        <span className="text-[7px] md:text-[8px] font-black text-[#FF6B35] uppercase bg-[#FF6B35]/5 px-2 py-0.5 rounded italic">Flavor: {item.flavor || "Chocolate"}</span>
-                                        <span className={`text-[7px] md:text-[8px] font-black uppercase px-2 py-0.5 rounded italic transition-colors ${
-                                          theme === 'dark' ? 'text-brown-400 bg-white/5' : 'text-brown-300 bg-brown-50'
+                                        <span className="text-[8px] md:text-[9px] font-black text-[#FF6B35] uppercase bg-[#FF6B35]/10 px-2.5 py-1 rounded-lg">Flavor: {item.flavor || "Chocolate"}</span>
+                                        <span className={`text-[8px] md:text-[9px] font-black uppercase px-2.5 py-1 rounded-lg transition-colors ${
+                                          theme === 'dark' ? 'text-brown-400 bg-black/20' : 'text-brown-300 bg-white'
                                         }`}>Shape: {item.shape || "Round"}</span>
                                     </div>
                                 </td>
-                                <td className={`py-6 md:py-12 text-center text-xs md:text-sm font-black transition-colors ${
+                                <td className={`py-8 text-center text-xs md:text-sm font-black transition-colors ${
                                   theme === 'dark' ? 'text-white/50' : 'text-brown-400'
                                 }`}>{item.quantity || item.qty}</td>
-                                <td className={`py-6 md:py-12 text-right text-xs md:text-sm font-black tracking-tighter transition-colors ${
+                                <td className={`py-8 text-right text-xs md:text-sm font-black px-6 transition-colors ${
                                   theme === 'dark' ? 'text-white/50' : 'text-brown-400'
-                                }`}>Rs. {item.price}</td>
-                                <td className={`py-6 md:py-12 text-right text-xl md:text-2xl font-black tracking-tighter pr-4 transition-colors ${
+                                }`}>Rs.{item.price}</td>
+                                <td className={`py-8 text-right text-2xl font-black tracking-tighter pr-10 rounded-r-[1.5rem] transition-colors ${
                                   theme === 'dark' ? 'text-white' : 'text-[#4A2A1A]'
                                 }`}>
                                     Rs.{((item.price || 0) * (item.quantity || item.qty || 1)).toLocaleString()}
@@ -336,23 +328,22 @@ const InvoicePage = () => {
                         This digital signal serves as a formal treaty between The Whisk Bakery and the consignee. All artisanal calibrations are final upon acquisition.
                     </p>
                 </div>
-                
-                <div className="w-full md:w-[400px] flex flex-col gap-4 md:gap-6">
-                    <div className={`flex justify-between items-center text-[10px] font-black uppercase tracking-widest pb-4 border-b transition-colors ${
+                      <div className="w-full md:w-[400px] flex flex-col gap-4 md:gap-6">
+                    <div className={`flex justify-between items-center text-xs font-black uppercase tracking-widest pb-4 border-b transition-colors ${
                       theme === 'dark' ? 'text-white/70 border-white/10' : 'text-brown-300 border-brown-50'
                     }`}>
-                        <span>Subtotal</span>
-                        <span className={`text-sm tracking-tighter transition-colors ${
+                        <span>Subtotal (Excl Tax)</span>
+                        <span className={`text-base tracking-tighter transition-colors ${
                           theme === 'dark' ? 'text-white' : 'text-primary'
                         }`}>Rs.{invoice?.subtotal || (order.total_price / 1.18).toFixed(2)}</span>
                     </div>
-                    <div className={`flex justify-between items-center text-[9px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-white/60' : 'text-brown-200'}`}>
+                    <div className={`flex justify-between items-center text-[10px] font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-white/60' : 'text-brown-200'}`}>
                         <span>CGST (9%)</span>
-                        <span className={`text-xs transition-colors ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Rs.{(invoice?.gst_amount / 2 || (order.total_price * 0.09)).toFixed(2)}</span>
+                        <span className={`text-sm transition-colors ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Rs.{(invoice?.gst_amount / 2 || (order.total_price * 0.09)).toFixed(2)}</span>
                     </div>
-                    <div className={`flex justify-between items-center text-[9px] font-bold uppercase tracking-widest pb-6 border-b-2 border-[#FF6B35] ${theme === 'dark' ? 'text-white/60' : 'text-brown-200'}`}>
+                    <div className={`flex justify-between items-center text-[10px] font-bold uppercase tracking-widest pb-6 border-b-2 border-[#FF6B35] ${theme === 'dark' ? 'text-white/60' : 'text-brown-200'}`}>
                         <span>SGST (9%)</span>
-                        <span className={`text-xs transition-colors ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Rs.{(invoice?.gst_amount / 2 || (order.total_price * 0.09)).toFixed(2)}</span>
+                        <span className={`text-sm transition-colors ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Rs.{(invoice?.gst_amount / 2 || (order.total_price * 0.09)).toFixed(2)}</span>
                     </div>
 
                     <div className="flex justify-between items-center pt-4 w-full">
