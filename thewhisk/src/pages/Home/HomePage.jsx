@@ -54,7 +54,7 @@ export default function HomePage() {
                   <h1 className="font-heading text-3xl sm:text-5xl lg:text-7xl font-black text-[#FFF8E7] leading-[1.1] mb-6 tracking-tighter">
                     Crafted with{' '}
                     <span className="text-gradient block sm:inline">Love,</span>
-                    <br className="hidden sm:block" />
+                    <br className="hidden lg:block" />
                     Delivered with{' '}
                     <span className="text-gradient block sm:inline">Joy</span>
                   </h1>
@@ -103,13 +103,13 @@ export default function HomePage() {
                   </div>
 
                   {/* Stats */}
-                  <div className="flex justify-between sm:justify-start gap-4 sm:gap-10 mt-10 max-w-sm">
+                  <div className="flex justify-between sm:justify-start gap-4 sm:gap-10 mt-10 max-w-sm mx-auto lg:mx-0">
                     {[
                       { value: '10K+', label: 'Customers' },
                       { value: '500+', label: 'Designs' },
                       { value: '4.9★', label: 'Rating' },
                     ].map((stat) => (
-                      <div key={stat.label}>
+                      <div key={stat.label} className="text-center lg:text-left">
                         <p className="font-heading font-black text-xl sm:text-2xl text-accent tracking-tighter">{stat.value}</p>
                         <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-brown-400">{stat.label}</p>
                       </div>
@@ -237,7 +237,7 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 {featured.map((product, i) => (
                   <ProductCard key={product.id} product={product} index={i} />
                 ))}
@@ -329,7 +329,7 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 {popular.slice(0, 4).map((product, i) => (
                   <ProductCard key={product.id} product={product} index={i} />
                 ))}

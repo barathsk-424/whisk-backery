@@ -77,9 +77,9 @@ export default function ProductCard({ product, index = 0 }) {
       </div>
 
       <div className="p-3 lg:p-6">
-         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-1 lg:mb-3 gap-1 lg:gap-0">
-            <h3 className={`font-black tracking-tight text-[11px] lg:text-sm uppercase truncate w-full ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>{product.name}</h3>
-            <div className="flex items-center gap-1">
+         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-1 lg:mb-3 gap-1 lg:gap-0">
+            <h3 className={`font-black tracking-tight text-[10px] lg:text-sm uppercase truncate w-full ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>{product.name}</h3>
+            <div className="flex items-center gap-1 shrink-0">
                <HiStar className="text-warning text-[10px] lg:text-sm" />
                <span className="text-[10px] lg:text-[11px] font-black text-accent">{product.rating || '5.0'}</span>
             </div>
@@ -89,11 +89,11 @@ export default function ProductCard({ product, index = 0 }) {
             {product.description || "A masterfully crafted creation."}
          </p>
 
-         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between pt-2 lg:pt-4 border-t border-brown-50/10 gap-2 lg:gap-0">
-            <p className="text-sm lg:text-lg font-black text-accent">₹{(product.price || product.base_price || 0).toLocaleString()}</p>
+         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between pt-2 lg:pt-4 border-t border-brown-50/10 gap-2 lg:gap-0">
+            <p className="text-xs lg:text-lg font-black text-accent">₹{(product.price || product.base_price || 0).toLocaleString()}</p>
             <button 
               onClick={handleOpenDetails}
-              className="w-full lg:w-auto px-4 lg:px-6 py-1.5 lg:py-2 bg-accent text-white rounded-full text-[8px] lg:text-[10px] font-black uppercase tracking-widest shadow-lg shadow-accent/20 hover:scale-105 active:scale-95 transition-all text-center"
+              className="px-4 lg:px-6 py-2 bg-accent text-white rounded-full text-[8px] lg:text-[10px] font-black uppercase tracking-widest shadow-lg shadow-accent/20 hover:scale-105 active:scale-95 transition-all text-center"
             >
                Order
             </button>

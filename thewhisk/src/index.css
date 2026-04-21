@@ -44,9 +44,9 @@
     --secondary: #FFFFFF;
     --secondary-dark: #F5E6C8;
     
-    --fluid-32-64: clamp(2rem, 5vw + 1rem, 4rem);
-    --fluid-16-32: clamp(1rem, 2.5vw + 0.5rem, 2rem);
-    --fluid-10-14: clamp(0.625rem, 0.5vw + 0.5rem, 0.875rem);
+    --fluid-32-64: clamp(1.5rem, 4vw + 1rem, 4rem);
+    --fluid-16-32: clamp(0.875rem, 2vw + 0.5rem, 2rem);
+    --fluid-10-14: clamp(0.75rem, 0.5vw + 0.5rem, 0.875rem);
   }
 
   .dark {
@@ -98,10 +98,15 @@
 
   /* Prevent horizontal scroll on mobile */
   .no-horizontal-scroll {
-    overflow-x: hidden;
-    width: 100%;
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
     position: relative;
   }
+
+  /* Responsive Typography Base */
+  h1 { font-size: clamp(1.75rem, 5vw, 4rem); }
+  h2 { font-size: clamp(1.5rem, 4vw, 3rem); }
+  h3 { font-size: clamp(1.25rem, 3vw, 2.25rem); }
 }
 
 @layer utilities {

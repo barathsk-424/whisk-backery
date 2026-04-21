@@ -237,10 +237,26 @@ export default function Navbar() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className={`lg:hidden fixed inset-x-0 top-[76px] p-6 shadow-2xl border-b z-[9998] flex flex-col gap-6 ${
+              className={`lg:hidden fixed inset-x-0 top-[72px] sm:top-[76px] p-6 shadow-2xl border-b z-[9998] flex flex-col gap-6 max-h-[calc(100vh-80px)] overflow-y-auto artisan-scrollbar ${
                 theme === 'dark' ? 'bg-[#1A1110] border-white/10' : 'bg-secondary border-primary/5'
               }`}
             >
+              {/* Mobile Search */}
+              <div className="relative">
+                <HiOutlineSearch className={`absolute left-4 top-1/2 -translate-y-1/2 text-lg ${theme === 'dark' ? 'text-white/20' : 'text-primary/20'}`} />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearch}
+                  placeholder="Search blueprints..."
+                  className={`w-full py-3.5 pl-12 pr-4 rounded-2xl text-xs font-black focus:outline-none transition-all uppercase tracking-widest ${
+                    theme === 'dark' 
+                      ? 'bg-white/5 text-white placeholder:text-white/20 border border-white/10 focus:border-accent' 
+                      : 'bg-primary/5 text-primary placeholder:text-primary/20 border border-primary/10 focus:border-accent/30'
+                  }`}
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <button
                   onClick={() => { navigate("/"); setIsMobileMenuOpen(false); }}
@@ -254,21 +270,21 @@ export default function Navbar() {
                   className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 bg-primary/5 border-primary/10`}
                 >
                   <p className="text-[9px] font-black uppercase tracking-[0.2em] text-accent mb-auto">Archive</p>
-                  <p className={`text-sm font-black uppercase tracking-tight text-primary`}>Menu</p>
+                  <p className={`text-sm font-black uppercase tracking-tight ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Menu</p>
                 </button>
                 <button
                   onClick={() => { navigate("/cake-builder"); setIsMobileMenuOpen(false); }}
                   className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 bg-primary/5 border-primary/10`}
                 >
                   <p className="text-[9px] font-black uppercase tracking-[0.2em] text-accent mb-auto">Lab</p>
-                  <p className={`text-sm font-black uppercase tracking-tight text-primary`}>Builder</p>
+                  <p className={`text-sm font-black uppercase tracking-tight ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Builder</p>
                 </button>
                 <button
                   onClick={() => { navigate("/track-orders"); setIsMobileMenuOpen(false); }}
                   className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 bg-primary/5 border-primary/10`}
                 >
                   <p className="text-[9px] font-black uppercase tracking-[0.2em] text-accent mb-auto">Radar</p>
-                  <p className={`text-sm font-black uppercase tracking-tight text-primary`}>Tracking</p>
+                  <p className={`text-sm font-black uppercase tracking-tight ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Tracking</p>
                 </button>
               </div>
 

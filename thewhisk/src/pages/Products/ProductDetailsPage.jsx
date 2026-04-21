@@ -122,14 +122,14 @@ export default function ProductDetailsPage() {
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Breadcrumbs */}
-        <div className="flex items-center gap-2 mb-10 text-[10px] font-black uppercase tracking-widest text-brown-400 overflow-x-auto whitespace-nowrap scrollbar-hide">
-           <button onClick={() => navigate('/')} className="hover:text-accent">Home</button>
-           <HiOutlineChevronRight />
-           <button onClick={() => navigate('/menu')} className="hover:text-accent">Collection</button>
-           <HiOutlineChevronRight />
-           <span className="text-accent">{product.category || 'Artisan'}</span>
-           <HiOutlineChevronRight />
-           <span className={`${theme === 'dark' ? 'text-white' : 'text-primary'}`}>{product.name}</span>
+        <div className="flex items-center gap-2 mb-10 text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-brown-400 overflow-x-auto whitespace-nowrap no-scrollbar py-2">
+           <button onClick={() => navigate('/')} className="hover:text-accent shrink-0">Home</button>
+           <HiOutlineChevronRight className="shrink-0" />
+           <button onClick={() => navigate('/menu')} className="hover:text-accent shrink-0">Collection</button>
+           <HiOutlineChevronRight className="shrink-0" />
+           <span className="text-accent shrink-0">{product.category || 'Artisan'}</span>
+           <HiOutlineChevronRight className="shrink-0" />
+           <span className={`${theme === 'dark' ? 'text-white' : 'text-primary'} shrink-0`}>{product.name}</span>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-16 items-start">
@@ -139,7 +139,7 @@ export default function ProductDetailsPage() {
              <motion.div 
                initial={{ opacity: 0, scale: 0.95 }}
                animate={{ opacity: 1, scale: 1 }}
-               className={`rounded-[3.5rem] overflow-hidden border-4 ${theme === 'dark' ? 'border-[#1A1110] bg-[#1A1110]' : 'border-white bg-white'} shadow-luxury relative group`}
+               className={`rounded-[2rem] sm:rounded-[3.5rem] overflow-hidden border-4 ${theme === 'dark' ? 'border-[#1A1110] bg-[#1A1110]' : 'border-white bg-white'} shadow-luxury relative group`}
              >
                 <img 
                   src={product.image_url || product.image || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&h=800&fit=crop&fm=webp&q=80'} 
@@ -175,9 +175,9 @@ export default function ProductDetailsPage() {
                 </div>
              </div>
 
-             <div className="flex items-end gap-4">
-                <p className="text-4xl font-black text-accent uppercase tracking-tighter">₹{currentPrice.toLocaleString()}</p>
-                <div className="text-success font-black text-[10px] uppercase bg-success/10 px-3 py-1.5 rounded-lg mb-1">Tax Inclusive</div>
+             <div className="flex flex-wrap items-end gap-3 sm:gap-4">
+                <p className="text-3xl sm:text-4xl font-black text-accent uppercase tracking-tighter">₹{currentPrice.toLocaleString()}</p>
+                <div className="text-success font-black text-[8px] sm:text-[10px] uppercase bg-success/10 px-3 py-1.5 rounded-lg mb-1">Tax Inclusive</div>
              </div>
 
              <p className={`text-sm font-bold leading-relaxed max-w-xl ${theme === 'dark' ? 'text-white/60' : 'text-brown-500'}`}>
@@ -283,9 +283,9 @@ export default function ProductDetailsPage() {
                        { l: 'Certification', v: 'FSSAI Certified, 100% Ceremonial' },
                        { l: 'Packaging', v: 'Insulated Temporal Container' }
                      ].map(row => (
-                       <div key={row.l} className="flex flex-col sm:flex-row p-5 gap-2 sm:gap-10">
-                          <span className="w-full sm:w-40 text-[10px] font-black uppercase text-brown-400 tracking-widest">{row.l}</span>
-                          <span className={`text-sm font-bold ${theme === 'dark' ? 'text-white/80' : 'text-primary'}`}>{row.v}</span>
+                       <div key={row.l} className="flex flex-col sm:flex-row p-4 sm:p-5 gap-1 sm:gap-10 text-left">
+                          <span className="w-full sm:w-40 text-[9px] sm:text-[10px] font-black uppercase text-accent tracking-widest">{row.l}</span>
+                          <span className={`text-xs sm:text-sm font-bold ${theme === 'dark' ? 'text-white/80' : 'text-primary'}`}>{row.v}</span>
                        </div>
                      ))}
                  </div>

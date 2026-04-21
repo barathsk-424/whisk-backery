@@ -27,16 +27,18 @@ export default function CartSidebar() {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-secondary z-50 shadow-2xl flex flex-col"
+            className={`fixed right-0 top-0 h-full w-full max-w-md z-50 shadow-2xl flex flex-col ${
+              theme === 'dark' ? 'bg-[#120C0B]' : 'bg-secondary'
+            }`}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-5 border-b border-brown-100">
-              <h2 className="font-heading text-xl font-bold text-primary">
+            <div className={`flex items-center justify-between p-5 border-b ${theme === 'dark' ? 'border-white/5' : 'border-brown-100'}`}>
+              <h2 className={`font-heading text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                 Your Cart 🛒
               </h2>
               <button
                 onClick={toggleCart}
-                className="p-2 rounded-full hover:bg-brown-100 transition-colors"
+                className={`p-2 rounded-full transition-colors ${theme === 'dark' ? 'hover:bg-white/5 text-white/40' : 'hover:bg-brown-100 text-primary/40'}`}
               >
                 <HiOutlineX className="w-5 h-5" />
               </button>
@@ -75,7 +77,7 @@ export default function CartSidebar() {
                         className="w-20 h-20 rounded-lg object-cover"
                       />
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-xs text-primary truncate">
+                        <h4 className={`font-medium text-xs truncate ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
                           {item.name} 
                           <span className="text-[9px] text-accent ml-1 opacity-60">({item.selectedSize || 'Std'})</span>
                         </h4>
@@ -85,19 +87,19 @@ export default function CartSidebar() {
 
                         {/* Quantity Controls */}
                         <div className="flex items-center justify-between mt-2">
-                          <div className="flex items-center gap-2 bg-brown-50 rounded-full px-1">
+                          <div className={`flex items-center gap-2 rounded-full px-1 ${theme === 'dark' ? 'bg-white/5' : 'bg-brown-50'}`}>
                             <button
                               onClick={() => updateCartQuantity(item.id, item.selectedSize, item.quantity - 1)}
-                              className="p-1 rounded-full hover:bg-brown-200 transition-colors"
+                              className={`p-1 rounded-full transition-colors ${theme === 'dark' ? 'hover:bg-white/10 text-white' : 'hover:bg-brown-200'}`}
                             >
                               <HiOutlineMinus className="w-3.5 h-3.5" />
                             </button>
-                            <span className="text-sm font-semibold w-6 text-center">
+                            <span className={`text-sm font-semibold w-6 text-center ${theme === 'dark' ? 'text-white' : ''}`}>
                               {item.quantity}
                             </span>
                             <button
                               onClick={() => updateCartQuantity(item.id, item.selectedSize, item.quantity + 1)}
-                              className="p-1 rounded-full hover:bg-brown-200 transition-colors"
+                              className={`p-1 rounded-full transition-colors ${theme === 'dark' ? 'hover:bg-white/10 text-white' : 'hover:bg-brown-200'}`}
                             >
                               <HiOutlinePlus className="w-3.5 h-3.5" />
                             </button>
@@ -125,14 +127,14 @@ export default function CartSidebar() {
               }`}>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-brown-400">Subtotal</span>
-                  <span className="font-bold text-primary">₹{total.toLocaleString()}</span>
+                  <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>₹{total.toLocaleString()}</span>
                 </div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-sm text-brown-400 font-medium">Delivery</span>
                   <span className="text-sm text-success font-bold">FREE</span>
                 </div>
-                <div className="flex items-center justify-between mb-5 pt-3 border-t border-brown-100 dark:border-white/10">
-                  <span className="font-heading font-bold text-lg text-primary">Total</span>
+                <div className={`flex items-center justify-between mb-5 pt-3 border-t ${theme === 'dark' ? 'border-white/5' : 'border-brown-100'}`}>
+                  <span className={`font-heading font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Total</span>
                   <span className="font-heading font-bold text-xl text-accent">
                     ₹{total.toLocaleString()}
                   </span>
