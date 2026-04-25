@@ -5,8 +5,11 @@ import { supabase } from '../../lib/supabase';
 import useStore from '../../store/useStore';
 import toast from 'react-hot-toast';
 
+import { useNavigate } from 'react-router-dom';
+
 export default function BundlesPage() {
-  const { addToCart, user, navigate, theme } = useStore();
+  const navigate = useNavigate();
+  const { addToCart, user, theme } = useStore();
   const [bundles, setBundles] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -87,7 +90,10 @@ export default function BundlesPage() {
             >
               <div className="grid sm:grid-cols-2">
                 {/* Image */}
-                <div className="relative overflow-hidden">
+                <div 
+                  className="relative overflow-hidden cursor-pointer"
+                  onClick={() => navigate(`/bundle/${bundle.id}`)}
+                >
                   <img
                     src={bundle.image_url}
                     alt={bundle.name}
@@ -105,7 +111,10 @@ export default function BundlesPage() {
                 {/* Details */}
                 <div className="p-6 flex flex-col justify-between">
                   <div>
-                    <h3 className="font-heading text-xl font-bold text-primary mb-3">
+                    <h3 
+                      className="font-heading text-xl font-bold text-primary mb-3 cursor-pointer hover:text-accent transition-colors"
+                      onClick={() => navigate(`/bundle/${bundle.id}`)}
+                    >
                       {bundle.emoji} {bundle.name}
                     </h3>
                     <p className="text-sm text-brown-400 mb-4">What's included:</p>

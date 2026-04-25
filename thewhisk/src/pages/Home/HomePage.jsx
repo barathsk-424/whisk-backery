@@ -1,17 +1,42 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { HiOutlineSearch, HiStar, HiArrowRight, HiSparkles } from 'react-icons/hi';
+import { HiOutlineSearch, HiStar, HiArrowRight, HiSparkles, HiOutlinePhone } from 'react-icons/hi';
 import useStore from '../../store/useStore';
 import ProductCard from '../../components/products/ProductCard';
-import { occasions, bundles, mockReviews } from '../../data/mockData';
+import { occasions, mockReviews } from '../../data/mockData';
 import ContactSection from '../../components/home/ContactSection';
+import AboutSection from '../../components/home/AboutSection';
+import OrderForm from '../../components/conversion/OrderForm';
+import { supabase } from '../../lib/supabase';
+
+const WHATSAPP_NUMBER = '916374618833';
+const PHONE_NUMBER = '+916374618833';
 
 export default function HomePage() {
   const navigate = useNavigate();
   const { products, searchQuery, setSearchQuery, loading, theme } = useStore();
+  const [homeBundles, setHomeBundles] = useState([]);
   const menuRef = useRef(null);
   
+  useEffect(() => {
+    const fetchBundles = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('bundles')
+          .select('*')
+          .order('created_at', { ascending: true })
+          .limit(4);
+        if (!error && data) {
+          setHomeBundles(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch bundles for home page", err);
+      }
+    };
+    fetchBundles();
+  }, []);
+
   const featured = products.slice(0, 4);
   const popular = products.filter((p) => (p.rating || 0) >= 4.7);
 
@@ -48,19 +73,18 @@ export default function HomePage() {
                     className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 bg-accent/20 rounded-full text-accent-light text-[10px] sm:text-sm font-medium mb-6 uppercase tracking-widest"
                   >
                     <HiSparkles className="w-3 h-3 sm:w-4 h-4" />
-                    AI-Powered Bakery Experience
+                    Chennai's Favourite Artisan Bakery
                   </motion.div>
 
                   <h1 className="font-heading text-3xl sm:text-5xl lg:text-7xl font-black text-[#FFF8E7] leading-[1.1] mb-6 tracking-tighter">
-                    Crafted with{' '}
-                    <span className="text-gradient block sm:inline">Love,</span>
+                    Fresh Cakes.{' '}
                     <br className="hidden lg:block" />
-                    Delivered with{' '}
-                    <span className="text-gradient block sm:inline">Joy</span>
+                    Made with{' '}
+                    <span className="text-gradient block sm:inline">Love</span> 🎂
                   </h1>
 
                   <p className="text-[#FFF8E7]/70 text-sm sm:text-lg max-w-xl mb-8 leading-relaxed mx-auto lg:mx-0">
-                    Build your dream cake in 3D, get AI-powered recommendations, and track your order in real-time. The future of bakery is here.
+                    Handcrafted cakes, premium ingredients, and same-day delivery across Chennai. Order now via WhatsApp or Call — it's that simple!
                   </p>
 
                   {/* Search */}
@@ -86,19 +110,31 @@ export default function HomePage() {
                   </div>
 
                   {/* CTA Buttons */}
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Link
-                      to="/cake-builder"
-                      className="group flex items-center justify-center gap-2 px-8 py-3.5 gradient-accent text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-accent/30"
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <button
+                      onClick={() => {
+                        const msg = encodeURIComponent('Hi! I want to order a cake from Whisk Bakery 🎂');
+                        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+                      }}
+                      className="group flex items-center justify-center gap-2 px-8 py-3.5 font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg"
+                      style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', boxShadow: '0 8px 24px rgba(37, 211, 102, 0.3)' }}
                     >
-                      🎨 Build Your Cake
+                      <svg viewBox="0 0 32 32" fill="white" className="w-5 h-5"><path d="M16.004 0h-.008C7.174 0 0 7.176 0 16c0 3.5 1.132 6.744 3.052 9.38L1.056 31.5l6.316-2.012A15.916 15.916 0 0 0 16.004 32C24.826 32 32 24.822 32 16S24.826 0 16.004 0zm9.32 22.616c-.392 1.1-1.94 2.016-3.164 2.284-.84.18-1.936.324-5.628-1.208-4.724-1.96-7.76-6.752-7.996-7.068-.228-.316-1.9-2.528-1.9-4.824 0-2.296 1.204-3.424 1.632-3.892.392-.428 1.044-.624 1.672-.624.2 0 .38.012.54.02.468.02.704.048 1.012.784.384.92 1.32 3.216 1.436 3.452.116.236.232.548.076.86-.148.316-.276.512-.512.788-.236.276-.472.488-.708.784-.22.26-.468.536-.2.96.268.428 1.192 1.964 2.56 3.184 1.76 1.568 3.24 2.056 3.704 2.284.384.188.624.16.876-.096.256-.268.96-1.048 1.216-1.412.252-.364.508-.3.856-.18.352.116 2.224 1.048 2.604 1.24.38.188.632.284.728.44.092.156.092.904-.3 2.008z"/></svg>
+                      Order via WhatsApp
                       <HiArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    </button>
+                    <a
+                      href={`tel:${PHONE_NUMBER}`}
+                      className="flex items-center justify-center gap-2 px-8 py-3.5 bg-white/15 border border-white/20 text-[#FFF8E7] font-semibold rounded-xl hover:bg-white/25 transition-all"
+                    >
+                      <HiOutlinePhone className="w-4 h-4" />
+                      Call Now
+                    </a>
                     <Link
                       to="/menu"
-                      className="flex items-center justify-center gap-2 px-8 py-3.5 bg-white/10 border border-white/20 text-[#FFF8E7] font-semibold rounded-xl hover:bg-white/20 transition-all"
+                      className="flex items-center justify-center gap-2 px-8 py-3.5 gradient-accent text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-accent/30"
                     >
-                      Explore Menu
+                      🎂 Explore Menu
                     </Link>
                   </div>
 
@@ -249,24 +285,27 @@ export default function HomePage() {
           <section className={`py-16 transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1A1110]' : 'bg-secondary'}`}>
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-10">
-                <h2 className={`font-heading text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
-                  🎁 Smart Bundles
-                </h2>
+                <Link to="/bundles" className="group inline-block">
+                  <h2 className={`font-heading text-2xl font-bold transition-all group-hover:text-accent group-hover:scale-105 ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
+                    🎁 Smart Bundles
+                  </h2>
+                </Link>
                 <p className="text-sm text-brown-400 mt-1 font-bold">
                   Curated combos for every occasion — save up to 20%
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {bundles.map((bundle, i) => (
+                {homeBundles.map((bundle, i) => (
                   <motion.div
                     key={bundle.id}
+                    onClick={() => navigate(`/bundle/${bundle.id}`)}
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.1 }}
                     viewport={{ once: true }}
                     className={`rounded-2xl overflow-hidden shadow-md group cursor-pointer border transition-all ${
-                      theme === 'dark' ? 'bg-[#0D0807] border-white/5' : 'bg-white border-brown-50'
+                      theme === 'dark' ? 'bg-[#0D0807] border-white/5 hover:border-accent' : 'bg-white border-brown-50 hover:shadow-xl hover:border-accent'
                     }`}
                   >
                     <div className="relative overflow-hidden">
@@ -286,7 +325,7 @@ export default function HomePage() {
                         <h3 className={`font-heading font-semibold ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>{bundle.name}</h3>
                       </div>
                       <ul className="text-xs text-brown-400 space-y-1 mb-3">
-                        {bundle.items.map((item) => (
+                        {bundle.items && bundle.items.map((item) => (
                           <li key={item} className="flex items-center gap-1">
                             <span className="w-1 h-1 bg-accent rounded-full" /> {item}
                           </li>
@@ -297,12 +336,15 @@ export default function HomePage() {
                           <span className="text-xs text-brown-300 line-through">₹{bundle.original_price}</span>
                           <span className="font-heading font-bold text-accent ml-2">₹{bundle.final_price}</span>
                         </div>
-                        <Link
-                          to="/bundles"
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/bundle/${bundle.id}`);
+                          }}
                           className="px-3 py-1.5 text-xs font-bold text-accent bg-accent/10 rounded-full hover:bg-accent hover:text-white transition-all"
                         >
-                          ADD
-                        </Link>
+                          VIEW
+                        </button>
                       </div>
                     </div>
                   </motion.div>
@@ -372,6 +414,12 @@ export default function HomePage() {
             </div>
           </section>
 
+          {/* About Section */}
+          <AboutSection />
+
+          {/* Order Form */}
+          <OrderForm />
+
           {/* CTA */}
           <section className="py-20 gradient-hero text-center">
             <div className="max-w-2xl mx-auto px-4">
@@ -381,21 +429,32 @@ export default function HomePage() {
                 viewport={{ once: true }}
               >
                 <h2 className="font-heading text-3xl sm:text-4xl font-bold text-secondary mb-4">
-                  Ready to Create Something Sweet?
+                  Ready to Order Something Sweet? 🎂
                 </h2>
                 <p className="text-brown-300 mb-8">
-                  Design your dream cake in our 3D builder or choose from our curated menu
+                  Place your order in seconds via WhatsApp, Call, or our quick order form!
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
-                  <Link
-                    to="/cake-builder"
-                    className="px-8 py-3.5 gradient-accent text-white font-semibold rounded-xl shadow-lg"
+                  <button
+                    onClick={() => {
+                      const msg = encodeURIComponent('Hi! I want to order from Whisk Bakery 🎂');
+                      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+                    }}
+                    className="px-8 py-3.5 font-semibold rounded-xl shadow-lg flex items-center gap-2"
+                    style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', color: 'white', boxShadow: '0 4px 20px rgba(37, 211, 102, 0.3)' }}
                   >
-                    🎨 Start Building
-                  </Link>
+                    <svg viewBox="0 0 32 32" fill="white" className="w-5 h-5"><path d="M16.004 0h-.008C7.174 0 0 7.176 0 16c0 3.5 1.132 6.744 3.052 9.38L1.056 31.5l6.316-2.012A15.916 15.916 0 0 0 16.004 32C24.826 32 32 24.822 32 16S24.826 0 16.004 0zm9.32 22.616c-.392 1.1-1.94 2.016-3.164 2.284-.84.18-1.936.324-5.628-1.208-4.724-1.96-7.76-6.752-7.996-7.068-.228-.316-1.9-2.528-1.9-4.824 0-2.296 1.204-3.424 1.632-3.892.392-.428 1.044-.624 1.672-.624.2 0 .38.012.54.02.468.02.704.048 1.012.784.384.92 1.32 3.216 1.436 3.452.116.236.232.548.076.86-.148.316-.276.512-.512.788-.236.276-.472.488-.708.784-.22.26-.468.536-.2.96.268.428 1.192 1.964 2.56 3.184 1.76 1.568 3.24 2.056 3.704 2.284.384.188.624.16.876-.096.256-.268.96-1.048 1.216-1.412.252-.364.508-.3.856-.18.352.116 2.224 1.048 2.604 1.24.38.188.632.284.728.44.092.156.092.904-.3 2.008z"/></svg>
+                    Order via WhatsApp
+                  </button>
+                  <a
+                    href={`tel:${PHONE_NUMBER}`}
+                    className="px-8 py-3.5 bg-white/10 border border-white/20 text-white font-semibold rounded-xl flex items-center gap-2 hover:bg-white/20 transition-all"
+                  >
+                    <HiOutlinePhone className="w-4 h-4" /> Call Now
+                  </a>
                   <Link
                     to="/menu"
-                    className="px-8 py-3.5 bg-white/10 border border-white/20 text-secondary font-semibold rounded-xl"
+                    className="px-8 py-3.5 gradient-accent text-white font-semibold rounded-xl shadow-lg"
                   >
                     Browse Menu
                   </Link>

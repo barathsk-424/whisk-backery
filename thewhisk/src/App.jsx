@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { AnimatePresence } from "framer-motion";
-import { Suspense, lazy, useEffect } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 import ErrorBoundary from "./components/layout/ErrorBoundary";
 import Navbar from "./components/layout/Navbar";
@@ -24,11 +24,13 @@ const EditCakePage = lazy(() => import("./pages/Admin/EditCakePage"));
 const EditBundlePage = lazy(() => import("./pages/Admin/EditBundlePage"));
 const FinanceDashboard = lazy(() => import("./pages/Finance/FinanceDashboard"));
 const AddCakePage = lazy(() => import("./pages/Products/AddCakePage"));
+const AddBundlePage = lazy(() => import("./pages/Admin/AddBundlePage"));
 const ProfilePage = lazy(() => import("./pages/Profile/ProfilePage"));
 const ProductDetailsPage = lazy(() => import("./pages/Products/ProductDetailsPage"));
 const Cart = lazy(() => import("./pages/Cart/CartPage"));
 const CheckoutPage = lazy(() => import("./pages/Checkout/CheckoutPage"));
 const BundlesPage = lazy(() => import("./pages/Bundles/BundlesPage"));
+const BundleDetailsPage = lazy(() => import("./pages/Bundles/BundleDetailsPage"));
 const StockAnalysisDashboard = lazy(() => import("./pages/Stock/StockAnalysisDashboard"));
 const StockDetailPage = lazy(() => import("./pages/Stock/StockDetailPage"));
 const InvoicePage = lazy(() => import("./pages/Checkout/InvoicePage"));
@@ -74,7 +76,7 @@ const ProtectedAdminRoute = ({ children }) => {
     );
     const decoded = JSON.parse(jsonPayload);
 
-    if (decoded.role !== "admin") {
+    if (decoded.role !== "admin" && decoded.source !== "master") {
       return (
         <div className="min-h-screen flex items-center justify-center bg-secondary">
           <div className="text-center p-12 bg-white rounded-[3rem] shadow-2xl border border-error/20">
@@ -113,6 +115,14 @@ const SafeRender = ({ component: Component }) => {
 
 function App() {
   const { initializeAuth, authInitialized, theme } = useStore();
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     initializeAuth();
@@ -127,10 +137,61 @@ function App() {
     }
   }, [theme]);
 
+  if (showSplash) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-secondary overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+          className="relative flex flex-col items-center"
+        >
+          <motion.div
+            animate={{ 
+              y: [0, -10, 0],
+            }}
+            transition={{ 
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            <img 
+              src="/logo.png" 
+              alt="Whisk Bakery" 
+              className="w-48 md:w-64 h-auto drop-shadow-[0_20px_50px_rgba(74,42,26,0.3)]" 
+            />
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 1 }}
+            className="mt-8 flex flex-col items-center"
+          >
+            <div className="h-[2px] w-12 bg-brown-200/30 rounded-full overflow-hidden">
+              <motion.div 
+                initial={{ x: "-100%" }}
+                animate={{ x: "100%" }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                className="h-full w-full bg-gradient-to-r from-transparent via-brown-400 to-transparent"
+              />
+            </div>
+            <p className="mt-4 font-black text-brown-300 uppercase tracking-[0.5em] text-[8px]">
+              Crafting Perfection
+            </p>
+          </motion.div>
+        </motion.div>
+      </div>
+    );
+  }
+
   if (!authInitialized) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-secondary font-black text-brown-300 uppercase tracking-widest text-[8px]">
-        Initializing Artisan Secure Protocols...
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-8 h-8 border-2 border-brown-200 border-t-brown-500 rounded-full animate-spin" />
+          Initializing Artisan Secure Protocols...
+        </div>
       </div>
     );
   }
@@ -239,6 +300,14 @@ function App() {
                     }
                   />
                   <Route
+                    path="/add-bundle"
+                    element={
+                      <ProtectedAdminRoute>
+                        <SafeRender component={AddBundlePage} />
+                      </ProtectedAdminRoute>
+                    }
+                  />
+                  <Route
                     path="/finance"
                     element={
                       <ProtectedAdminRoute>
@@ -299,6 +368,10 @@ function App() {
                   <Route
                     path="/product/:id"
                     element={<SafeRender component={ProductDetailsPage} />}
+                  />
+                  <Route
+                    path="/bundle/:id"
+                    element={<SafeRender component={BundleDetailsPage} />}
                   />
                   <Route
                     path="/track/:id"

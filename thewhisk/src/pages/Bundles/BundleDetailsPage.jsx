@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -10,21 +10,21 @@ import {
   HiOutlineBadgeCheck,
   HiOutlineChevronRight,
   HiOutlineLocationMarker,
-  HiOutlineClock
+  HiOutlineClock,
+  HiOutlineSparkles
 } from 'react-icons/hi';
 import { FaWhatsapp, FaPhoneAlt } from 'react-icons/fa';
 import useStore from '../../store/useStore';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
 
-export default function ProductDetailsPage() {
+export default function BundleDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { products, theme, addToCart, fetchReviews, reviews, user, addReview } = useStore();
+  const { theme, addToCart, fetchReviews, reviews, user, addReview } = useStore();
   
   const [loading, setLoading] = useState(true);
-  const [product, setProduct] = useState(null);
-  const [selectedSize, setSelectedSize] = useState('1kg');
+  const [bundle, setBundle] = useState(null);
   const [pincode, setPincode] = useState('');
   const [deliveryDate, setDeliveryDate] = useState(null);
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -33,40 +33,58 @@ export default function ProductDetailsPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const found = products.find(p => p.id === id);
-    if (found) {
-      setProduct(found);
-      fetchReviews(id);
-      setLoading(false);
-    } else if (products.length > 0) {
-      setLoading(false); // Not found
-    }
-  }, [id, products, fetchReviews]);
+    fetchBundle();
+    fetchReviews(id);
+  }, [id, fetchReviews]);
 
-  const currentPrice = useMemo(() => {
-    if (!product) return 0;
-    const base = product.price || product.base_price || 0;
-    if (selectedSize === '0.5kg') return Math.round(base * 0.6);
-    if (selectedSize === '2kg') return Math.round(base * 1.8);
-    if (selectedSize === '3kg') return Math.round(base * 2.5);
-    return base;
-  }, [product, selectedSize]);
+  const fetchBundle = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('bundles')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+      setBundle(data);
+    } catch (error) {
+      console.error('Fetch Bundle Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddToCart = () => {
-    if (!product) return;
-    addToCart({ ...product, selectedSize, price: currentPrice });
-    toast.success(`${product.name} added to your Artisan collection! 🧁`);
+    if (!bundle) return;
+    if (!user) {
+      toast.error("Please login to reserve this bundle.");
+      navigate('/login');
+      return;
+    }
+
+    addToCart({
+      id: bundle.id,
+      name: bundle.name,
+      description: bundle.items.join(', '),
+      category: 'bundle',
+      base_price: bundle.final_price,
+      price: bundle.final_price,
+      image_url: bundle.image_url,
+      tags: [bundle.occasion],
+      rating: 4.8,
+    });
+    toast.success(`${bundle.name} added to your Artisan collection! 🎁`);
   };
 
   const handleBuyNow = () => {
-    if (!product) return;
-    addToCart({ ...product, selectedSize, price: currentPrice });
+    if (!bundle) return;
+    handleAddToCart();
     navigate('/checkout');
   };
 
   const handleWhatsApp = () => {
-    if (!product) return;
-    const message = `Hi Whisk Bakery! I would like to order the ${product.name} (${selectedSize}). Is it available?`;
+    if (!bundle) return;
+    const message = `Hi Whisk Bakery! I would like to order the ${bundle.name} bundle. Is it available?`;
     window.open(`https://wa.me/916374618833?text=${encodeURIComponent(message)}`, '_blank');
   };
 
@@ -90,7 +108,6 @@ export default function ProductDetailsPage() {
       toast.success("Sentiment archived successfully!", { id: tid });
       setReviewForm({ rating: 5, comment: '' });
       setShowReviewForm(false);
-      // No need to fetchReviews(id) as addReview updates the store state
     } catch (err) {
       toast.error("Transmission failed: " + err.message, { id: tid });
     } finally {
@@ -118,12 +135,12 @@ export default function ProductDetailsPage() {
      );
   }
 
-  if (!product) {
+  if (!bundle) {
     return (
       <div className={`min-h-screen pt-32 px-6 text-center ${theme === 'dark' ? 'bg-[#0D0807]' : 'bg-secondary'}`}>
-        <h2 className="text-4xl font-black text-primary mb-4 uppercase">Artifact Not Found</h2>
+        <h2 className="text-4xl font-black text-primary mb-4 uppercase">Bundle Not Found</h2>
         <p className="text-brown-400 mb-8">The requested bakery signal was lost or archived.</p>
-        <button onClick={() => navigate('/menu')} className="px-10 py-4 gradient-accent text-white font-black rounded-2xl">Return to Menu</button>
+        <button onClick={() => navigate('/bundles')} className="px-10 py-4 gradient-accent text-white font-black rounded-2xl">Return to Bundles</button>
       </div>
     );
   }
@@ -136,11 +153,11 @@ export default function ProductDetailsPage() {
         <div className="flex items-center gap-2 mb-10 text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-brown-400 overflow-x-auto whitespace-nowrap no-scrollbar py-2">
            <button onClick={() => navigate('/')} className="hover:text-accent shrink-0">Home</button>
            <HiOutlineChevronRight className="shrink-0" />
-           <button onClick={() => navigate('/menu')} className="hover:text-accent shrink-0">Collection</button>
+           <button onClick={() => navigate('/bundles')} className="hover:text-accent shrink-0">Bundles</button>
            <HiOutlineChevronRight className="shrink-0" />
-           <span className="text-accent shrink-0">{product.category || 'Artisan'}</span>
+           <span className="text-accent shrink-0">{bundle.occasion || 'Special Occasion'}</span>
            <HiOutlineChevronRight className="shrink-0" />
-           <span className={`${theme === 'dark' ? 'text-white' : 'text-primary'} shrink-0`}>{product.name}</span>
+           <span className={`${theme === 'dark' ? 'text-white' : 'text-primary'} shrink-0`}>{bundle.name}</span>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-16 items-start">
@@ -153,9 +170,14 @@ export default function ProductDetailsPage() {
                className={`rounded-[2rem] sm:rounded-[3.5rem] overflow-hidden border-4 ${theme === 'dark' ? 'border-[#1A1110] bg-[#1A1110]' : 'border-white bg-white'} shadow-luxury relative group`}
              >
                 <img 
-                  src={product.image_url || product.image || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&h=800&fit=crop&fm=webp&q=80'} 
+                  src={bundle.image_url || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&h=800&fit=crop&fm=webp&q=80'} 
                   className="w-full h-auto aspect-square object-cover transition-transform duration-1000 group-hover:scale-110"
                 />
+                
+                <div className="absolute top-6 left-6 px-4 py-2 bg-success text-white text-xs font-black rounded-full shadow-lg">
+                  {bundle.discount}% OFF
+                </div>
+
                 <div className="absolute top-8 right-8 flex flex-col gap-3">
                    <button className="p-4 bg-white/10 backdrop-blur-md rounded-2xl text-white hover:bg-accent transition-colors"><HiStar /></button>
                 </div>
@@ -164,7 +186,7 @@ export default function ProductDetailsPage() {
              <div className="grid grid-cols-4 gap-3 sm:gap-4">
                 {[1,2,3,4].map(i => (
                   <div key={i} className={`aspect-square rounded-2xl sm:rounded-3xl overflow-hidden border-2 cursor-pointer hover:border-accent transition-all ${theme === 'dark' ? 'border-[#1A1110] bg-[#1A1110]' : 'border-white bg-white shadow-sm'}`}>
-                     <img src={product.image_url || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200&h=200&fit=crop&fm=webp&q=80'} className="w-full h-full object-cover opacity-60 hover:opacity-100 transition-opacity" />
+                     <img src={bundle.image_url || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200&h=200&fit=crop&fm=webp&q=80'} className="w-full h-full object-cover opacity-60 hover:opacity-100 transition-opacity" />
                   </div>
                 ))}
              </div>
@@ -173,48 +195,41 @@ export default function ProductDetailsPage() {
           {/* RIGHT: Product Intelligence */}
           <div className="space-y-10">
              <div>
-                <span className="px-4 py-1.5 bg-accent/10 text-accent rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 inline-block">Premium Collection</span>
+                <span className="px-4 py-1.5 bg-accent/10 text-accent rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 inline-flex items-center gap-2">
+                  <HiOutlineSparkles /> Curated Bundle
+                </span>
                 <h1 className={`text-3xl sm:text-5xl font-black tracking-tighter mb-4 uppercase ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
-                  {product.name}
+                  {bundle.emoji} {bundle.name}
                 </h1>
                 <div className="flex items-center gap-6">
                    <div className="flex items-center gap-1.5 p-2 px-3 bg-warning/10 rounded-xl">
                       <HiStar className="text-warning text-lg" />
-                      <span className="font-black text-warning">4.9</span>
+                      <span className="font-black text-warning">4.8</span>
                    </div>
                    <p className="text-brown-400 text-xs font-bold uppercase tracking-widest underline underline-offset-4">{reviews.length} Transmissions</p>
                 </div>
              </div>
 
-             <div className="flex flex-wrap items-end gap-3 sm:gap-4">
-                <p className="text-3xl sm:text-4xl font-black text-accent uppercase tracking-tighter">₹{currentPrice.toLocaleString()}</p>
-                <div className="text-success font-black text-[8px] sm:text-[10px] uppercase bg-success/10 px-3 py-1.5 rounded-lg mb-1">Tax Inclusive</div>
+             <div className="flex flex-wrap items-end gap-4">
+                <p className="text-3xl sm:text-4xl font-black text-accent uppercase tracking-tighter">₹{bundle.final_price?.toLocaleString()}</p>
+                <p className={`text-xl font-black line-through uppercase tracking-tighter mb-1 opacity-50 ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>₹{bundle.original_price?.toLocaleString()}</p>
+                <div className="text-success font-black text-[8px] sm:text-[10px] uppercase bg-success/10 px-3 py-1.5 rounded-lg mb-1">
+                  Save ₹{bundle.original_price - bundle.final_price}
+                </div>
              </div>
 
-             <p className={`text-sm font-bold leading-relaxed max-w-xl ${theme === 'dark' ? 'text-white/60' : 'text-brown-500'}`}>
-                {product.description || "A masterfully crafted creation using the finest ceremonial ingredients. This artisan piece features delicate layers, premium imported chocolate, and a secret infusion that defines the Whisk signature experience."}
-             </p>
-
-             {/* Size Selector */}
-             <div className="space-y-4">
-                <h4 className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
-                   Configuration Unit <span className="opacity-30">(Select Size)</span>
+             <div className={`p-6 rounded-3xl ${theme === 'dark' ? 'bg-white/5' : 'bg-brown-50/50'}`}>
+                <h4 className={`text-[10px] font-black uppercase tracking-widest mb-4 flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>
+                   What's Included
                 </h4>
-                <div className="flex flex-wrap gap-3">
-                   {['0.5kg', '1kg', '2kg', '3kg'].map(size => (
-                     <button 
-                       key={size}
-                       onClick={() => setSelectedSize(size)}
-                       className={`px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all border-2 ${
-                         selectedSize === size 
-                         ? 'border-accent bg-accent text-white shadow-lg' 
-                         : theme === 'dark' ? 'border-[#1A1110] bg-[#1A1110] text-white/40' : 'border-brown-50 bg-white text-brown-400'
-                       }`}
-                     >
-                        {size}
-                     </button>
-                   ))}
-                </div>
+                <ul className="space-y-3">
+                  {bundle.items && bundle.items.map((item, idx) => (
+                    <li key={idx} className={`flex items-center gap-3 text-sm font-bold ${theme === 'dark' ? 'text-white/80' : 'text-brown-500'}`}>
+                      <div className="w-2 h-2 rounded-full bg-accent" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
              </div>
 
              {/* Delivery Check */}
@@ -298,15 +313,15 @@ export default function ProductDetailsPage() {
            {/* Specifications */}
            <div className="lg:col-span-2 space-y-12">
               <div className="space-y-6">
-                 <h3 className={`text-2xl font-black uppercase tracking-tighter ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Product Specifications</h3>
+                 <h3 className={`text-2xl font-black uppercase tracking-tighter ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Bundle Specifications</h3>
                  <div className={`rounded-3xl border divide-y overflow-hidden ${theme === 'dark' ? 'bg-[#1A1110] border-white/5 divide-white/5' : 'bg-white border-brown-50 divide-brown-50'}`}>
                      {/* Specification Rows */}
                      {[
-                       { l: 'Type', v: product.category || 'Flavored Artisan Piece' },
-                       { l: 'Base Unit', v: selectedSize },
-                       { l: 'Ingredients', v: 'Pure Cocoa, Organic Dairy, Refined Artisan Sugar' },
-                       { l: 'Certification', v: 'FSSAI Certified, 100% Ceremonial' },
-                       { l: 'Packaging', v: 'Insulated Temporal Container' }
+                       { l: 'Bundle Name', v: bundle.name },
+                       { l: 'Target Occasion', v: bundle.occasion },
+                       { l: 'Total Value', v: `₹${bundle.original_price}` },
+                       { l: 'Discount Applied', v: `${bundle.discount}%` },
+                       { l: 'Packaging', v: 'Premium Bundle Presentation Box' }
                      ].map(row => (
                        <div key={row.l} className="flex flex-col sm:flex-row p-4 sm:p-5 gap-1 sm:gap-10 text-left">
                           <span className="w-full sm:w-40 text-[9px] sm:text-[10px] font-black uppercase text-accent tracking-widest">{row.l}</span>

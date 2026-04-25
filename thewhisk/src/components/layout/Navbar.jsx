@@ -280,6 +280,13 @@ export default function Navbar() {
                   <p className={`text-sm font-black uppercase tracking-tight ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Builder</p>
                 </button>
                 <button
+                  onClick={() => { navigate("/bundles"); setIsMobileMenuOpen(false); }}
+                  className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 bg-primary/5 border-primary/10`}
+                >
+                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-accent mb-auto">Gift</p>
+                  <p className={`text-sm font-black uppercase tracking-tight ${theme === 'dark' ? 'text-white' : 'text-primary'}`}>Bundles</p>
+                </button>
+                <button
                   onClick={() => { navigate("/track-orders"); setIsMobileMenuOpen(false); }}
                   className={`p-4 rounded-2xl text-left border flex flex-col justify-between h-24 bg-primary/5 border-primary/10`}
                 >
@@ -326,6 +333,21 @@ export default function Navbar() {
                   Theme
                 </button>
               </div>
+
+              {isAdmin && (
+                <button
+                  onClick={() => { navigate("/admin-dashboard"); setIsMobileMenuOpen(false); }}
+                  className="p-5 gradient-accent text-white rounded-2xl flex items-center justify-between shadow-xl shadow-accent/30"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                      <HiOutlineCog className="text-2xl" />
+                    </div>
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em]">Command Hub</span>
+                  </div>
+                  <HiArrowRight />
+                </button>
+              )}
 
               {isAuthenticated ? (
                 <button

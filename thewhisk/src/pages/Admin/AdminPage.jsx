@@ -149,7 +149,7 @@ export default function AdminDashboard() {
       setContacts(data.contacts || []);
       setReviewsList(data.reviews || []);
       setFeedbackList(data.feedback || []);
-      toast.success("Intelligence data synchronized.");
+      toast.success("Intelligence data synchronized.", { id: "dashboard-sync" });
     } catch (error) {
       console.error("Dashboard Sync Error:", error);
       if (error.status === 401) {
@@ -1257,6 +1257,14 @@ export default function AdminDashboard() {
                   Curated Collections & Offers
                 </p>
               </div>
+              <button
+                onClick={() => navigate("/add-bundle")}
+                className={`px-8 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-luxury hover:scale-105 active:scale-95 transition-all flex items-center gap-3 ${
+                  theme === "dark" ? "bg-accent text-white" : "bg-primary text-white"
+                }`}
+              >
+                <span className="text-xl">🎁</span> Create New Bundle
+              </button>
             </div>
 
             <div className={`rounded-[3rem] shadow-luxury border overflow-hidden ${theme === "dark" ? "bg-[#1A1110] border-white/5" : "bg-white border-brown-100"}`}>
