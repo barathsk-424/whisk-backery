@@ -1,0 +1,77 @@
+WHISK BAKERY - FOLDER & FILE GUIDE
+---------------------------------------------------------
+This guide explains exactly where to find every file and what it does.
+The project is split into two main folders: 
+1. "thewhisk" (The Website you see)
+2. "backend"  (The hidden Server handling data)
+
+=========================================================
+1. THE WEBSITE (Folder: /thewhisk/src/)
+=========================================================
+This is where all the website designs, buttons, and pages live.
+
+⭐ Main Startup Files:
+- App.jsx             -> The "Map" of the website. It links URLs to the correct page (e.g., /cart opens the Cart page).
+- main.jsx            -> The startup engine for the website.
+- index.css           -> All the website colors, fonts, and designs.
+- config.js           -> Stores the link to the backend server.
+
+📁 "pages" Folder (Full Website Pages):
+- pages/Home/         -> The Homepage you see first.
+- pages/Menu/         -> The Cake Menu page.
+- pages/Cart/         -> The Shopping Cart page.
+- pages/Checkout/     -> The Payment, Address, and Invoice pages.
+- pages/Builder/      -> The 3D Custom Cake Builder page.
+- pages/Track/        -> The Order Tracking pages.
+- pages/Admin/        -> The Admin Dashboard pages (only for owners).
+- pages/Auth/         -> The Login, Signup, and Password Reset pages.
+- pages/Finance/      -> The Financial charts and revenue page.
+
+📁 "components" Folder (Small Reusable Website Parts):
+- components/layout/  -> The Top Navbar, Bottom Footer, and loading Splash Screen.
+- components/auth/    -> Security guards (blocks normal users from entering Admin pages).
+- components/home/    -> Parts of the homepage (About Us, Gallery).
+- components/cart/    -> The side-panel shopping cart.
+- components/voice/   -> The voice search microphone button.
+
+📁 "store" Folder (Website Memory):
+- store/useStore.js   -> Remembers if you are logged in, and what's currently in your cart.
+
+📁 "lib" Folder (External Connections):
+- lib/supabase.js     -> Connects the website to the database.
+- lib/orderApi.js     -> Sends order data from the website to the backend server.
+- lib/invoiceService.js -> Creates the PDF bills.
+
+📁 "data" Folder (Dummy Data):
+- data/mockData.js    -> Fake cakes and orders used for testing when the database is empty.
+
+
+=========================================================
+2. THE SERVER (Folder: /backend/)
+=========================================================
+This handles the database, passwords, and security behind the scenes.
+
+⭐ Main Server File:
+- server.js           -> The main server file. Handles logins, signups, and data routing.
+
+📁 "routes" Folder (Data Links):
+- routes/products.js  -> Sends product data to the website.
+- routes/invoices.js  -> Creates and emails invoices to customers.
+
+📁 "middleware" Folder (Security):
+- middleware/auth.js  -> Checks if the user's password/token is correct before letting them inside.
+
+📁 "config" Folder (Database Setup):
+- config/supabase.js  -> Connects the server to the database.
+
+
+=========================================================
+QUICK FIX GUIDE: "Where do I fix..."
+=========================================================
+- A Broken Link or URL?       -> Open thewhisk/src/App.jsx
+- The Navbar or Footer?       -> Open thewhisk/src/components/layout/
+- The Colors or Fonts?        -> Open thewhisk/src/index.css
+- The Admin Dashboard?        -> Open thewhisk/src/pages/Admin/
+- The Home Page?              -> Open thewhisk/src/pages/Home/
+- User Login Issues?          -> Open backend/server.js
+- Database Passwords/Keys?    -> Open thewhisk/.env AND backend/.env
