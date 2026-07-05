@@ -2,6 +2,10 @@
   "name": "bakery-monorepo",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "backend",
+    "thewhisk"
+  ],
   "scripts": {
     "dev:frontend": "npm run dev --prefix thewhisk",
     "dev:backend": "npm run dev --prefix backend",
