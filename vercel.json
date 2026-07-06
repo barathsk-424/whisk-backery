@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "buildCommand": "npm --workspace=thewhisk run build",
+  "outputDirectory": "thewhisk/dist",
+  "installCommand": "npm ci",
+  "framework": null
+}

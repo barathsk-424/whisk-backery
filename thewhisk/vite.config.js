@@ -2,8 +2,11 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
+// Use sub-path base only for GitHub Pages; Vercel and local use '/'
+const base = process.env.GITHUB_PAGES === 'true' ? '/whisk-backery/' : '/'
+
 export default defineConfig({
-  base: '/whisk-backery/',
+  base,
   plugins: [
     react(),
     tailwindcss(),
