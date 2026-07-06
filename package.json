@@ -7,11 +7,11 @@
     "thewhisk"
   ],
   "scripts": {
-    "dev:frontend": "npm run dev --prefix thewhisk",
-    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm --workspace=thewhisk run dev",
+    "dev:backend": "npm --workspace=backend run dev",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "build": "npm run build --prefix thewhisk",
-    "preview": "npm run preview --prefix thewhisk"
+    "build": "npm --workspace=thewhisk run build",
+    "preview": "npm --workspace=thewhisk run preview"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
