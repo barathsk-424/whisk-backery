@@ -1,6 +1,6 @@
 import React, { Suspense, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, ContactShadows, Environment } from '@react-three/drei';
+import { OrbitControls, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 import CakeModel from './CakeModel';
 import useCakeStore from '../../../store/useCakeStore';
@@ -74,8 +74,10 @@ const CakeCanvas = () => {
           <ambientLight intensity={1.5} />
           <spotLight position={[10, 20, 10]} angle={0.15} penumbra={1} intensity={500} castShadow />
           <pointLight position={[-10, 10, -10]} intensity={200} />
-          
-          <Environment preset="apartment" />
+          {/* Warm fill lights to simulate apartment environment without remote HDR fetch */}
+          <pointLight position={[5, 5, 5]}   intensity={80}  color="#fff5e0" />
+          <pointLight position={[-5, 3, -5]} intensity={60}  color="#e0eaff" />
+          <hemisphereLight skyColor="#ffffff" groundColor="#b0b0b0" intensity={0.8} />
           
           <group position={[0, -0.5, 0]}>
             <CakeModel />

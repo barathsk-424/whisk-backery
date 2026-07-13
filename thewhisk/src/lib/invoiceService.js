@@ -1,7 +1,6 @@
 import { supabase } from './supabase';
 import { jsPDF } from 'jspdf';
-
-const API_URL = import.meta.env.VITE_API_URL || "https://whisk-backery.onrender.com";
+import { API_URL } from '../config';
 
 /**
  * Saves a new invoice archive entry to the Supabase vault.

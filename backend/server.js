@@ -89,9 +89,21 @@ const adminOnly = (req, res, next) => {
 // ─── Route Registration ──────────────────────────────────────────
 const productRoutes = require("./routes/products");
 const invoiceRoutes = require("./routes/invoices");
+const adminRoutes   = require("./routes/admin");
+const authRoutes    = require("./routes/auth");
+const cartRoutes    = require("./routes/cart");
+const orderRoutes   = require("./routes/order");
+const ordersRoutes  = require("./routes/orders");
+const transactionRoutes = require("./routes/transactions");
 
-app.use("/api/products", productRoutes);
-app.use("/api/invoices", invoiceRoutes);
+app.use("/api/products",     productRoutes);
+app.use("/api/invoices",     invoiceRoutes);
+app.use("/api/admin",        adminRoutes);
+app.use("/api/auth",         authRoutes);
+app.use("/api/cart",         cartRoutes);
+app.use("/api/order",        orderRoutes);
+app.use("/api/orders",       ordersRoutes);
+app.use("/api/transactions", transactionRoutes);
 
 // ─── ARTISAN MEMBERSHIP (SIGNUP) ──────────────────────
 app.post("/signup", async (req, res) => {

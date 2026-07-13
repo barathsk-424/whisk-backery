@@ -1,13 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const { createClient } = require("@supabase/supabase-js");
+const { supabase } = require("../config/supabase");
 const { Resend } = require("resend");
-
-const supabase = createClient(
-  process.env.SUPABASE_URL || "https://cqdxnjhyoxqxofyhzgov.supabase.co",
-  process.env.SUPABASE_ANON_KEY ||
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxZHhuamh5b3hxeG9meWh6Z292Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODYzNjcsImV4cCI6MjA5MDE2MjM2N30.gOMC8DwXfGPM1IOwwpJdOU6YVoAQCHvuF1tW5Sd3WzI",
-);
 
 const resend = new Resend(process.env.RESEND_API_KEY || "re_placeholder");
 
