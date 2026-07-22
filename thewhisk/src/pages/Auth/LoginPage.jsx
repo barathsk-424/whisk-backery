@@ -102,11 +102,10 @@ export default function LoginPage() {
         className="w-full max-w-lg"
       >
         <div
-          className={`rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 shadow-2xl border transition-all ${
-            theme === "dark"
-              ? "bg-[#1A1110] border-white/5 shadow-white/5"
-              : "bg-white border-brown-100"
-          }`}
+          className={`rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 shadow-2xl border transition-all ${theme === "dark"
+            ? "bg-[#1A1110] border-white/5 shadow-white/5"
+            : "bg-white border-brown-100"
+            }`}
         >
           <div className="text-center mb-6 sm:mb-10">
             <motion.div
@@ -120,11 +119,13 @@ export default function LoginPage() {
             <h1
               className="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-primary"
             >
-              Artisan Gateway
+              Whisk Connect
             </h1>
-            <p className="text-accent font-black uppercase text-[8px] sm:text-[10px] tracking-[0.3em] sm:tracking-[0.4em] mt-2 sm:mt-3">
-              {isSignUp ? "Create Membership" : "Unified Intelligence Portal"}
-            </p>
+            {isSignUp && (
+              <p className="text-accent font-black uppercase text-[8px] sm:text-[10px] tracking-[0.3em] sm:tracking-[0.4em] mt-2 sm:mt-3">
+                Create Membership
+              </p>
+            )}
           </div>
 
           <AnimatePresence>
@@ -149,18 +150,17 @@ export default function LoginPage() {
                 <label className="block text-[10px] font-black text-brown-400 uppercase tracking-widest mb-2 ml-4 self-start text-left">
                   Masterpiece Signature (Name)
                 </label>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="EX: PIERRE HERMÉ"
-                    className={`w-full px-5 py-4 sm:px-6 sm:py-4.5 rounded-xl sm:rounded-2xl border font-black text-[10px] sm:text-xs tracking-widest focus:outline-none focus:ring-4 transition-all uppercase ${
-                      theme === "dark"
-                        ? "bg-white/5 border-white/10 text-white focus:ring-white/5 placeholder:text-white/20"
-                        : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5 placeholder:text-brown-200"
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="EX: PIERRE HERMÉ"
+                  className={`w-full px-5 py-4 sm:px-6 sm:py-4.5 rounded-xl sm:rounded-2xl border font-black text-[10px] sm:text-xs tracking-widest focus:outline-none focus:ring-4 transition-all uppercase ${theme === "dark"
+                    ? "bg-white/5 border-white/10 text-white focus:ring-white/5 placeholder:text-white/20"
+                    : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5 placeholder:text-brown-200"
                     }`}
-                  />
+                />
               </motion.div>
             )}
 
@@ -174,11 +174,10 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="YOU@ARTISAN.COM"
-                className={`w-full px-5 py-4 sm:px-6 sm:py-4.5 rounded-xl sm:rounded-2xl border font-black text-[10px] sm:text-xs tracking-widest focus:outline-none focus:ring-4 transition-all uppercase ${
-                  theme === "dark"
-                    ? "bg-white/5 border-white/10 text-white focus:ring-white/5 placeholder:text-white/20"
-                    : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5 placeholder:text-brown-200"
-                }`}
+                className={`w-full px-5 py-4 sm:px-6 sm:py-4.5 rounded-xl sm:rounded-2xl border font-black text-[10px] sm:text-xs tracking-widest focus:outline-none focus:ring-4 transition-all uppercase ${theme === "dark"
+                  ? "bg-white/5 border-white/10 text-white focus:ring-white/5 placeholder:text-white/20"
+                  : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5 placeholder:text-brown-200"
+                  }`}
               />
             </div>
 
@@ -192,22 +191,20 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className={`w-full px-5 py-4 sm:px-6 sm:py-4.5 rounded-xl sm:rounded-2xl border font-black text-[10px] sm:text-xs focus:outline-none focus:ring-4 transition-all ${
-                  theme === "dark"
-                    ? "bg-white/5 border-white/10 text-white focus:ring-white/5 tracking-widest"
-                    : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5"
-                }`}
+                className={`w-full px-5 py-4 sm:px-6 sm:py-4.5 rounded-xl sm:rounded-2xl border font-black text-[10px] sm:text-xs focus:outline-none focus:ring-4 transition-all ${theme === "dark"
+                  ? "bg-white/5 border-white/10 text-white focus:ring-white/5 tracking-widest"
+                  : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5"
+                  }`}
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-5 font-black text-xs rounded-2xl shadow-xl hover:translate-y-[-2px] active:translate-y-[1px] transition-all flex items-center justify-center gap-3 uppercase tracking-[0.3em] ${
-                theme === "dark" 
-                  ? "bg-white text-black hover:bg-white/90 shadow-white/5" 
-                  : "bg-primary text-white hover:bg-primary-light shadow-luxury"
-              } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`w-full py-5 font-black text-xs rounded-2xl shadow-xl hover:translate-y-[-2px] active:translate-y-[1px] transition-all flex items-center justify-center gap-3 uppercase tracking-[0.3em] ${theme === "dark"
+                ? "bg-white text-black hover:bg-white/90 shadow-white/5"
+                : "bg-primary text-white hover:bg-primary-light shadow-luxury"
+                } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
