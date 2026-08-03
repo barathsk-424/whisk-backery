@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import useStore from "../../store/useStore";
 import toast from "react-hot-toast";
 
@@ -196,6 +196,16 @@ export default function LoginPage() {
                   : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5"
                   }`}
               />
+              {!isSignUp && (
+                <div className="text-right mt-2 mr-2">
+                  <Link
+                    to="/forgot-password"
+                    className="text-accent font-black hover:underline text-[10px] uppercase tracking-widest"
+                  >
+                    Forgot Password?
+                  </Link>
+                </div>
+              )}
             </div>
 
             <button

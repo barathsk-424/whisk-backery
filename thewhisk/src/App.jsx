@@ -21,6 +21,8 @@ const BuilderPage = lazy(() => import("./pages/Builder/BuilderPage"));
 const TrackOrdersPage = lazy(() => import("./pages/Track/TrackOrdersPage"));
 const TrackOrderPage = lazy(() => import("./pages/Track/TrackOrderPage"));
 const LoginPage = lazy(() => import("./pages/Auth/LoginPage"));
+const ForgotPassword = lazy(() => import("./pages/Auth/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/Auth/ResetPassword"));
 const AdminDashboard = lazy(() => import("./pages/Admin/AdminPage"));
 const EditCakePage = lazy(() => import("./pages/Admin/EditCakePage"));
 const EditBundlePage = lazy(() => import("./pages/Admin/EditBundlePage"));
@@ -141,6 +143,14 @@ function App() {
                   <Route
                     path="/login"
                     element={<SafeRender component={LoginPage} />}
+                  />
+                  <Route
+                    path="/forgot-password"
+                    element={<SafeRender component={ForgotPassword} />}
+                  />
+                  <Route
+                    path="/reset-password"
+                    element={<SafeRender component={ResetPassword} />}
                   />
 
                   {/* PROTECTED COMMAND CENTER ROUTES */}

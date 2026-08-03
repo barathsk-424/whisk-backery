@@ -86,6 +86,37 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// ─── POST /api/auth/forgot-password ─────────────────────────────
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: 'Please enter a valid email address' });
+  }
+
+  try {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174';
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${frontendUrl}/reset-password`,
+    });
+
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    res.json({
+      message: 'Password reset link sent to your email',
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error during forgot password request' });
+  }
+});
+
 // ─── GET /api/auth/profile (protected) ──────────────────────────
 const authenticate = require('../middleware/auth');
 

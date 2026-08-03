@@ -1,0 +1,174 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate, Link } from "react-router-dom";
+import useStore from "../../store/useStore";
+import toast from "react-hot-toast";
+import { API_URL } from "../../config";
+
+export default function ForgotPassword() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const { theme } = useStore();
+
+  const validateEmail = (email) => {
+    const regex = /^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
+    return regex.test(email);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(false);
+
+    if (!email) {
+      setError("Please enter your email address.");
+      toast.error("Email is required.");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError("Please enter a valid artisan email address.");
+      toast.error("Invalid email format.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${API_URL}/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setSuccess(true);
+        toast.success(data.message || "Reset link sent! Please check your inbox. 📧");
+      } else {
+        const errorMsg = data.error || data.message || "Failed to send reset link.";
+        setError(errorMsg);
+        toast.error(errorMsg);
+      }
+    } catch (err) {
+      const netErr = "Network error. Backend service unreachable.";
+      setError(netErr);
+      toast.error(netErr);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div
+      className={`min-h-[calc(100vh-80px)] flex items-center justify-center py-12 sm:py-24 px-4 sm:px-6 transition-colors duration-700 ${theme === "dark" ? "bg-[#0D0807]" : "bg-secondary"}`}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        className="w-full max-w-lg"
+      >
+        <div
+          className={`rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 shadow-2xl border transition-all ${theme === "dark"
+            ? "bg-[#1A1110] border-white/5 shadow-white/5"
+            : "bg-white border-brown-100"
+            }`}
+        >
+          <div className="text-center mb-6 sm:mb-10">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring" }}
+              className="w-16 h-16 sm:w-20 sm:h-20 bg-accent/10 rounded-[1.25rem] sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 text-3xl sm:text-4xl"
+            >
+              🔑
+            </motion.div>
+            <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-primary">
+              Forgot Password
+            </h1>
+            <p className="text-accent font-black uppercase text-[8px] sm:text-[10px] tracking-[0.3em] sm:tracking-[0.4em] mt-2 sm:mt-3">
+              Recover Access to Your Account
+            </p>
+          </div>
+
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 text-[10px] font-black uppercase tracking-widest text-center"
+              >
+                🚨 {error}
+              </motion.div>
+            )}
+
+            {success && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-8 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-500 text-[10px] font-black uppercase tracking-widest text-center"
+              >
+                ✅ Password reset link has been dispatched to your email!
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-[10px] font-black text-brown-400 uppercase tracking-widest mb-2 ml-4 self-start text-left">
+                Artisan Identity (Email)
+              </label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="YOU@ARTISAN.COM"
+                className={`w-full px-5 py-4 sm:px-6 sm:py-4.5 rounded-xl sm:rounded-2xl border font-black text-[10px] sm:text-xs tracking-widest focus:outline-none focus:ring-4 transition-all uppercase ${theme === "dark"
+                  ? "bg-white/5 border-white/10 text-white focus:ring-white/5 placeholder:text-white/20"
+                  : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5 placeholder:text-brown-200"
+                  }`}
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-5 font-black text-xs rounded-2xl shadow-xl hover:translate-y-[-2px] active:translate-y-[1px] transition-all flex items-center justify-center gap-3 uppercase tracking-[0.3em] ${theme === "dark"
+                ? "bg-white text-black hover:bg-white/90 shadow-white/5"
+                : "bg-primary text-white hover:bg-primary-light shadow-luxury"
+                } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                "Send Reset Link"
+              )}
+            </button>
+          </form>
+
+          <div className="mt-12 text-center border-t border-brown-50 pt-8 flex items-center justify-center gap-3">
+            <p className="text-[10px] font-black text-brown-400 uppercase tracking-widest">
+              Remember your password?{" "}
+              <Link to="/login" className="text-accent font-black hover:underline">
+                Back to Sign In
+              </Link>
+            </p>
+          </div>
+
+          <div className="mt-8 flex justify-center gap-4 text-[8px] font-black uppercase tracking-widest text-brown-300 opacity-50">
+            <span>Identity Secured</span>
+            <span>•</span>
+            <span>Node & Supabase Auth</span>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
