@@ -1,6 +1,18 @@
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
+// Polyfill global WebSocket for Node.js environments where native WebSocket is missing (< Node 22)
+let ws;
+try {
+  ws = require('ws');
+} catch (e) {
+  // ws module fallback
+}
+
+if (typeof globalThis.WebSocket === 'undefined' && ws) {
+  globalThis.WebSocket = ws;
+}
+
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
@@ -9,12 +21,26 @@ if (!supabaseUrl || !supabaseAnonKey) {
   process.exit(1);
 }
 
-// Default client (for auth operations that create per-user sessions)
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Client configuration disabling unnecessary Realtime WebSocket connections
+const clientOptions = {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
+    detectSessionInUrl: false,
+  },
+  realtime: {
+    autoConnect: false,
+    ...(ws ? { WebSocket: ws } : {}),
+  },
+};
 
-// Create a client with user's JWT for RLS-scoped queries
+// Default backend Supabase client
+const supabase = createClient(supabaseUrl, supabaseAnonKey, clientOptions);
+
+// Helper function to create custom client with specific token / options
 const createUserClient = (accessToken) => {
   return createClient(supabaseUrl, supabaseAnonKey, {
+    ...clientOptions,
     global: {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -23,4 +49,4 @@ const createUserClient = (accessToken) => {
   });
 };
 
-module.exports = { supabase, createUserClient };
+module.exports = { supabase, createUserClient, clientOptions };

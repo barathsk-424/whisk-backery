@@ -9,11 +9,7 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || "SECRET";
 
 // ─── Supabase Configuration ──────────────────────────────────────
-const { createClient } = require("@supabase/supabase-js");
-const supabase = createClient(
-  "https://cqdxnjhyoxqxofyhzgov.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxZHhuamh5b3hxeG9meWh6Z292Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODYzNjcsImV4cCI6MjA5MDE2MjM2N30.gOMC8DwXfGPM1IOwwpJdOU6YVoAQCHvuF1tW5Sd3WzI",
-);
+const { supabase, createUserClient } = require("./config/supabase");
 
 // ─── MongoDB Connection (Optional/Stabilization) ────────────────
 if (process.env.MONGODB_URI) {
@@ -409,13 +405,7 @@ app.post("/reset-password", async (req, res) => {
 
   try {
     // We need to use the token to authenticate the request for password update
-    const userSupabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_ANON_KEY,
-      {
-        global: { headers: { Authorization: `Bearer ${token}` } },
-      },
-    );
+    const userSupabase = createUserClient(token);
 
     const { data, error } = await userSupabase.auth.updateUser({
       password: password,
