@@ -80,24 +80,26 @@ router.post('/', async (req, res) => {
 // Get user's order history
 router.get('/', async (req, res) => {
   try {
+    console.error("[DEBUG] JWT Payload (req.user):", req.user);
+    console.error("[DEBUG] Executing Supabase query on table 'orders'");
+    console.error("[DEBUG] Filter: user_id = ", req.user.id);
+    console.error("[DEBUG] req.supabase available:", !!req.supabase);
+
     const { data, error } = await req.supabase
       .from('orders')
-      .select(`
-        id,
-        quantity,
-        status,
-        created_at,
-        product:products ( id, name, price, image )
-      `)
+      .select('*')
       .eq('user_id', req.user.id)
       .order('created_at', { ascending: false });
 
     if (error) {
+      console.error("[DEBUG] Supabase Query Error:", error);
       return res.status(500).json({ error: error.message });
     }
 
+    console.error("[DEBUG] Supabase Query Success, orders count:", data?.length);
     res.json({ orders: data });
   } catch (err) {
+    console.error("[DEBUG] Exception thrown in GET /api/orders:", err);
     res.status(500).json({ error: 'Server error fetching orders' });
   }
 });
@@ -108,13 +110,7 @@ router.get('/:id', async (req, res) => {
   try {
     const { data, error } = await req.supabase
       .from('orders')
-      .select(`
-        id,
-        quantity,
-        status,
-        created_at,
-        product:products ( id, name, price, image )
-      `)
+      .select('*')
       .eq('id', req.params.id)
       .eq('user_id', req.user.id)
       .single();
