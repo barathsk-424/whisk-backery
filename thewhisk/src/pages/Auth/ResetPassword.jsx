@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import useStore from "../../store/useStore";
 import toast from "react-hot-toast";
 import { supabase } from "../../lib/supabase";
@@ -9,6 +10,8 @@ export default function ResetPassword() {
   const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sessionChecking, setSessionChecking] = useState(true);
   const [hasRecoverySession, setHasRecoverySession] = useState(false);
@@ -227,34 +230,52 @@ export default function ResetPassword() {
                   <label className="block text-[10px] font-black text-brown-400 uppercase tracking-widest mb-2 ml-4 self-start text-left">
                     New Secure Cipher (Password)
                   </label>
-                  <input
-                    type="password"
-                    required
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className={`w-full px-5 py-4 sm:px-6 sm:py-4.5 rounded-xl sm:rounded-2xl border font-black text-[10px] sm:text-xs focus:outline-none focus:ring-4 transition-all ${theme === "dark"
-                      ? "bg-white/5 border-white/10 text-white focus:ring-white/5 tracking-widest"
-                      : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5"
-                      }`}
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      required
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className={`w-full px-5 py-4 sm:px-6 sm:py-4.5 pr-12 sm:pr-14 rounded-xl sm:rounded-2xl border font-black text-[10px] sm:text-xs focus:outline-none focus:ring-4 transition-all ${theme === "dark"
+                        ? "bg-white/5 border-white/10 text-white focus:ring-white/5 tracking-widest"
+                        : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5"
+                        }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className={`absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-colors ${theme === "dark" ? "text-white/50 hover:text-white" : "text-brown-300 hover:text-primary"}`}
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                 </div>
 
                 <div>
                   <label className="block text-[10px] font-black text-brown-400 uppercase tracking-widest mb-2 ml-4 self-start text-left">
                     Confirm Secure Cipher
                   </label>
-                  <input
-                    type="password"
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className={`w-full px-5 py-4 sm:px-6 sm:py-4.5 rounded-xl sm:rounded-2xl border font-black text-[10px] sm:text-xs focus:outline-none focus:ring-4 transition-all ${theme === "dark"
-                      ? "bg-white/5 border-white/10 text-white focus:ring-white/5 tracking-widest"
-                      : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5"
-                      }`}
-                  />
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className={`w-full px-5 py-4 sm:px-6 sm:py-4.5 pr-12 sm:pr-14 rounded-xl sm:rounded-2xl border font-black text-[10px] sm:text-xs focus:outline-none focus:ring-4 transition-all ${theme === "dark"
+                        ? "bg-white/5 border-white/10 text-white focus:ring-white/5 tracking-widest"
+                        : "bg-secondary/30 border-brown-50 text-primary focus:ring-primary/5"
+                        }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className={`absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-colors ${theme === "dark" ? "text-white/50 hover:text-white" : "text-brown-300 hover:text-primary"}`}
+                    >
+                      {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                 </div>
 
                 <button
