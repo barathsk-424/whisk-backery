@@ -151,8 +151,14 @@ export default function MyOrdersPage() {
                   const API =
                     import.meta.env.VITE_API_URL ||
                     "https://whisk-backery.onrender.com";
+                  const token = localStorage.getItem("token");
                   toast.promise(
-                    fetch(`${API}/api/orders`)
+                    fetch(`${API}/api/orders`, {
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                      }
+                    })
                       .then((res) => res.json())
                       .then((data) => {
                         console.log("Artisan Backend Raw Data:", data);

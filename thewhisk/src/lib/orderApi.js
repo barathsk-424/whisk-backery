@@ -20,13 +20,21 @@ import { API_URL } from "../config";
  * Specialized fetch wrapper for backend communication.
  */
 async function apiFetch(endpoint, options = {}) {
+  const token = localStorage.getItem("token");
   const url = `${API_URL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+  
+  const headers = {
+    "Content-Type": "application/json",
+    ...options.headers,
+  };
+  
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   return fetch(url, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
+    headers,
   });
 }
 
