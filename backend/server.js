@@ -22,43 +22,17 @@ if (process.env.MONGODB_URI) {
 }
 
 // ─── Middleware ──────────────────────────────────────────────────
-app.use(cors());
+app.use(cors({
+  origin: [
+    process.env.FRONTEND_URL, 
+    process.env.FRONTEND_URL?.replace(/\/+$/, ''), 
+    "http://localhost:5174", 
+    "http://localhost:5173"
+  ].filter(Boolean),
+  credentials: true
+}));
 app.use(express.json());
 
-// ─── EMAIL VALIDATION UTILITY ───
-const DISPOSABLE_DOMAINS = [
-  "mailinator.com",
-  "tempmail.com",
-  "guerrillamail.com",
-  "10minutemail.com",
-  "yopmail.com",
-  "throwawaymail.com",
-  "sharklasers.com",
-  "getnada.com",
-  "dispostable.com",
-  "trashmail.com",
-  "maildrop.cc",
-];
-
-const isValidEmail = (email) => {
-  const regex = /^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
-  const match = email.match(regex);
-  if (!match)
-    return {
-      valid: false,
-      message: "Please provide a valid artisan email format.",
-    };
-
-  const domain = match[1].toLowerCase();
-  if (DISPOSABLE_DOMAINS.includes(domain)) {
-    return {
-      valid: false,
-      message: "Disposable artisan identities are not permitted for registry.",
-    };
-  }
-
-  return { valid: true };
-};
 
 // ─── AUTHENTICATION MIDDLEWARE ──────────────────────────────────
 const authenticate = (req, res, next) => {
@@ -101,248 +75,6 @@ app.use("/api/order",        orderRoutes);
 app.use("/api/orders",       ordersRoutes);
 app.use("/api/transactions", transactionRoutes);
 
-// ─── ARTISAN MEMBERSHIP (SIGNUP) ──────────────────────
-app.post("/signup", async (req, res) => {
-  const { name, email, password } = req.body;
-  const userEmail = email?.trim().toLowerCase();
-
-  console.log(`\n[MEMBERSHIP] Registration attempt: ${userEmail}`);
-
-  // ── Email Guard ──
-  const validation = isValidEmail(userEmail);
-  if (!validation.valid) {
-    return res.status(400).json({ message: validation.message });
-  }
-
-  try {
-    // 1. Validate if user already exists
-    const { data: existingAdmin } = await supabase
-      .from("admins")
-      .select("id")
-      .eq("email", userEmail)
-      .maybeSingle();
-    const { data: existingUser } = await supabase
-      .from("users")
-      .select("id")
-      .eq("email", userEmail)
-      .maybeSingle();
-
-    if (existingAdmin || existingUser) {
-      return res
-        .status(400)
-        .json({ message: "Artisan already exists in the registry." });
-    }
-
-    // 2. Register user in Supabase Auth (auth.users)
-    const { data: authData, error: authErr } = await supabase.auth.signUp({
-      email: userEmail,
-      password: password,
-      options: {
-        data: { full_name: name || "New Artisan" },
-      },
-    });
-
-    if (authErr) {
-      console.warn("⚠️ Supabase Auth registration note:", authErr.message);
-    }
-
-    // 3. Insert into shared Artisan Ledger (users table)
-    const { data: newUser, error: regError } = await supabase
-      .from("users")
-      .insert([
-        {
-          name: name || "New Artisan",
-          email: userEmail,
-          password: password,
-          role: "user",
-          created_at: new Date(),
-        },
-      ])
-      .select()
-      .single();
-
-    if (regError) throw regError;
-
-    console.log(
-      `   → OK: New Artisan registered in Auth & DB: ${newUser?.email || userEmail}`,
-    );
-    res
-      .status(201)
-      .json({ message: "Registration successful. Welcome to the community!" });
-  } catch (err) {
-    console.error("   → SYSTEM ERROR SIGNUP:", err.message);
-    res.status(500).json({ message: "Backend error during registration." });
-  }
-});
-
-// ─── ARTISAN AUTHENTICATION (LOGIN) ─────────────────────────────
-app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  const userEmail = email?.trim().toLowerCase();
-
-  console.log(`\n[AUTH] LOGIN ATTEMPT: ${userEmail}`);
-
-  try {
-    // 1. MASTER VAULT SEARCH (Admins)
-    const { data: masterAdmin, error: adminErr } = await supabase
-      .from("admins")
-      .select("*")
-      .eq("email", userEmail)
-      .maybeSingle();
-
-    if (adminErr) {
-      console.error("[AUTH] Admin Search ERROR:", adminErr);
-      return res.status(500).json({
-        message: "Master vault lookup failure: " + adminErr.message,
-        details: adminErr,
-      });
-    }
-
-    if (masterAdmin && masterAdmin.password === password) {
-      console.log(
-        `   → Success: Master Admin Access Granted: ${masterAdmin.email}`,
-      );
-      const token = jwt.sign(
-        {
-          id: masterAdmin.id,
-          email: masterAdmin.email,
-          role: "admin",
-          source: "master",
-        },
-        JWT_SECRET,
-        { expiresIn: "1d" },
-      );
-      return res.json({
-        token,
-        user: {
-          id: masterAdmin.id,
-          email: masterAdmin.email,
-          role: "admin",
-          name: masterAdmin.name,
-        },
-      });
-    }
-
-    // 2. SUPABASE AUTH SEARCH (auth.users)
-    let authAuthenticated = false;
-    let authUser = null;
-
-    const { data: authData, error: authErr } = await supabase.auth.signInWithPassword({
-      email: userEmail,
-      password: password,
-    });
-
-    if (!authErr && authData?.user) {
-      authAuthenticated = true;
-      authUser = authData.user;
-    }
-
-    // 3. GENERAL USER SEARCH (public.users table)
-    let { data: user, error: userErr } = await supabase
-      .from("users")
-      .select("*")
-      .eq("email", userEmail)
-      .maybeSingle();
-
-    if (userErr) {
-      console.error("[AUTH] User Search ERROR:", userErr.message);
-      return res
-        .status(500)
-        .json({ message: "Registry lookup failure: " + userErr.message });
-    }
-
-    // Branch A: Authenticated via Supabase Auth (e.g. after password reset)
-    if (authAuthenticated) {
-      console.log(`   → Success: Supabase Auth Session Verified: ${userEmail}`);
-
-      // Keep public.users table synchronized with the new password
-      if (user && user.password !== password) {
-        await supabase
-          .from("users")
-          .update({ password: password })
-          .eq("email", userEmail);
-        user.password = password;
-      } else if (!user) {
-        const { data: createdUser } = await supabase
-          .from("users")
-          .insert([
-            {
-              name: authUser.user_metadata?.full_name || userEmail.split("@")[0],
-              email: userEmail,
-              password: password,
-              role: "user",
-              created_at: new Date(),
-            },
-          ])
-          .select()
-          .single();
-        user = createdUser;
-      }
-
-      const token = jwt.sign(
-        {
-          id: user?.id || authUser.id,
-          email: userEmail,
-          role: user?.role || "user",
-          source: "general",
-        },
-        JWT_SECRET,
-        { expiresIn: "1d" },
-      );
-
-      return res.json({
-        token,
-        user: {
-          id: user?.id || authUser.id,
-          email: userEmail,
-          role: user?.role || "user",
-          name: user?.name || userEmail.split("@")[0],
-        },
-      });
-    }
-
-    // Branch B: Fallback check against public.users table (legacy records)
-    if (user) {
-      if (user.password === password) {
-        console.log(`   → Success: Member Session Initialized via DB: ${user.email}`);
-
-        // Try syncing to Supabase Auth so future resets work smoothly
-        supabase.auth.signUp({ email: userEmail, password }).catch(() => {});
-
-        const token = jwt.sign(
-          {
-            id: user.id,
-            email: user.email,
-            role: user.role || "user",
-            source: "general",
-          },
-          JWT_SECRET,
-          { expiresIn: "1d" },
-        );
-        return res.json({
-          token,
-          user: {
-            id: user.id,
-            email: user.email,
-            role: user.role || "user",
-            name: user.name,
-          },
-        });
-      } else {
-        return res.status(401).json({ message: "Invalid credentials" });
-      }
-    }
-
-    return res
-      .status(401)
-      .json({
-        message: "Artisan not found in registry (Search: " + userEmail + ")",
-      });
-  } catch (err) {
-    console.error("   → SYSTEM ERROR LOGIN:", err.message);
-    res.status(500).json({ message: "Server error during authentication" });
-  }
-});
 
 // ─── FINANCE TRANSACTIONS ─────────────────────────────────────────
 app.get("/api/transactions", authenticate, async (req, res) => {
@@ -548,6 +280,11 @@ app.get("/api/orders", async (req, res) => {
   }
 });
 
+
+// ─── API 404 CATCH-ALL ───────────────────────────────────────────
+app.all("/api/*", (req, res) => {
+  res.status(404).json({ success: false, message: "API endpoint not found." });
+});
 
 // --- ERROR HANDLERS ---
 process.on('unhandledRejection', (reason, promise) => {
