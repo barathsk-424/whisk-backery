@@ -327,24 +327,6 @@ router.post('/forgot-password', async (req, res) => {
   }
 });
 
-// ─── POST /api/auth/reset-password ──────────────────────────────
-router.post('/reset-password', async (req, res) => {
-  const { password } = req.body;
-  if (!password) {
-    return res.status(400).json({ success: false, message: 'Password is required' });
-  }
-
-  try {
-    const { data, error } = await supabase.auth.updateUser({ password });
-    if (error) {
-      return res.status(400).json({ success: false, message: error.message });
-    }
-    res.json({ success: true, message: 'Password updated successfully' });
-  } catch (err) {
-    res.status(500).json({ success: false, message: 'Server error during password reset' });
-  }
-});
-
 // ─── GET /api/auth/profile (protected) ──────────────────────────
 const authenticate = require('../middleware/auth');
 

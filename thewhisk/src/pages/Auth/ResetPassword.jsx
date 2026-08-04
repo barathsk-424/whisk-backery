@@ -36,6 +36,8 @@ export default function ResetPassword() {
         const accessToken = hashParams.get("access_token") || url.searchParams.get("access_token");
         const refreshToken = hashParams.get("refresh_token") || url.searchParams.get("refresh_token");
 
+        const type = hashParams.get("type") || url.searchParams.get("type");
+
         // 1. Handle PKCE Code Flow (?code=...)
         if (code) {
           const { data, error } = await supabase.auth.exchangeCodeForSession(code);
@@ -49,8 +51,8 @@ export default function ResetPassword() {
           }
         }
 
-        // 2. Handle Implicit Hash / Query Token Flow (access_token & refresh_token)
-        if (accessToken && refreshToken) {
+        // 2. Handle Implicit Hash / Query Token Flow (access_token & refresh_token & type=recovery)
+        if (accessToken && refreshToken && type === "recovery") {
           const { data, error } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken,
@@ -65,29 +67,17 @@ export default function ResetPassword() {
           }
         }
 
-        // 3. Check for active session directly
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          setHasRecoverySession(true);
-          setSessionChecking(false);
-          return;
-        }
-
-        // 4. Listen for auth state events (e.g. PASSWORD_RECOVERY)
+        // 3. Listen for auth state events (ONLY PASSWORD_RECOVERY, do not accept normal sessions)
         const { data: listener } = supabase.auth.onAuthStateChange((event, currentSession) => {
-          if (event === "PASSWORD_RECOVERY" || currentSession) {
+          if (event === "PASSWORD_RECOVERY") {
             setHasRecoverySession(true);
             setSessionChecking(false);
           }
         });
         authSubscription = listener?.subscription;
 
-        // Fallback delay to allow Supabase SDK to parse hash automatically
-        setTimeout(async () => {
-          const { data: { session: checkSession } } = await supabase.auth.getSession();
-          if (checkSession) {
-            setHasRecoverySession(true);
-          }
+        // 4. Fallback timeout: if no recovery event fired and no tokens, it's invalid.
+        setTimeout(() => {
           setSessionChecking(false);
         }, 1200);
 
