@@ -44,7 +44,10 @@ const isValidEmail = (email) => {
 // ─── POST /api/auth/signup ──────────────────────────────────────
 router.post('/signup', async (req, res) => {
   const { name, email, password } = req.body;
-  const userEmail = email?.trim().toLowerCase();
+  if (!email || typeof email !== 'string' || !password || !name) {
+    return res.status(400).json({ success: false, message: 'Valid name, email, and password are required' });
+  }
+  const userEmail = email.trim().toLowerCase();
 
   console.log(`\n[MEMBERSHIP] Registration attempt: ${userEmail}`);
 
@@ -119,7 +122,10 @@ router.post('/signup', async (req, res) => {
 // ─── POST /api/auth/login ───────────────────────────────────────
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  const userEmail = email?.trim().toLowerCase();
+  if (!email || typeof email !== 'string' || !password) {
+    return res.status(400).json({ success: false, message: 'Valid email and password are required' });
+  }
+  const userEmail = email.trim().toLowerCase();
 
   console.log(`\n[AUTH] LOGIN ATTEMPT: ${userEmail}`);
 
@@ -318,6 +324,24 @@ router.post('/forgot-password', async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Server error during forgot password request' });
+  }
+});
+
+// ─── POST /api/auth/reset-password ──────────────────────────────
+router.post('/reset-password', async (req, res) => {
+  const { password } = req.body;
+  if (!password) {
+    return res.status(400).json({ success: false, message: 'Password is required' });
+  }
+
+  try {
+    const { data, error } = await supabase.auth.updateUser({ password });
+    if (error) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
+    res.json({ success: true, message: 'Password updated successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Server error during password reset' });
   }
 });
 
