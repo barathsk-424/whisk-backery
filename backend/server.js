@@ -23,12 +23,22 @@ if (process.env.MONGODB_URI) {
 
 // ─── Middleware ──────────────────────────────────────────────────
 app.use(cors({
-  origin: [
-    process.env.FRONTEND_URL, 
-    process.env.FRONTEND_URL?.replace(/\/+$/, ''), 
-    "http://localhost:5174", 
-    "http://localhost:5173"
-  ].filter(Boolean),
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      process.env.FRONTEND_URL, 
+      process.env.FRONTEND_URL?.replace(/\/+$/, ''), 
+      "http://localhost:5174", 
+      "http://localhost:5173"
+    ].filter(Boolean);
+
+    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    
+    return callback(new Error('CORS policy violation'), false);
+  },
   credentials: true
 }));
 app.use(express.json());
