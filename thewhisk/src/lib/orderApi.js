@@ -76,7 +76,7 @@ export async function getOrdersAPI({ user_id, email } = {}) {
     if (response.ok) {
       const data = await response.json();
       console.log("[orderApi] Bridge Sync Complete (Source: Backend)");
-      return { success: true, orders: data, source: "backend" };
+      return { success: true, orders: data.orders || data, source: "backend" };
     }
 
     // Stage 2: Fallback to Direct Supabase (if backend is unreachable or fails)
