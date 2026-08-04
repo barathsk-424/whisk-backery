@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { supabase } = require('../config/supabase');
-const JWT_SECRET = process.env.JWT_SECRET || 'the-whisk-secret-key-12345';
+const JWT_SECRET = process.env.JWT_SECRET || 'SECRET';
 
 // Middleware: Verify custom JWT and attach user info
 const authenticate = (req, res, next) => {
