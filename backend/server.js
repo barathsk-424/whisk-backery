@@ -133,7 +133,20 @@ app.post("/signup", async (req, res) => {
         .json({ message: "Artisan already exists in the registry." });
     }
 
-    // 2. Insert into shared Artisan Ledger (users table)
+    // 2. Register user in Supabase Auth (auth.users)
+    const { data: authData, error: authErr } = await supabase.auth.signUp({
+      email: userEmail,
+      password: password,
+      options: {
+        data: { full_name: name || "New Artisan" },
+      },
+    });
+
+    if (authErr) {
+      console.warn("⚠️ Supabase Auth registration note:", authErr.message);
+    }
+
+    // 3. Insert into shared Artisan Ledger (users table)
     const { data: newUser, error: regError } = await supabase
       .from("users")
       .insert([
@@ -151,7 +164,7 @@ app.post("/signup", async (req, res) => {
     if (regError) throw regError;
 
     console.log(
-      `   → OK: New Artisan registered: ${newUser?.email || userEmail}`,
+      `   → OK: New Artisan registered in Auth & DB: ${newUser?.email || userEmail}`,
     );
     res
       .status(201)
@@ -170,7 +183,7 @@ app.post("/login", async (req, res) => {
   console.log(`\n[AUTH] LOGIN ATTEMPT: ${userEmail}`);
 
   try {
-    // 1. MASTER VAULT SEARCH
+    // 1. MASTER VAULT SEARCH (Admins)
     const { data: masterAdmin, error: adminErr } = await supabase
       .from("admins")
       .select("*")
@@ -210,7 +223,21 @@ app.post("/login", async (req, res) => {
       });
     }
 
-    // 2. GENERAL USER SEARCH (MEMBERS)
+    // 2. SUPABASE AUTH SEARCH (auth.users)
+    let authAuthenticated = false;
+    let authUser = null;
+
+    const { data: authData, error: authErr } = await supabase.auth.signInWithPassword({
+      email: userEmail,
+      password: password,
+    });
+
+    if (!authErr && authData?.user) {
+      authAuthenticated = true;
+      authUser = authData.user;
+    }
+
+    // 3. GENERAL USER SEARCH (public.users table)
     let { data: user, error: userErr } = await supabase
       .from("users")
       .select("*")
@@ -224,9 +251,64 @@ app.post("/login", async (req, res) => {
         .json({ message: "Registry lookup failure: " + userErr.message });
     }
 
+    // Branch A: Authenticated via Supabase Auth (e.g. after password reset)
+    if (authAuthenticated) {
+      console.log(`   → Success: Supabase Auth Session Verified: ${userEmail}`);
+
+      // Keep public.users table synchronized with the new password
+      if (user && user.password !== password) {
+        await supabase
+          .from("users")
+          .update({ password: password })
+          .eq("email", userEmail);
+        user.password = password;
+      } else if (!user) {
+        const { data: createdUser } = await supabase
+          .from("users")
+          .insert([
+            {
+              name: authUser.user_metadata?.full_name || userEmail.split("@")[0],
+              email: userEmail,
+              password: password,
+              role: "user",
+              created_at: new Date(),
+            },
+          ])
+          .select()
+          .single();
+        user = createdUser;
+      }
+
+      const token = jwt.sign(
+        {
+          id: user?.id || authUser.id,
+          email: userEmail,
+          role: user?.role || "user",
+          source: "general",
+        },
+        JWT_SECRET,
+        { expiresIn: "1d" },
+      );
+
+      return res.json({
+        token,
+        user: {
+          id: user?.id || authUser.id,
+          email: userEmail,
+          role: user?.role || "user",
+          name: user?.name || userEmail.split("@")[0],
+        },
+      });
+    }
+
+    // Branch B: Fallback check against public.users table (legacy records)
     if (user) {
       if (user.password === password) {
-        console.log(`   → Success: Member Session Initialized: ${user.email}`);
+        console.log(`   → Success: Member Session Initialized via DB: ${user.email}`);
+
+        // Try syncing to Supabase Auth so future resets work smoothly
+        supabase.auth.signUp({ email: userEmail, password }).catch(() => {});
+
         const token = jwt.sign(
           {
             id: user.id,
@@ -247,7 +329,7 @@ app.post("/login", async (req, res) => {
           },
         });
       } else {
-        return res.status(401).json({ message: "Invalid password" });
+        return res.status(401).json({ message: "Invalid credentials" });
       }
     }
 
@@ -379,50 +461,10 @@ app.get("/api/admin-dashboard", adminOnly, async (req, res) => {
   }
 });
 
-// ─── FORGOT PASSWORD (REQUEST RECOVERY) ───────────────────
-app.post("/forgot-password", async (req, res) => {
-  const { email } = req.body;
-  const userEmail = email?.trim().toLowerCase();
+// Removed duplicate /forgot-password endpoint; handled by /api/auth/forgot-password router.
 
-  console.log(`\n[AUTH] PASSWORD RESET REQUEST: ${userEmail}`);
+// Removed backend /reset-password API. Password reset is handled purely on the client side via supabase.auth.updateUser().
 
-  try {
-    const { data, error } =
-      await supabase.auth.resetPasswordForEmail(userEmail);
-    if (error) return res.status(400).json({ message: error.message });
-
-    res.json({ message: "Recovery instructions sent to your email." });
-  } catch (err) {
-    res.status(500).json({ message: "Recovery relay failure." });
-  }
-});
-
-// ─── RESET PASSWORD (UPDATE CIPHER) ─────────────────────────────
-app.post("/reset-password", async (req, res) => {
-  const { token, password } = req.body;
-
-  console.log(`\n[AUTH] PASSWORD UPDATE ATTEMPT`);
-
-  try {
-    // We need to use the token to authenticate the request for password update
-    const userSupabase = createUserClient(token);
-
-    const { data, error } = await userSupabase.auth.updateUser({
-      password: password,
-    });
-
-    if (error) {
-      console.log(`   → RESET FAILED: ${error.message}`);
-      return res.status(400).json({ message: error.message });
-    }
-
-    console.log(`   → SUCCESS: Cipher updated for ${data.user.email}`);
-    res.json({ message: "Cipher updated successfully. Identity re-secured." });
-  } catch (err) {
-    console.error("   → SYSTEM ERROR RESET PWD:", err.message);
-    res.status(500).json({ message: "Master vault update failure." });
-  }
-});
 
 app.get("/", async (req, res) => {
   let supabaseStatus = "connected";

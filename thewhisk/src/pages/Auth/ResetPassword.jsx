@@ -16,41 +16,91 @@ export default function ResetPassword() {
   const { theme } = useStore();
 
   useEffect(() => {
-    // Check if user arrived via recovery link with active recovery session
+    let authSubscription = null;
+
     const checkRecoverySession = async () => {
+      setSessionChecking(true);
       try {
+        const url = new URL(window.location.href);
+        const code = url.searchParams.get("code");
+
+        // Parse hash parameters (#access_token=...&refresh_token=...&type=recovery)
+        const hashString = window.location.hash.startsWith("#")
+          ? window.location.hash.substring(1)
+          : window.location.hash;
+        const hashParams = new URLSearchParams(hashString);
+
+        const accessToken = hashParams.get("access_token") || url.searchParams.get("access_token");
+        const refreshToken = hashParams.get("refresh_token") || url.searchParams.get("refresh_token");
+
+        // 1. Handle PKCE Code Flow (?code=...)
+        if (code) {
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+          if (error) {
+            console.error("Error exchanging code for session:", error.message);
+          } else if (data.session) {
+            setHasRecoverySession(true);
+            window.history.replaceState({}, document.title, window.location.pathname);
+            setSessionChecking(false);
+            return;
+          }
+        }
+
+        // 2. Handle Implicit Hash / Query Token Flow (access_token & refresh_token)
+        if (accessToken && refreshToken) {
+          const { data, error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+          if (error) {
+            console.error("Error setting session from URL tokens:", error.message);
+          } else if (data.session) {
+            setHasRecoverySession(true);
+            window.history.replaceState({}, document.title, window.location.pathname);
+            setSessionChecking(false);
+            return;
+          }
+        }
+
+        // 3. Check for active session directly
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
           setHasRecoverySession(true);
-        } else {
-          // Listen for session state changes (Supabase handles URL hash tokens automatically)
-          const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            if (event === "PASSWORD_RECOVERY" || session) {
-              setHasRecoverySession(true);
-            }
-          });
-          
-          // Check session once more after brief delay for hash parsing
-          setTimeout(async () => {
-            const { data: { session: currentSession } } = await supabase.auth.getSession();
-            if (currentSession) {
-              setHasRecoverySession(true);
-            }
-            setSessionChecking(false);
-          }, 1000);
-
-          return () => {
-            subscription.unsubscribe();
-          };
+          setSessionChecking(false);
+          return;
         }
+
+        // 4. Listen for auth state events (e.g. PASSWORD_RECOVERY)
+        const { data: listener } = supabase.auth.onAuthStateChange((event, currentSession) => {
+          if (event === "PASSWORD_RECOVERY" || currentSession) {
+            setHasRecoverySession(true);
+            setSessionChecking(false);
+          }
+        });
+        authSubscription = listener?.subscription;
+
+        // Fallback delay to allow Supabase SDK to parse hash automatically
+        setTimeout(async () => {
+          const { data: { session: checkSession } } = await supabase.auth.getSession();
+          if (checkSession) {
+            setHasRecoverySession(true);
+          }
+          setSessionChecking(false);
+        }, 1200);
+
       } catch (err) {
-        console.error("Session verification error:", err);
-      } finally {
+        console.error("Recovery session detection failed:", err);
         setSessionChecking(false);
       }
     };
 
     checkRecoverySession();
+
+    return () => {
+      if (authSubscription) {
+        authSubscription.unsubscribe();
+      }
+    };
   }, []);
 
   const handleSubmit = async (e) => {
@@ -74,23 +124,32 @@ export default function ResetPassword() {
     setLoading(true);
 
     try {
+      // Ensure we have a valid recovery session before attempting update
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("AUTH SESSION MISSING: Recovery session expired or missing. Please request a new password reset link.");
+      }
+
+      // Update password inside Supabase Authentication only
       const { data, error: updateError } = await supabase.auth.updateUser({
         password: newPassword,
       });
 
       if (updateError) {
-        setError(updateError.message);
-        toast.error(updateError.message);
-      } else {
-        toast.success("Password updated successfully! Redirecting to login... 🔒");
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
+        throw updateError;
       }
+
+      toast.success("Password updated successfully in Supabase Auth! Redirecting to login... 🔒");
+      
+      // Sign out from recovery session so user can log in with new credentials
+      await supabase.auth.signOut();
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
     } catch (err) {
-      const netErr = "Failed to update password. Please try again.";
-      setError(netErr);
-      toast.error(netErr);
+      setError(err.message || "Failed to update password.");
+      toast.error(err.message || "Failed to update password.");
     } finally {
       setLoading(false);
     }
