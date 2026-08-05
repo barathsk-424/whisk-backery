@@ -28,9 +28,10 @@ export default function ResetPassword() {
         const code = url.searchParams.get("code");
 
         // Parse hash parameters (#access_token=...&refresh_token=...&type=recovery)
-        const hashString = window.location.hash.startsWith("#")
-          ? window.location.hash.substring(1)
-          : window.location.hash;
+        const currentHash = window.__INITIAL_HASH__ || window.location.hash;
+        const hashString = currentHash.startsWith("#")
+          ? currentHash.substring(1)
+          : currentHash;
         const hashParams = new URLSearchParams(hashString);
 
         const accessToken = hashParams.get("access_token") || url.searchParams.get("access_token");
