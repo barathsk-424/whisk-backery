@@ -85,8 +85,25 @@ router.post('/signup', async (req, res) => {
       },
     });
 
+    // ── CRITICAL: Stop immediately if Supabase Auth fails.
+    // Continuing would insert into public.users with no auth.users record,
+    // creating an orphaned user who can never receive password reset emails.
     if (authErr) {
-      console.warn("⚠️ Supabase Auth registration note:", authErr.message);
+      console.error(`   → FAILED: Supabase Auth signup error for ${userEmail}:`, authErr.message);
+      return res.status(500).json({
+        success: false,
+        message: "Registration failed. Please try again.",
+      });
+    }
+
+    // ── Edge case: Supabase returns a "ghost" user with identities:[] when the
+    // email already exists in auth.users but was never confirmed. Treat as duplicate.
+    if (authData?.user && Array.isArray(authData.user.identities) && authData.user.identities.length === 0) {
+      console.warn(`   → WARN: ${userEmail} already exists in auth.users (unconfirmed ghost account).`);
+      return res.status(400).json({
+        success: false,
+        message: "Artisan already exists in the registry.",
+      });
     }
 
     // 3. Insert into shared Artisan Ledger (users table)
@@ -255,8 +272,22 @@ router.post('/login', async (req, res) => {
       if (user.password === password) {
         console.log(`   → Success: Member Session Initialized via DB: ${user.email}`);
 
-        // Try syncing to Supabase Auth so future resets work smoothly
-        supabase.auth.signUp({ email: userEmail, password }).catch(() => {});
+        // Try syncing this user to Supabase Auth so future password resets work.
+        // This is intentionally async (non-blocking) but now properly logged.
+        supabase.auth
+          .signUp({ email: userEmail, password })
+          .then(({ data: syncData, error: syncErr }) => {
+            if (syncErr) {
+              console.warn(`[AUTH] Branch-B auth.users re-sync failed for ${userEmail}:`, syncErr.message);
+            } else if (syncData?.user && syncData.user.identities?.length === 0) {
+              console.log(`[AUTH] Branch-B: ${userEmail} already in auth.users (no re-sync needed).`);
+            } else {
+              console.log(`[AUTH] Branch-B: auth.users re-sync succeeded for ${userEmail}.`);
+            }
+          })
+          .catch((syncEx) => {
+            console.warn(`[AUTH] Branch-B auth.users re-sync exception for ${userEmail}:`, syncEx.message);
+          });
 
         const token = jwt.sign(
           {
