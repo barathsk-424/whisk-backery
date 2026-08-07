@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { API_URL } from "../../config";
+import { supabase } from "../../lib/supabase";
 
 /* ── Simple password strength ──────────────────────── */
 function getStrength(pwd) {
@@ -25,7 +25,6 @@ export default function ResetPasswordPage() {
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState("otp"); // 'otp' | 'password' | 'done'
-  const [recoveryToken, setRecoveryToken] = useState("");
 
   const strength = getStrength(newPwd);
 
@@ -46,7 +45,7 @@ export default function ResetPasswordPage() {
     }
   };
 
-  // ── Verify OTP through Backend ───────────────────────
+  // ── Verify OTP via Supabase Authentication ─────────────
   const verifyOtp = async () => {
     const entered = otp.join("");
     const email = localStorage.getItem("resetEmail") || "";
@@ -55,22 +54,26 @@ export default function ResetPasswordPage() {
       toast.error("Identity code requires 6 digits.");
       return;
     }
+    if (!email) {
+      toast.error("Session expired. Please restart forgot password.");
+      return;
+    }
 
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/verify-recovery`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, token: entered }),
+      // supabase.auth.verifyOtp() validates the 6-digit code Supabase sent.
+      // On success it establishes a live auth session — required for updateUser.
+      const { error } = await supabase.auth.verifyOtp({
+        email,
+        token: entered,
+        type: "recovery",
       });
 
-      const data = await res.json();
-      if (res.ok) {
-        toast.success(data.message || "Identity confirmed! 🔐");
-        setRecoveryToken(data.token);
-        setStep("password");
+      if (error) {
+        toast.error(error.message || "Invalid or expired code.");
       } else {
-        toast.error(data.message || "Invalid or expired code.");
+        toast.success("Identity confirmed! 🔐");
+        setStep("password");
       }
     } catch (err) {
       toast.error("Verification relay failure.");
@@ -79,7 +82,7 @@ export default function ResetPasswordPage() {
     }
   };
 
-  // ── Reset password through Backend ───────────────────
+  // ── Reset password via Supabase Authentication ───────────
   const handleReset = async () => {
     if (!newPwd) {
       toast.error("Cipher required.");
@@ -96,20 +99,18 @@ export default function ResetPasswordPage() {
 
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/reset-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: recoveryToken, password: newPwd }),
-      });
+      // supabase.auth.updateUser() updates the password for the currently
+      // authenticated session established by verifyOtp above.
+      const { error } = await supabase.auth.updateUser({ password: newPwd });
 
-      const data = await res.json();
-      if (res.ok) {
-        // Cleanup
+      if (error) {
+        toast.error(error.message || "Vault update failure.");
+      } else {
+        // Clean up + sign out the recovery session
         localStorage.removeItem("resetEmail");
+        await supabase.auth.signOut();
         setStep("done");
         toast.success("🎉 Vault re-secured!");
-      } else {
-        toast.error(data.message || "Vault update failure.");
       }
     } catch (err) {
       toast.error("Security server error.");

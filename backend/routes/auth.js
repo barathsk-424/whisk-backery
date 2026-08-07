@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const { supabase } = require('../config/supabase');
 const jwt = require("jsonwebtoken");
 const router = express.Router();
@@ -323,38 +323,6 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     console.error("   → SYSTEM ERROR LOGIN:", err.message);
     res.status(500).json({ success: false, message: "Server error during authentication" });
-  }
-});
-
-// ─── POST /api/auth/forgot-password ─────────────────────────────
-router.post('/forgot-password', async (req, res) => {
-  const { email } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ success: false, message: 'Email is required' });
-  }
-
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({ success: false, message: 'Please enter a valid email address' });
-  }
-
-  try {
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174';
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${frontendUrl.replace(/\/+$/, '')}/reset-password`,
-    });
-
-    if (error) {
-      return res.status(400).json({ success: false, message: error.message });
-    }
-
-    res.json({
-      success: true,
-      message: 'Password reset link sent to your email',
-    });
-  } catch (err) {
-    res.status(500).json({ success: false, message: 'Server error during forgot password request' });
   }
 });
 

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { API_URL } from "../../config";
+import { supabase } from "../../lib/supabase";
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ export default function ForgotPasswordPage() {
     return regex.test(email);
   };
 
-  // ── generate & send OTP via Backend ────────────────────────
+  // ── Send OTP via Supabase Authentication ─────────────
   const sendOTP = async () => {
     if (!email.trim()) {
       toast.error("Identity required to proceed.");
@@ -38,20 +38,17 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_URL}/forgot-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+      // Uses the official Password Recovery flow in Supabase
+      // Assuming Dashboard Email Template settings use {{ .Token }}, this will send a 6-digit OTP
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase());
 
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem("resetEmail", email.trim());
-        toast.success(data.message || "Security code dispatched! 📬");
+      if (error) {
+        toast.error(error.message || "Recovery failure.");
+      } else {
+        localStorage.setItem("resetEmail", email.trim().toLowerCase());
+        toast.success("Security code dispatched! 📬");
         setSent(true);
         setCountdown(60);
-      } else {
-        toast.error(data.message || "Recovery failure.");
       }
     } catch (err) {
       toast.error("Network relay failure.");
