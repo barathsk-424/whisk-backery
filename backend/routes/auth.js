@@ -1,7 +1,12 @@
-﻿const express = require('express');
+const express = require('express');
 const { supabase } = require('../config/supabase');
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const router = express.Router();
+
+const hashPassword = (password) => {
+  return crypto.createHash('sha256').update(password).digest('hex');
+};
 
 const JWT_SECRET = process.env.JWT_SECRET || "SECRET";
 
@@ -76,55 +81,32 @@ router.post('/signup', async (req, res) => {
         .json({ success: false, message: "Artisan already exists in the registry." });
     }
 
-    // 2. Register user in Supabase Auth (auth.users)
-    const { data: authData, error: authErr } = await supabase.auth.signUp({
-      email: userEmail,
-      password: password,
-      options: {
-        data: { full_name: name || "New Artisan" },
-      },
-    });
-
-    // ── CRITICAL: Stop immediately if Supabase Auth fails.
-    // Continuing would insert into public.users with no auth.users record,
-    // creating an orphaned user who can never receive password reset emails.
-    if (authErr) {
-      console.error(`   → FAILED: Supabase Auth signup error for ${userEmail}:`, authErr.message);
-      return res.status(500).json({
-        success: false,
-        message: "Registration failed. Please try again.",
-      });
-    }
-
-    // ── Edge case: Supabase returns a "ghost" user with identities:[] when the
-    // email already exists in auth.users but was never confirmed. Treat as duplicate.
-    if (authData?.user && Array.isArray(authData.user.identities) && authData.user.identities.length === 0) {
-      console.warn(`   → WARN: ${userEmail} already exists in auth.users (unconfirmed ghost account).`);
-      return res.status(400).json({
-        success: false,
-        message: "Artisan already exists in the registry.",
-      });
-    }
-
-    // 3. Insert into shared Artisan Ledger (users table)
+    // 2. Insert the public profile into the users table with a hashed password
+    const newUserId = crypto.randomUUID();
     const { data: newUser, error: regError } = await supabase
       .from("users")
       .insert([
         {
+          id: newUserId,
           name: name || "New Artisan",
           email: userEmail,
-          password: password,
+          password: hashPassword(password),
           role: "user",
-          created_at: new Date(),
         },
       ])
       .select()
       .single();
 
-    if (regError) throw regError;
+    if (regError) {
+      console.error("   → Database insert error:", regError.message);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Registration failed due to database error. Please try again." 
+      });
+    }
 
     console.log(
-      `   → OK: New Artisan registered in Auth & DB: ${newUser?.email || userEmail}`,
+      `   → OK: New Artisan registered in DB: ${newUser?.email || userEmail}`,
     );
     res
       .status(201)
@@ -147,179 +129,81 @@ router.post('/login', async (req, res) => {
   console.log(`\n[AUTH] LOGIN ATTEMPT: ${userEmail}`);
 
   try {
-    // 1. MASTER VAULT SEARCH (Admins)
+    // 1. Check if user is a Master Admin (Admins Table)
     const { data: masterAdmin, error: adminErr } = await supabase
       .from("admins")
-      .select("*")
+      .select("id, name, email, password")
       .eq("email", userEmail)
       .maybeSingle();
 
-    if (adminErr) {
-      console.error("[AUTH] Admin Search ERROR:", adminErr);
-      return res.status(500).json({
-        success: false,
-        message: "Master vault lookup failure: " + adminErr.message,
-      });
-    }
-
-    if (masterAdmin && masterAdmin.password === password) {
-      console.log(
-        `   → Success: Master Admin Access Granted: ${masterAdmin.email}`,
-      );
-      const token = jwt.sign(
-        {
-          id: masterAdmin.id,
-          email: masterAdmin.email,
-          role: "admin",
-          source: "master",
-        },
-        JWT_SECRET,
-        { expiresIn: "1d" },
-      );
-      return res.json({
-        success: true,
-        token,
-        user: {
-          id: masterAdmin.id,
-          email: masterAdmin.email,
-          role: "admin",
-          name: masterAdmin.name,
-        },
-      });
-    }
-
-    // 2. SUPABASE AUTH SEARCH (auth.users)
-    let authAuthenticated = false;
-    let authUser = null;
-
-    const { data: authData, error: authErr } = await supabase.auth.signInWithPassword({
-      email: userEmail,
-      password: password,
-    });
-
-    if (!authErr && authData?.user) {
-      authAuthenticated = true;
-      authUser = authData.user;
-    }
-
-    // 3. GENERAL USER SEARCH (public.users table)
-    let { data: user, error: userErr } = await supabase
-      .from("users")
-      .select("*")
-      .eq("email", userEmail)
-      .maybeSingle();
-
-    if (userErr) {
-      console.error("[AUTH] User Search ERROR:", userErr.message);
-      return res
-        .status(500)
-        .json({ success: false, message: "Registry lookup failure: " + userErr.message });
-    }
-
-    // Branch A: Authenticated via Supabase Auth (e.g. after password reset)
-    if (authAuthenticated) {
-      console.log(`   → Success: Supabase Auth Session Verified: ${userEmail}`);
-
-      // Keep public.users table synchronized with the new password
-      if (user && user.password !== password) {
-        await supabase
-          .from("users")
-          .update({ password: password })
-          .eq("email", userEmail);
-        user.password = password;
-      } else if (!user) {
-        const { data: createdUser } = await supabase
-          .from("users")
-          .insert([
-            {
-              name: authUser.user_metadata?.full_name || userEmail.split("@")[0],
-              email: userEmail,
-              password: password,
-              role: "user",
-              created_at: new Date(),
-            },
-          ])
-          .select()
-          .single();
-        user = createdUser;
-      }
-
-      const token = jwt.sign(
-        {
-          id: user?.id || authUser.id,
-          email: userEmail,
-          role: user?.role || "user",
-          source: "general",
-        },
-        JWT_SECRET,
-        { expiresIn: "1d" },
-      );
-
-      return res.json({
-        success: true,
-        token,
-        user: {
-          id: user?.id || authUser.id,
-          email: userEmail,
-          role: user?.role || "user",
-          name: user?.name || userEmail.split("@")[0],
-        },
-      });
-    }
-
-    // Branch B: Fallback check against public.users table (legacy records)
-    if (user) {
-      if (user.password === password) {
-        console.log(`   → Success: Member Session Initialized via DB: ${user.email}`);
-
-        // Try syncing this user to Supabase Auth so future password resets work.
-        // This is intentionally async (non-blocking) but now properly logged.
-        supabase.auth
-          .signUp({ email: userEmail, password })
-          .then(({ data: syncData, error: syncErr }) => {
-            if (syncErr) {
-              console.warn(`[AUTH] Branch-B auth.users re-sync failed for ${userEmail}:`, syncErr.message);
-            } else if (syncData?.user && syncData.user.identities?.length === 0) {
-              console.log(`[AUTH] Branch-B: ${userEmail} already in auth.users (no re-sync needed).`);
-            } else {
-              console.log(`[AUTH] Branch-B: auth.users re-sync succeeded for ${userEmail}.`);
-            }
-          })
-          .catch((syncEx) => {
-            console.warn(`[AUTH] Branch-B auth.users re-sync exception for ${userEmail}:`, syncEx.message);
-          });
-
+    if (masterAdmin && !adminErr) {
+      // Legacy compatibility: check plain text and hashed
+      if (masterAdmin.password === password || masterAdmin.password === hashPassword(password)) {
+        console.log(`   → Success: Master Admin Access Granted: ${masterAdmin.email}`);
         const token = jwt.sign(
           {
-            id: user.id,
-            email: user.email,
-            role: user.role || "user",
-            source: "general",
+            id: masterAdmin.id,
+            email: masterAdmin.email,
+            role: "admin",
+            source: "master",
           },
           JWT_SECRET,
-          { expiresIn: "1d" },
+          { expiresIn: "1d" }
         );
         return res.json({
           success: true,
           token,
           user: {
-            id: user.id,
-            email: user.email,
-            role: user.role || "user",
-            name: user.name,
+            id: masterAdmin.id,
+            email: masterAdmin.email,
+            role: "admin",
+            name: masterAdmin.name,
           },
         });
-      } else {
-        return res.status(401).json({ success: false, message: "Invalid credentials" });
       }
     }
 
-    return res
-      .status(401)
-      .json({
-        success: false,
-        message: "Artisan not found in registry (Search: " + userEmail + ")",
-      });
+    // 2. Fetch public profile (users table)
+    const { data: user, error: userErr } = await supabase
+      .from("users")
+      .select("id, name, email, role, password")
+      .eq("email", userEmail)
+      .maybeSingle();
+
+    if (userErr || !user) {
+      console.error("[AUTH] Login failed: User not found");
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
+    }
+
+    // Legacy compatibility: check plain text and hashed
+    if (user.password !== password && user.password !== hashPassword(password)) {
+      console.error("[AUTH] Login failed: Incorrect password");
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
+    }
+
+    console.log(`   → Success: User Session Verified: ${userEmail}`);
+
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role || "user",
+        source: "database",
+      },
+      JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    return res.json({
+      success: true,
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role || "user",
+        name: user.name || user.email.split("@")[0],
+      },
+    });
   } catch (err) {
     console.error("   → SYSTEM ERROR LOGIN:", err.message);
     res.status(500).json({ success: false, message: "Server error during authentication" });
@@ -344,6 +228,31 @@ router.get('/profile', authenticate, async (req, res) => {
     res.json({ success: true, user: data });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Server error fetching profile' });
+  }
+});
+
+// ─── POST /api/auth/forgot-password ──────────────────────────────────────
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  if (!email || typeof email !== 'string') {
+    return res.status(400).json({ success: false, message: 'Valid email is required' });
+  }
+
+  const userEmail = email.trim().toLowerCase();
+  console.log(`\n[AUTH] FORGOT PASSWORD ATTEMPT: ${userEmail}`);
+
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(userEmail);
+
+    if (error) {
+      console.error("[AUTH] Forgot password error:", error.message);
+      return res.status(400).json({ success: false, message: error.message });
+    }
+
+    return res.json({ success: true, message: "Reset link sent! Please check your inbox. 📧" });
+  } catch (err) {
+    console.error("   → SYSTEM ERROR FORGOT PASSWORD:", err.message);
+    res.status(500).json({ success: false, message: "Server error during password reset" });
   }
 });
 
