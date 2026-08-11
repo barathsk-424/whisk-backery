@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import useStore from "../../store/useStore";
 import toast from "react-hot-toast";
 import { API_URL } from "../../config";
+import { supabase } from "../../lib/supabase";
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
@@ -38,26 +39,20 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+      const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
       });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        setSuccess(true);
-        toast.success(data.message || "Reset link sent! Please check your inbox. 📧");
-      } else {
-        const errorMsg = data.error || data.message || "Failed to send reset link.";
-        setError(errorMsg);
-        toast.error(errorMsg);
+      if (error) {
+        throw error;
       }
+
+      setSuccess(true);
+      toast.success("Reset link sent! Please check your inbox. 📧");
     } catch (err) {
-      const netErr = "Network error. Backend service unreachable.";
-      setError(netErr);
-      toast.error(netErr);
+      const errorMsg = err.message || "Failed to send reset link.";
+      setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
