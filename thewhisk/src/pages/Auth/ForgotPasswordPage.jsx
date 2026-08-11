@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { supabase } from "../../lib/supabase";
+import { API_URL } from "../../config";
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();
@@ -24,8 +24,8 @@ export default function ForgotPasswordPage() {
     return regex.test(email);
   };
 
-  // ── Send OTP via Supabase Authentication ─────────────
-  const sendOTP = async () => {
+  // ── Send reset link via backend API ─────────────
+  const sendResetLink = async () => {
     if (!email.trim()) {
       toast.error("Identity required to proceed.");
       return;
@@ -38,17 +38,20 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      // Uses the official Password Recovery flow in Supabase
-      // Assuming Dashboard Email Template settings use {{ .Token }}, this will send a 6-digit OTP
-      const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase());
+      const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+      });
 
-      if (error) {
-        toast.error(error.message || "Recovery failure.");
-      } else {
-        localStorage.setItem("resetEmail", email.trim().toLowerCase());
-        toast.success("Security code dispatched! 📬");
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success("Reset link dispatched! Check your inbox. 📧");
         setSent(true);
         setCountdown(60);
+      } else {
+        toast.error(data.message || "Recovery failure.");
       }
     } catch (err) {
       toast.error("Network relay failure.");
@@ -60,7 +63,7 @@ export default function ForgotPasswordPage() {
   const handleResend = () => {
     setSent(false);
     setCountdown(0);
-    sendOTP();
+    sendResetLink();
   };
 
   return (
@@ -86,7 +89,7 @@ export default function ForgotPasswordPage() {
             </h1>
             <p className="text-brown-400 mt-2 text-sm leading-relaxed">
               Enter the email linked to your account and we'll send you a
-              6-digit OTP.
+              password reset link.
             </p>
           </div>
 
@@ -99,7 +102,7 @@ export default function ForgotPasswordPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && !sent && sendOTP()}
+              onKeyDown={(e) => e.key === "Enter" && !sent && sendResetLink()}
               placeholder="you@thewhisk.com"
               disabled={sent}
               className="w-full px-4 py-3.5 rounded-2xl border border-brown-100 text-sm
@@ -116,7 +119,7 @@ export default function ForgotPasswordPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                onClick={sendOTP}
+                onClick={sendResetLink}
                 disabled={loading}
                 className={`w-full py-4 gradient-accent text-white font-bold rounded-2xl
                             shadow-lg shadow-accent/20 transition-all flex items-center
@@ -126,10 +129,10 @@ export default function ForgotPasswordPage() {
                 {loading ? (
                   <>
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Sending OTP...
+                    Sending...
                   </>
                 ) : (
-                  "📧 Send Reset OTP"
+                  "📧 Send Reset Link"
                 )}
               </motion.button>
             ) : (
@@ -142,22 +145,12 @@ export default function ForgotPasswordPage() {
                 {/* Success banner */}
                 <div className="p-4 bg-green-50 border border-green-200 rounded-2xl text-center">
                   <p className="text-green-700 font-semibold text-sm">
-                    ✅ Security code dispatched!
+                    ✅ Reset link dispatched!
                   </p>
                   <p className="text-green-500 text-xs mt-1">
-                    Please enter the 6-digit code from your inbox.
+                    Please check your inbox and click the reset link to set a new password.
                   </p>
                 </div>
-
-                {/* Go to Reset */}
-                <button
-                  onClick={() => navigate("/reset-password")}
-                  className="w-full py-4 gradient-accent text-white font-bold rounded-2xl
-                             shadow-lg shadow-accent/20 hover:opacity-90 hover:-translate-y-0.5
-                             active:scale-[0.98] transition-all"
-                >
-                  Enter OTP & Reset Password →
-                </button>
 
                 {/* Resend */}
                 <p className="text-center text-sm text-brown-400">
@@ -171,7 +164,7 @@ export default function ForgotPasswordPage() {
                       onClick={handleResend}
                       className="text-accent font-bold hover:underline"
                     >
-                      Resend OTP
+                      Resend Link
                     </button>
                   )}
                 </p>
