@@ -2,6 +2,7 @@ const express = require('express');
 const { supabase } = require('../config/supabase');
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 const router = express.Router();
 
 const hashPassword = (password) => {
@@ -99,9 +100,9 @@ router.post('/signup', async (req, res) => {
 
     if (regError) {
       console.error("   → Database insert error:", regError.message);
-      return res.status(500).json({ 
-        success: false, 
-        message: "Registration failed due to database error. Please try again." 
+      return res.status(500).json({
+        success: false,
+        message: "Registration failed due to database error. Please try again."
       });
     }
 
@@ -232,8 +233,15 @@ router.get('/profile', authenticate, async (req, res) => {
 });
 
 // ─── EMAIL SERVICE (Resend) ─────────────────────────────────────
-const { Resend } = require("resend");
-const resendClient = new Resend(process.env.RESEND_API_KEY || "re_placeholder");
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
 
 // ─── POST /api/auth/forgot-password ──────────────────────────────────────
@@ -310,51 +318,64 @@ router.post('/forgot-password', async (req, res) => {
     const resetUrl = `${origin}/reset-password?token=${encodeURIComponent(rawToken)}`;
 
     // 7. Send email via Resend
-    if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== "re_placeholder") {
-      try {
-        await resendClient.emails.send({
-          from: "The Whisk <orders@resend.dev>",
-          to: [userEmail],
-          subject: "🔐 Password Reset — The Whisk Bakery",
-          html: `
-            <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 520px; margin: 0 auto; padding: 40px 30px; background: #FFF9F5; border-radius: 20px; border: 1px solid #F0E6DC;">
-              <div style="text-align: center; margin-bottom: 30px;">
-                <span style="font-size: 48px;">🧁</span>
-                <h1 style="color: #4A2A1A; font-size: 24px; margin: 10px 0 0;">The Whisk Bakery</h1>
-              </div>
-              <p style="color: #6B4C3B; font-size: 15px; line-height: 1.7;">
-                We received a request to reset your password. Click the button below to set a new password:
-              </p>
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${resetUrl}" style="display: inline-block; padding: 14px 40px; background: #4A2A1A; color: white; text-decoration: none; border-radius: 12px; font-weight: bold; font-size: 14px; letter-spacing: 1px;">
-                  RESET PASSWORD
-                </a>
-              </div>
-              <p style="color: #9B8578; font-size: 12px; line-height: 1.6;">
-                This link expires in <strong>15 minutes</strong>. If you didn't request this, you can safely ignore this email.
-              </p>
-              <hr style="border: none; border-top: 1px solid #F0E6DC; margin: 25px 0;" />
-              <p style="color: #C4B0A0; font-size: 11px; text-align: center;">
-                The Whisk Bakery • Chennai
-              </p>
-            </div>
-          `,
-        });
-        console.log(`   → Reset email dispatched to ${userEmail}`);
-      } catch (emailErr) {
-        console.error("   → Email delivery failed. Check RESEND_API_KEY configuration.");
-      }
-    } else {
-      console.warn("   → RESEND_API_KEY not configured. Email delivery skipped.");
+    // 7. Send email via Gmail SMTP
+    try {
+      await transporter.sendMail({
+        from: `"The Whisk" <${process.env.SMTP_USER}>`,
+        to: userEmail,
+        subject: "🔐 Password Reset — The Whisk Bakery",
+        html: `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 520px; margin: 0 auto; padding: 40px 30px; background: #FFF9F5; border-radius: 20px; border: 1px solid #F0E6DC;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <span style="font-size: 48px;">🧁</span>
+          <h1 style="color: #4A2A1A; font-size: 24px; margin: 10px 0 0;">
+            The Whisk Bakery
+          </h1>
+        </div>
+
+        <p style="color: #6B4C3B; font-size: 15px; line-height: 1.7;">
+          We received a request to reset your password.
+          Click the button below to set a new password:
+        </p>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${resetUrl}"
+             style="display: inline-block; padding: 14px 40px; background: #4A2A1A; color: white; text-decoration: none; border-radius: 12px; font-weight: bold; font-size: 14px;">
+            RESET PASSWORD
+          </a>
+        </div>
+
+        <p style="color: #9B8578; font-size: 12px; line-height: 1.6;">
+          This link expires in <strong>15 minutes</strong>.
+          If you didn't request this, you can safely ignore this email.
+        </p>
+
+        <hr style="border: none; border-top: 1px solid #F0E6DC; margin: 25px 0;" />
+
+        <p style="color: #C4B0A0; font-size: 11px; text-align: center;">
+          The Whisk Bakery • Chennai
+        </p>
+      </div>
+    `,
+      });
+
+      console.log(`   → Reset email dispatched to ${userEmail}`);
+    } catch (emailErr) {
+      console.error("   → Email delivery failed:", emailErr.message);
     }
 
-    return res.json({ success: true, message: "If this email is registered, a reset link has been sent." });
+    return res.json({
+      success: true,
+      message: "If this email is registered, a reset link has been sent."
+    });
   } catch (err) {
     console.error("   → SYSTEM ERROR FORGOT PASSWORD:", err.message);
-    res.status(500).json({ success: false, message: "Server error during password reset" });
+    return res.status(500).json({
+      success: false,
+      message: "Server error during password reset"
+    });
   }
 });
-
 
 // ─── POST /api/auth/reset-password ──────────────────────────────────────
 router.post('/reset-password', async (req, res) => {
