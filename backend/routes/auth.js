@@ -2,7 +2,8 @@ const express = require('express');
 const { supabase } = require('../config/supabase');
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY);
 const router = express.Router();
 
 const hashPassword = (password) => {
@@ -233,15 +234,7 @@ router.get('/profile', authenticate, async (req, res) => {
 });
 
 // ─── EMAIL SERVICE (Resend) ─────────────────────────────────────
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+
 
 
 // ─── POST /api/auth/forgot-password ──────────────────────────────────────
@@ -320,8 +313,8 @@ router.post('/forgot-password', async (req, res) => {
     // 7. Send email via Resend
     // 7. Send email via Gmail SMTP
     try {
-      await transporter.sendMail({
-        from: `"The Whisk" <${process.env.SMTP_USER}>`,
+      await resend.emails.send({
+        from: "The Whisk <onboarding@resend.dev>",
         to: userEmail,
         subject: "🔐 Password Reset — The Whisk Bakery",
         html: `
